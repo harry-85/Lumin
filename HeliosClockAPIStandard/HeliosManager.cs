@@ -9,9 +9,11 @@ namespace HeliosClockAPIStandard
     public class HeliosManager : IHeliosManager
     {
         public ILedController LedController { get; set; }
+        public int RefreshSpeed { get; set; }
 
         public HeliosManager(ILedController ledController)
         {
+            RefreshSpeed = 100;
             this.LedController = ledController;
         }
 
@@ -37,11 +39,12 @@ namespace HeliosClockAPIStandard
             while (!cancellationToken.IsCancellationRequested)
             {
                 LedController.PixelOffset++;
-                await Task.Delay(400).ConfigureAwait(false);
+                await Task.Delay(RefreshSpeed).ConfigureAwait(false);
                 if (LedController.PixelOffset >= LedController.LedCount)
                 {
                     LedController.PixelOffset = 0;
                 }
+                await LedController.Repaint().ConfigureAwait(false);
             }
             LedController.PixelOffset = oldOffest;
         }

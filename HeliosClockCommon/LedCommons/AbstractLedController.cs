@@ -1,6 +1,7 @@
 ﻿using HeliosClockCommon.ServiceCommons;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HeliosClockCommon.LedCommon
 {
@@ -54,7 +55,7 @@ namespace HeliosClockCommon.LedCommon
         /// <value>The pixel delta.</value>
         public int PixelOffset { get; set; }
 
-        public abstract void SendPixels(LedPixel[] pixels);
+        public abstract Task SendPixels(LedPixel[] pixels);
 
         /// <summary>Sets the screen colors.</summary>
         /// <param name="screen">The screen.</param>
@@ -72,11 +73,11 @@ namespace HeliosClockCommon.LedCommon
         public CancellationToken Token { get; set; }
       
         /// <summary>Repaints this instance.</summary>
-        public void Repaint()
+        public async Task Repaint()
         {
             if (ActualScreen == null)
                 return;
-            SendPixels(ActualScreen);
+            await SendPixels(ActualScreen);
         }
     }
 }

@@ -26,6 +26,13 @@ namespace HeliosClockCommon.Hubs
             await Clients.All.Stop().ConfigureAwait(false);
         }
 
+
+        public async Task SetRefreshSpeed(string speed)
+        {
+            await Clients.All.SetRefreshSpeed(speed).ConfigureAwait(false);
+        }
+
+
         public override Task OnConnectedAsync()
         {
             Console.WriteLine("New Client Connected ...");

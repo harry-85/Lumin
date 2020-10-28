@@ -39,7 +39,7 @@ namespace HeliosClockCommon.Clients
 
             _connection = new HubConnectionBuilder().WithUrl(URL).Build();
 
-            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), (startColor, endColor) =>
+            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), async (startColor, endColor) =>
             {
                 _logger.LogInformation("Incomming Color Change ...");
 
@@ -52,11 +52,12 @@ namespace HeliosClockCommon.Clients
                     leds.SetPixel(ref i, colors[i]);
                 }
 
-                ledController.SendPixels(leds.pixels);
-                return Task.CompletedTask;
+                await ledController.SendPixels(leds.pixels).ConfigureAwait(false);
             });
 
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
+            _connection.On(nameof(IHeliosHub.Stop), OnStop);
+            _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
 
             _logger.LogInformation("Local Helios Client Initialized ...");
         }
@@ -113,7 +114,14 @@ namespace HeliosClockCommon.Clients
             await manager.RunLedMode(ledMode, cancellationToken).ConfigureAwait(false);
         }
 
-        private Task Stop()
+        private Task OnSetRefreshSpeed(string speed)
+        {
+            _logger.LogInformation("Set refresh speed: {0} ...", speed);
+            manager.RefreshSpeed = int.Parse(speed);
+            return Task.CompletedTask;
+        }
+
+        private Task OnStop()
         {
             _logger.LogInformation("Local Client: Mode stop command ...");
 

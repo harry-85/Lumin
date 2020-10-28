@@ -63,5 +63,13 @@ namespace HeliosClockApp.Views
             var viewModel = (AboutViewModel)BindingContext;
             viewModel.AddGradientCommand.Execute(null);
         }
+
+        private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            labelSpeed.Text = e.NewValue.ToString();
+            var viewModel = (AboutViewModel)BindingContext;
+            viewModel.SetRefreshRateCommand.Execute(e.NewValue);
+
+        }
     }
 }

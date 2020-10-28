@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Device.Spi;
+using System.Threading.Tasks;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.LedCommon;
 
@@ -34,7 +35,7 @@ namespace HeliosClockAPIStandard.Controller
 
             // By initializing an int array of that specific length, it gets initialized with ints of default value (0).  :)
             this.EndFrame = new byte[endFrameSize];
-            
+
             ClockSpeedHz = 10_000_000;
 
             connectionSettings = new SpiConnectionSettings(0, SpiChipSelectLine)
@@ -53,42 +54,45 @@ namespace HeliosClockAPIStandard.Controller
 
         /// <summary>Sends the pixels.</summary>
         /// <param name="pixels">The pixels.</param>
-        public override void SendPixels(LedPixel[] pixels)
+        public override async Task SendPixels(LedPixel[] pixels)
         {
-            List<byte> spiDataBytes = new List<byte>();
-            spiDataBytes.AddRange(startFrame);
-
-            for (int i = 0; i < pixels.Length; i++)
+            await Task.Run(() =>
             {
-                int realIndex = PixelHelper.CalculateRealPixel(i, LedCount, PixelOffset);
+                List<byte> spiDataBytes = new List<byte>();
+                spiDataBytes.AddRange(startFrame);
 
-                if (pixels[realIndex] == null) pixels[realIndex] = new LedPixel();
-                // Global brightness.  Not implemented currently.  0xE0 (binary 11100000) specifies the beginning of the pixel's
-                // color data.  0x1F (binary 00011111) specifies the global brightness.  If you want to actually use this functionality
-                // comment out this line and uncomment the next one.  Then the pixel's RGB value will get scaled based on the alpha
-                // channel value from the Color.
-                //spiDataBytes.Add(0xE0 | 0x1F);
-                spiDataBytes.Add((byte)(0xE0 | (byte)(pixels[realIndex].LedColor.A >> 3)));
+                for (int i = 0; i < pixels.Length; i++)
+                {
+                    int realIndex = PixelHelper.CalculateRealPixel(i, LedCount, PixelOffset);
 
-                // APA102/DotStar leds take the color data in Blue, Green, Red order.  Weirdly, according to the spec these are supposed
-                // to take a 0-255 value for R/G/B.  However, on the ones I have they only seem to take 0-126.  Specifying 127-255 doesn't
-                // break anything, but seems to show the same exact value 0-126 would have (i.e. 127 is 0 brightness, 255 is full brightness).
-                // Discarding the lowest bit from each to make the value fit in 0-126.
-                spiDataBytes.Add((byte)(pixels[realIndex].LedColor.B >> 1));
-                spiDataBytes.Add((byte)(pixels[realIndex].LedColor.G >> 1));
-                spiDataBytes.Add((byte)(pixels[realIndex].LedColor.R >> 1));
-            }
+                    if (pixels[realIndex] == null) pixels[realIndex] = new LedPixel();
+                    // Global brightness.  Not implemented currently.  0xE0 (binary 11100000) specifies the beginning of the pixel's
+                    // color data.  0x1F (binary 00011111) specifies the global brightness.  If you want to actually use this functionality
+                    // comment out this line and uncomment the next one.  Then the pixel's RGB value will get scaled based on the alpha
+                    // channel value from the Color.
+                    //spiDataBytes.Add(0xE0 | 0x1F);
+                    spiDataBytes.Add((byte)(0xE0 | (byte)(pixels[realIndex].LedColor.A >> 3)));
 
-            spiDataBytes.AddRange(this.EndFrame);
-            try
-            {
-                spiDevice.Write(spiDataBytes.ToArray());
-                ActualScreen = pixels;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+                    // APA102/DotStar leds take the color data in Blue, Green, Red order.  Weirdly, according to the spec these are supposed
+                    // to take a 0-255 value for R/G/B.  However, on the ones I have they only seem to take 0-126.  Specifying 127-255 doesn't
+                    // break anything, but seems to show the same exact value 0-126 would have (i.e. 127 is 0 brightness, 255 is full brightness).
+                    // Discarding the lowest bit from each to make the value fit in 0-126.
+                    spiDataBytes.Add((byte)(pixels[realIndex].LedColor.B >> 1));
+                    spiDataBytes.Add((byte)(pixels[realIndex].LedColor.G >> 1));
+                    spiDataBytes.Add((byte)(pixels[realIndex].LedColor.R >> 1));
+                }
+
+                spiDataBytes.AddRange(this.EndFrame);
+                try
+                {
+                    spiDevice.Write(spiDataBytes.ToArray());
+                    ActualScreen = pixels;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            });
         }
 
         /// <summary>Gets the SpiDevice handle</summary>

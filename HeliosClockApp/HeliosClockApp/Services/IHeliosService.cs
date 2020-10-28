@@ -21,5 +21,6 @@ namespace HeliosClockApp.Services
         Task ConnectToServer();
         Task StartMode(LedMode mode);
         Task Stop();
+        Task SetRefreshSpeed(int speed);
     }
 }

@@ -80,6 +80,18 @@
                         x:Name="ButtonSpin"
                         Command="{Binding StartSpinCommand}"
                         TextColor="White" />
+
+                <StackLayout Orientation="Horizontal">
+                    <Slider Margin="0,10,0,0"
+                    Maximum="150"
+                    MaximumTrackColor="{StaticResource Primary}"
+                    MinimumTrackColor="{StaticResource Primary}"
+                    ThumbColor="{StaticResource Primary}"
+                    ValueChanged="Slider_ValueChanged"
+                    HorizontalOptions="FillAndExpand"/>
+                    <Label x:Name="labelSpeed" Text="0"></Label>
+                    <Label Text="ms"></Label>
+                </StackLayout>
                 <Button Margin="0,10,0,0" Text="Stop Mode"
                         BackgroundColor="IndianRed"
                         x:Name="ButtonStop"

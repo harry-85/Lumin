@@ -52,6 +52,11 @@ namespace HeliosClockApp.ViewModels
                 await HeliosService.Stop().ConfigureAwait(false);
             });
 
+            SetRefreshRateCommand = new Command<double>(async (speed) =>
+            {
+                await HeliosService.SetRefreshSpeed((int)speed).ConfigureAwait(false);
+            });
+
             AddGradientCommand = new Command(OnAddGradient);
         }
 
@@ -62,6 +67,8 @@ namespace HeliosClockApp.ViewModels
         public ICommand BlackCommand { get; }
 
         public ICommand WhiteCommand { get; }
+
+        public ICommand SetRefreshRateCommand { get; }
 
         public ICommand AddGradientCommand { get; }
 

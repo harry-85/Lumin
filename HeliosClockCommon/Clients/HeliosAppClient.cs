@@ -34,6 +34,11 @@ namespace HeliosClockCommon.Clients
             await _connection.InvokeAsync(nameof(IHeliosHub.Stop)).ConfigureAwait(false);
         }
 
+        public async Task SetRefreshSpeed(string speed)
+        {
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRefreshSpeed), speed).ConfigureAwait(false);
+        }
+
         public Task SetAlarm(DateTime alarmTime)
         {
             throw new NotImplementedException();

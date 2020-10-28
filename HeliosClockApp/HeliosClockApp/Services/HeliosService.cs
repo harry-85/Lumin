@@ -56,6 +56,11 @@ namespace HeliosClockApp.Services
             await Client.StartMode(mode.ToString()).ConfigureAwait(false);
         }
 
+        public async Task SetRefreshSpeed(int speed)
+        {
+            await Client.SetRefreshSpeed(speed.ToString()).ConfigureAwait(false);
+        }
+
         public async Task Stop()
         {
             await Client.Stop().ConfigureAwait(false);

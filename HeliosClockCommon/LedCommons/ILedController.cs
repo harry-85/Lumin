@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HeliosClockCommon.LedCommon
 {
@@ -42,14 +43,14 @@ namespace HeliosClockCommon.LedCommon
 
         /// <summary>Sends the pixels.</summary>
         /// <param name="pixels">The pixels.</param>
-        void SendPixels(LedPixel[] pixels);
+        Task SendPixels(LedPixel[] pixels);
 
         /// <summary>Gets the height of the get.</summary>
         /// <value>The height of the get.</value>
         int LedCount { get; set; }
 
         /// <summary>Repaints this instance.</summary>
-        void Repaint();
+        Task Repaint();
 
         /// <summary>Gets or sets the CancellationToken.</summary>
         /// <value>The token.</value>

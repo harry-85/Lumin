@@ -12,6 +12,7 @@ namespace HeliosClockCommon.Interfaces
     {
         ILedController LedController { get; set; }
 
+        int RefreshSpeed { get; set; }
         Task RunLedMode(LedMode mode, CancellationToken cancellationToken);
     }
 }
