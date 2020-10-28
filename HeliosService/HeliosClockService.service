@@ -1,0 +1,22 @@
+[Unit]
+Description=HeliosClock Service in .NET
+# Requires=xyz.service
+# After=xyz.service
+
+#Follow this link to get sound running, you need to make pulseaudio systemwide
+#https://rudd-o.com/linux-and-free-software/how-to-make-pulseaudio-run-once-at-boot-for-all-your-users
+
+#And Remove running local instances of pulse audio
+#sudo systemctl --global disable pulseaudio.service pulseaudio.socket
+
+#some more help: 
+#https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/SystemWide/
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/HeliosClock
+ExecStart=/usr/share/dotnet/dotnet /home/ubuntu/HeliosClock/HeliosService.dll
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target

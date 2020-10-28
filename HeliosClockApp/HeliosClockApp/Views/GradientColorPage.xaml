@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeliosClockApp.Views.GradientColorPage"
+             Shell.PresentationMode="ModalAnimated"
+             Title="Set Gradient Color"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" xmlns:views="clr-namespace:HeliosClockApp.Views"
+             ios:Page.UseSafeArea="true">
+    <ContentPage.Content>
+        <StackLayout Spacing="3" Padding="15">
+            <Frame BorderColor="LightGray"
+                HasShadow="True"
+                CornerRadius="12"
+                HeightRequest="50">  
+                <Frame.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" >
+                        <GradientStop x:Name="GradientStart" Color="{Binding StartColor}" Offset="0.1"/>
+                        <GradientStop x:Name="GradientStop" Color="{Binding EndColor}"  Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Frame.Background>
+            </Frame>
+            <StackLayout Orientation="Vertical">
+                <Button Text="Start Color" Command="{Binding SetStartColorCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Button Text="End Color" Command="{Binding SetEndColorCommand}" HorizontalOptions="FillAndExpand"></Button>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>

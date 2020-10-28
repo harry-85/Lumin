@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30615.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosService", "HeliosService\HeliosService.csproj", "{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockCommon", "HeliosClockCommon\HeliosClockCommon.csproj", "{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeliosClockApp.Android", "HeliosClockApp\HeliosClockApp.Android\HeliosClockApp.Android.csproj", "{4C797898-9FDD-42E5-8FCB-270DA9E25569}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockApp", "HeliosClockApp\HeliosClockApp\HeliosClockApp.csproj", "{27D260B1-814E-4825-9836-53772DB1CC5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeliosClockAPIStandard", "HeliosClockAPIStandard\HeliosClockAPIStandard.csproj", "{2D4B917A-E466-41AE-A600-D1E73AB8F810}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C797898-9FDD-42E5-8FCB-270DA9E25569}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{27D260B1-814E-4825-9836-53772DB1CC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D260B1-814E-4825-9836-53772DB1CC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D260B1-814E-4825-9836-53772DB1CC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D260B1-814E-4825-9836-53772DB1CC5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D4B917A-E466-41AE-A600-D1E73AB8F810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D4B917A-E466-41AE-A600-D1E73AB8F810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D4B917A-E466-41AE-A600-D1E73AB8F810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D4B917A-E466-41AE-A600-D1E73AB8F810}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D97D8EA9-9CBD-4572-B71C-578CFAF56219}
+	EndGlobalSection
+EndGlobal

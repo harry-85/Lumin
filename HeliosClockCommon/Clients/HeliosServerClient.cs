@@ -1,0 +1,127 @@
+﻿using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Helper;
+using HeliosClockCommon.Interfaces;
+using HeliosClockCommon.LedCommon;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Drawing;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace HeliosClockCommon.Clients
+{
+    public partial class HeliosServerClient : IHostedService
+    {
+        private readonly ILogger<HeliosServerClient> _logger;
+        private HubConnection _connection;
+        private IHeliosManager manager;
+        private ILedController ledController;
+
+        private CancellationTokenSource cancellationTokenSource;
+        private CancellationToken cancellationToken;
+
+        public HeliosServerClient(ILogger<HeliosServerClient> logger, IHeliosManager manager)
+        {
+            this.manager = manager;
+            ledController = manager.LedController;
+
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationToken = cancellationTokenSource.Token;
+
+            _logger = logger;
+            string URL = string.Format(DefaultValues.HubUrl, "localhost", DefaultValues.SignalPortOne);
+
+            _logger.LogInformation(URL);
+
+            _connection = new HubConnectionBuilder().WithUrl(URL).Build();
+
+            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), (startColor, endColor) =>
+            {
+                _logger.LogInformation("Incomming Color Change ...");
+
+                var leds = new LedScreen(ledController);
+
+                var colors = ColorHelpers.ColorGradient(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor), ledController.LedCount);
+
+                for (int i = 0; i < ledController.LedCount; i++)
+                {
+                    leds.SetPixel(ref i, colors[i]);
+                }
+
+                ledController.SendPixels(leds.pixels);
+                return Task.CompletedTask;
+            });
+
+            _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
+
+            _logger.LogInformation("Local Helios Client Initialized ...");
+        }
+
+        public Task SetAlarm(DateTime alarmTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SignalClient(string user, string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Local Client: Connecting ...");
+            // Loop is here to wait until the server is running
+            while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await _connection.StartAsync(cancellationToken);
+
+                    // _logger.LogInformation("Local Client: Status: {0} ...", _connection.State.ToString());
+
+                    // break;
+
+                    while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(1000);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Local Client: Error Connecting: {0}", ex.Message);
+                    await Task.Delay(1000, cancellationToken);
+                }
+            }
+
+            _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _connection.DisposeAsync().ConfigureAwait(false);
+        }
+
+        private async Task OnStartMode(string mode)
+        {
+            _logger.LogInformation("Local Client: Mode change to: {0} ...", mode);
+
+            Enum.TryParse(mode, out LedMode ledMode);
+            await manager.RunLedMode(ledMode, cancellationToken).ConfigureAwait(false);
+        }
+
+        private Task Stop()
+        {
+            _logger.LogInformation("Local Client: Mode stop command ...");
+
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationToken = cancellationTokenSource.Token;
+
+            return Task.CompletedTask;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HeliosClockApp.Views.SetColorPage"
+             Shell.PresentationMode="ModalAnimated"
+             Title="Set Gradient Color"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" xmlns:controls="clr-namespace:HeliosClockApp.Controls"
+             ios:Page.UseSafeArea="true">
+    <ContentPage.Content>
+        
+            <Grid Padding="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" BackgroundColor="{Binding SelectedColor}" Text="Selected Color" FontSize="Medium"></Label>
+
+                <controls:ColorPickerControl Grid.Row="1" Grid.Column="0" x:Name="ColorPicker"></controls:ColorPickerControl>
+                
+                <StackLayout  Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                    <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
+                    <Button Text="Set Color" Command="{Binding SetColorCommand}" HorizontalOptions="FillAndExpand"></Button>
+                </StackLayout>
+            </Grid>
+
+    </ContentPage.Content>
+    
+</ContentPage>

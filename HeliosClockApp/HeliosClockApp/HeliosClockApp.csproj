@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.0-rc.2.20475.17" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1558-pre3" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.0-pre2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\HeliosClockCommon\HeliosClockCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\ColorPickerControl.xaml.cs">
+      <DependentUpon>ColorPickerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\GradientColorPage.xaml.cs">
+      <DependentUpon>GradientColorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SetColorPage.xaml.cs">
+      <DependentUpon>SetColorPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
