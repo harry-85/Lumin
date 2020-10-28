@@ -13,12 +13,15 @@ namespace HeliosClockApp.Services
     public class HeliosService : IHeliosService
     {
         public HeliosAppClient Client { get; set; }
-        private CancellationTokenSource cancellationTokenSource;
+        public event EventHandler OnConnected;
         public CancellationToken token;
+
+        public bool IsStartup { get; private set; } = true;
 
         public event EventHandler<EventArgs<Color>> OnStartColorChanged;
         public event EventHandler<EventArgs<Color>> OnEndColorChanged;
 
+        private CancellationTokenSource cancellationTokenSource;
         private Color startColor;
         private Color endColor;
 
@@ -44,6 +47,10 @@ namespace HeliosClockApp.Services
         public HeliosService()
         {
             Client = new HeliosAppClient();
+            Client.OnConnected += (s, e) =>
+            {
+                OnConnected?.Invoke(this, e);
+            };
         }
 
         public async Task SendColor()

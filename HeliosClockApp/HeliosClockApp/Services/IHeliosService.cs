@@ -13,6 +13,9 @@ namespace HeliosClockApp.Services
     {
         event EventHandler<EventArgs<Color>> OnStartColorChanged;
         event EventHandler<EventArgs<Color>> OnEndColorChanged;
+        event EventHandler OnConnected;
+
+        bool IsStartup { get; }
 
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }

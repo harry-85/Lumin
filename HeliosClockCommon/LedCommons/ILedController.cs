@@ -39,7 +39,7 @@ namespace HeliosClockCommon.LedCommon
 
         /// <summary>Sets the screen colors.</summary>
         /// <param name="screen">The screen.</param>
-        void SetScreenColors(LedScreen screen);
+        Task SetScreenColors(LedScreen screen);
 
         /// <summary>Sends the pixels.</summary>
         /// <param name="pixels">The pixels.</param>

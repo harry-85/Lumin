@@ -59,7 +59,7 @@ namespace HeliosClockCommon.LedCommon
 
         /// <summary>Sets the screen colors.</summary>
         /// <param name="screen">The screen.</param>
-        public abstract void SetScreenColors(LedScreen screen);
+        public abstract Task SetScreenColors(LedScreen screen);
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public abstract void Dispose();

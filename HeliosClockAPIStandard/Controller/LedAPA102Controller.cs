@@ -105,7 +105,7 @@ namespace HeliosClockAPIStandard.Controller
 
         /// <summary>Sets the screen colors.</summary>
         /// <param name="pixels">The pixels.</param>
-        public override void SetScreenColors(LedScreen pixels) => SendPixels(pixels.pixels);
+        public override async Task SetScreenColors(LedScreen pixels) => await SendPixels(pixels.pixels).ConfigureAwait(false);
 
         /// <summary>Releases unmanaged and - optionally - managed resources.</summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>

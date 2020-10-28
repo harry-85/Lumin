@@ -18,6 +18,18 @@ namespace HeliosClockApp.Views
 
             ((AboutViewModel)BindingContext).HeliosService.OnEndColorChanged += HeliosService_OnEndColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
+            ((AboutViewModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
+        }
+
+        private void HeliosService_OnConnected(object sender, EventArgs e)
+        {
+            var viewModel = (AboutViewModel)BindingContext;
+
+            if (((AboutViewModel)BindingContext).HeliosService.IsStartup)
+            {
+                viewModel.SetRefreshRateCommand.Execute(sliderSpeed.Value);
+                viewModel.BlackCommand.Execute(null);
+            }
         }
 
         private void HeliosService_OnStartColorChanged(object sender, Systems.EventArgs<System.Drawing.Color> e)
@@ -66,7 +78,7 @@ namespace HeliosClockApp.Views
 
         private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
-            labelSpeed.Text = e.NewValue.ToString();
+            labelSpeed.Text = ((int)e.NewValue).ToString();
             var viewModel = (AboutViewModel)BindingContext;
             viewModel.SetRefreshRateCommand.Execute(e.NewValue);
 

@@ -13,6 +13,7 @@ namespace HeliosClockCommon.Clients
     public partial class HeliosAppClient : IHeliosHub
     {
         private HubConnection _connection;
+        public event EventHandler OnConnected;
 
         public HeliosAppClient()
         {
@@ -82,6 +83,7 @@ namespace HeliosClockCommon.Clients
                     await Task.Delay(1000).ConfigureAwait(false);
                 }
             }
+            OnConnected?.Invoke(this, new EventArgs());
         }
 
         public async Task StopAsync()
