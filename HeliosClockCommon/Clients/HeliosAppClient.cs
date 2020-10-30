@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace HeliosClockCommon.Clients
         /// <value><c>true</c> if this instance is initial connection; otherwise, <c>false</c>.</value>
         public static bool IsInitialConnection { get; set; } = true;
 
+        public IPAddress IPAddress { get; set; }
+
         /// <summary>Occurs when connection tu hub established.</summary>
         public event EventHandler<EventArgs<bool>> OnConnected;
 
@@ -25,7 +28,7 @@ namespace HeliosClockCommon.Clients
         /// <summary>Initializes a new instance of the <see cref="HeliosAppClient"/> class.</summary>
         public HeliosAppClient()
         {
-            
+            IPAddress = null; 
         }
 
         public async Task SendColor(Color startColor, Color endColor)
@@ -75,7 +78,7 @@ namespace HeliosClockCommon.Clients
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            string URL = string.Format(DefaultValues.HubUrl, "192.168.0.136", DefaultValues.SignalPortOne);
+            string URL = string.Format(DefaultValues.HubUrl, IPAddress, DefaultValues.SignalPortOne);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(async () => await StopOldConnection(_connection).ConfigureAwait(false));
@@ -92,7 +95,7 @@ namespace HeliosClockCommon.Clients
 
                     break;
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException)
                 {
                     _connection = new HubConnectionBuilder().WithUrl(URL).Build();
                     await Task.Delay(1000).ConfigureAwait(false);

@@ -2,6 +2,7 @@ using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
 using HeliosClockCommon.Clients;
 using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Hubs;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
@@ -32,20 +33,21 @@ namespace HeliosService
             ILedController controller = new LedAPA102Controller { LedCount = 59 };
             IHeliosManager heliosManager = new HeliosManager(controller);
 
+            services.AddHostedService<DiscroveryServer>();
+
             services.AddSignalR(options => { options.EnableDetailedErrors = true; });
             services.AddSingleton(controller);
             services.AddSingleton(heliosManager);
 
 
             services.AddHostedService<Worker>();
-
             services.AddSingleton<HeliosServerClient>();
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
             var provider = services.BuildServiceProvider();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
             var client = provider.GetService<HeliosServerClient>();
-            Task.Run( async () => await client.StartAsync(token));
+            Task.Run(async () => await client.StartAsync(token));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

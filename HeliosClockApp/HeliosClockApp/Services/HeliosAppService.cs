@@ -1,7 +1,9 @@
 ﻿using HeliosClockCommon.Clients;
 using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Messages;
 using System;
 using System.Drawing;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +12,7 @@ namespace HeliosClockApp.Services
     public class HeliosAppService : IHeliosAppService
     {
         public HeliosAppClient Client { get; set; }
+
 
         public CancellationToken token;
 
@@ -41,6 +44,7 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Initializes a new instance of the <see cref="HeliosAppService"/> class.</summary>
         public HeliosAppService()
         {
             Client = new HeliosAppClient();
@@ -53,6 +57,13 @@ namespace HeliosClockApp.Services
                     await StopMode().ConfigureAwait(false);
                 }
             };
+
+            Xamarin.Forms.MessagingCenter.Subscribe<IpDiscoveredTaskMessage, IPAddress>(new IpDiscoveredTaskMessage(), "IpDiscovered", (s, ip) =>
+            {
+                Client.IPAddress = ip;
+            });
+
+            Xamarin.Forms.MessagingCenter.Send<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage");
         }
 
         /// <summary>Sends the color to the server.</summary>
@@ -91,6 +102,8 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Sets the refresh speed of the actual running task on the server.</summary>
+        /// <param name="speed">The speed.</param>
         public async Task SetRefreshSpeed(int speed)
         {
             try
@@ -102,6 +115,7 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Stops the actual running task on the server.</summary>
         public async Task StopMode()
         {
             try
@@ -114,14 +128,22 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Connects to server.</summary>
         public async Task ConnectToServer()
         {
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
 
+            while (!token.IsCancellationRequested && Client.IPAddress == null)
+            {
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+
             await Client.StartAsync(token).ConfigureAwait(false);
         }
 
+        /// <summary>Stops the server.</summary>
         public async Task StopServer()
         {
             cancellationTokenSource?.Cancel();

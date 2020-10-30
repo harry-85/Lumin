@@ -18,7 +18,7 @@ namespace HeliosService
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).UseSystemd().ConfigureWebHostDefaults(webBuilder =>
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Debug)).UseSystemd().ConfigureWebHostDefaults(webBuilder =>
         {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureKestrel(serverOptions =>

@@ -37,5 +37,12 @@ namespace HeliosClockCommon.Interfaces
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task RunLedMode(LedMode mode, CancellationToken cancellationToken);
+
+        /// <summary>Sets the color.</summary>
+        /// <param name="startColor">The start color.</param>
+        /// <param name="endColor">The end color.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task SetColor(Color startColor, Color endColor, CancellationToken cancellationToken);
     }
 }

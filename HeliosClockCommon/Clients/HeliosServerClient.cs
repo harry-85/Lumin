@@ -42,26 +42,7 @@ namespace HeliosClockCommon.Clients
 
             _connection = new HubConnectionBuilder().WithUrl(URL).Build();
 
-            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), async (startColor, endColor) =>
-            {
-                _logger.LogInformation("Incomming Color Change ...");
-
-                var leds = new LedScreen(ledController);
-
-                manager.StartColor = ColorHelpers.FromHex(startColor);
-                manager.EndColor = ColorHelpers.FromHex(endColor);
-
-                var colors = await ColorHelpers.ColorGradient(manager.StartColor, ColorHelpers.FromHex(endColor), ledController.LedCount).ConfigureAwait(false);
-
-                for (int i = 0; i < ledController.LedCount; i++)
-                {
-                    leds.SetPixel(ref i, colors[i]);
-                }
-
-                ledController.IsSmoothing = true;
-                await ledController.SendPixels(leds.pixels).ConfigureAwait(false);
-                ledController.IsSmoothing = false;
-            });
+            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), SetColor);
 
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
@@ -77,6 +58,21 @@ namespace HeliosClockCommon.Clients
         {
             _logger.LogInformation("Local Helios On / Off Command : {0} ...", onOff);
             await manager.SetOnOff(onOff).ConfigureAwait(false);
+        }
+        bool isRunning = false;
+        public Task SetColor(string startColor, string endColor)
+        {
+            if (isRunning) return Task.CompletedTask;
+
+            Task.Run(async () =>
+            {
+                isRunning = true;
+                _logger.LogInformation("Local Color Change: Start: {0} - End: {1} ...", startColor, endColor);
+                await manager.SetColor(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor), cancellationToken).ConfigureAwait(false);
+                isRunning = false;
+            });
+
+            return Task.CompletedTask;
         }
 
         public Task SetAlarm(DateTime alarmTime)

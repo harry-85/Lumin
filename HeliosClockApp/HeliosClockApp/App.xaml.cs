@@ -9,7 +9,7 @@ namespace HeliosClockApp
 {
     public partial class App : Application
     {
-        private IHeliosAppService heliosService;
+        public IHeliosAppService HeliosService { get; private set; }
         public App()
         {
             InitializeComponent();
@@ -17,14 +17,14 @@ namespace HeliosClockApp
             DependencyService.Register<MockDataStore>();
             DependencyService.Register<HeliosAppService>();
 
-            heliosService = DependencyService.Get<IHeliosAppService>();
+            HeliosService = DependencyService.Get<IHeliosAppService>();
 
             MainPage = new AppShell();
         }
 
         protected override void OnStart()
         {
-            Task.Run(async () => await heliosService.ConnectToServer());
+            Task.Run(async () => await HeliosService.ConnectToServer());
         }
 
         protected override void OnSleep()
@@ -33,7 +33,7 @@ namespace HeliosClockApp
 
         protected override void OnResume()
         {
-            Task.Run(async () => await heliosService.ConnectToServer());
+            Task.Run(async () => await HeliosService.ConnectToServer());
         }
 
     }

@@ -2,6 +2,7 @@
 using HeliosClockCommon.Enumerations;
 using System;
 using System.Drawing;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace HeliosClockApp.Services

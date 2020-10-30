@@ -5,6 +5,7 @@ using HeliosClockCommon.LedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Drawing;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,10 +18,38 @@ namespace HeliosClockAPIStandard
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
 
+        private bool colorChangingInProgress = false;
+
         public HeliosManager(ILedController ledController)
         {
             RefreshSpeed = 100;
             this.LedController = ledController;
+        }
+
+        public async Task SetColor(Color startColor, Color endColor, CancellationToken cancellationToken)
+        {
+            if (colorChangingInProgress)
+                return;
+
+            colorChangingInProgress = true;
+
+            var leds = new LedScreen(LedController);
+
+            StartColor = startColor;
+            EndColor = endColor;
+
+            var colors = await ColorHelpers.ColorGradient(StartColor, EndColor, LedController.LedCount).ConfigureAwait(false);
+
+            for (int i = 0; i < LedController.LedCount; i++)
+            {
+                leds.SetPixel(ref i, colors[i]);
+            }
+
+            LedController.IsSmoothing = true;
+            await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
+            LedController.IsSmoothing = false;
+
+            colorChangingInProgress = false;
         }
 
         public async Task RunLedMode(LedMode mode, CancellationToken cancellationToken)
@@ -124,7 +153,7 @@ namespace HeliosClockAPIStandard
                         leds.SetPixel(ref ledIndex, Color.Black);
                     }
 
-                    
+
                 }
 
                 if (startPoint + 1 % knightCount == 0)
@@ -135,7 +164,7 @@ namespace HeliosClockAPIStandard
                 await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
                 await Task.Delay(RefreshSpeed).ConfigureAwait(false);
 
-                if(colorCount < knightCount - 1)
+                if (colorCount < knightCount - 1)
                     colorCount++;
 
                 startPoint++;

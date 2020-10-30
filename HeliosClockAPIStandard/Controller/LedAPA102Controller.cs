@@ -57,6 +57,9 @@ namespace HeliosClockAPIStandard.Controller
         /// <param name="pixels">The pixels.</param>
         public override async Task SendPixels(LedPixel[] pixels)
         {
+            int smoothDelta = 1; // ms
+            int SmoothTime = 1;
+
             await Task.Run(async () =>
             {
 
@@ -64,10 +67,10 @@ namespace HeliosClockAPIStandard.Controller
 
                 List<List<Color>> smoothColors = null;
 
-                int SmoothTime = 1;
+                
                 if (IsSmoothing)
                 {
-                    SmoothTime = 5 * 5; //(5*0,2 ms = 1ms * 5 = 5ms)
+                    SmoothTime = 30; //5 * 5; //(5*0,5 ms = 1ms * 5 = 5ms)
                     smoothColors = new List<List<Color>>(pixels.Length);
 
                     if (ActualScreen == null)
@@ -83,7 +86,7 @@ namespace HeliosClockAPIStandard.Controller
                     }
                 }
 
-                for (int smoothIndex = 0; smoothIndex < SmoothTime; smoothIndex++)
+                for (int smoothIndex = 0; smoothIndex < SmoothTime; smoothIndex += smoothDelta)
                 {
                     List<byte> spiDataBytes = new List<byte>();
                     spiDataBytes.AddRange(startFrame);
@@ -127,6 +130,8 @@ namespace HeliosClockAPIStandard.Controller
                     {
                         Console.WriteLine(ex.Message);
                     }
+
+                    await Task.Delay(TimeSpan.FromMilliseconds(smoothDelta)).ConfigureAwait(false);
                 }
             }).ConfigureAwait(false);
         }

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Forms9Patch" Version="2.4.6" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.0-rc.2.20475.17" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.2" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.1558-pre3" />  
