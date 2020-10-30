@@ -10,6 +10,10 @@ namespace HeliosClockCommon.LedCommon
         /// <summary>The disposed indicator.</summary>
         protected bool disposed = false;
 
+        /// <summary>Gets or sets a value indicating whether this instance is smoothing.</summary>
+        /// <value><c>true</c> if this instance is smoothing; otherwise, <c>false</c>.</value>
+        public bool IsSmoothing { get; set; }
+
         /// <summary>Gets or sets the API service settings.</summary>
         /// <value>The API service settings.</value>
         public APIServiceSettings APIServiceSettings { get; set; }
@@ -77,7 +81,7 @@ namespace HeliosClockCommon.LedCommon
         {
             if (ActualScreen == null)
                 return;
-            await SendPixels(ActualScreen);
+            await SendPixels(ActualScreen).ConfigureAwait(false);
         }
     }
 }

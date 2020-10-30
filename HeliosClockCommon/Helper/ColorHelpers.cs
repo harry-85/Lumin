@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Helper
 {
@@ -46,12 +47,25 @@ namespace HeliosClockCommon.Helper
             }
         }
 
-        public static List<Color> ColorGradient(Color startColor, Color endColor, int size, ColorInterpolationMode interpolationMode = ColorInterpolationMode.HueMode)
+        public static async Task<List<Color>> ColorGradient(Color startColor, Color endColor, int size, ColorInterpolationMode interpolationMode = ColorInterpolationMode.HueMode)
         {
+            if (startColor.R == endColor.R && startColor.G == endColor.G && startColor.B == endColor.B)
+            {
+                return await Task.Run(() =>
+                {
+                    List<Color> colors = new List<Color>(size);
+                    for (int i = 0; i < size; i++)
+                    {
+                        colors.Add(startColor);
+                    }
+                    return colors;
+                });
+            }
+
             switch (interpolationMode)
             {
                 case ColorInterpolationMode.HueMode:
-                    return CalculateGradientHUE(endColor, startColor, size);
+                    return await CalculateGradientHUE(endColor, startColor, size).ConfigureAwait(false);
                 case ColorInterpolationMode.Linear:
                     return CalculateGradientLinear(endColor, startColor, size);
                 case ColorInterpolationMode.LinearCorrected:
@@ -60,6 +74,26 @@ namespace HeliosClockCommon.Helper
                     break;
             }
             return new List<Color>();
+        }
+
+        public static async Task<List<Color>> DimColor(Color color, int size)
+        {
+            return await Task.Run(() =>
+            {
+                double decrement = 100.0 / ((double)size) / 100.0;
+                double actualDecrement = 0;
+
+                HSLColor hslColor = color;
+
+                List<Color> colors = new List<Color>(size);
+
+                for (int i = 0; i < size; i++)
+                {
+                    colors.Add(new HSLColor(hslColor.Hue, hslColor.Saturation, hslColor.Luminosity - actualDecrement));
+                    actualDecrement += decrement;
+                }
+                return colors;
+            }).ConfigureAwait(false);
         }
 
         private static List<Color> CalculateGradientLinear(Color endColor, Color startColor, int size)
@@ -103,27 +137,30 @@ namespace HeliosClockCommon.Helper
             return colors;
         }
 
-        private static List<Color> CalculateGradientHUE(Color startColor, Color endColor, int size)
+        private static async Task<List<Color>> CalculateGradientHUE(Color startColor, Color endColor, int size)
         {
-            List<Color> colors = new List<Color>(size);
-            HSLColor startHlsColor = startColor;
-            HSLColor endHlsColor = endColor;
-            int discreteUnits = size;
-
-            for (int i = 0; i < discreteUnits; i++)
+            return await Task<List<Color>>.Run(() =>
             {
-                var hueAverage = endHlsColor.Hue + (int)((startHlsColor.Hue - endHlsColor.Hue) * i / size);
-                var saturationAverage = endHlsColor.Saturation + (int)((startHlsColor.Saturation - endHlsColor.Saturation) * i / size);
-                var luminosityAverage = endHlsColor.Luminosity + (int)((startHlsColor.Luminosity - endHlsColor.Luminosity) * i / size);
-                colors.Add(new HSLColor(hueAverage, saturationAverage, luminosityAverage));
-            }
-            return colors;
+                List<Color> colors = new List<Color>(size);
+                HSLColor startHlsColor = startColor;
+                HSLColor endHlsColor = endColor;
+                int discreteUnits = size;
+
+                for (int i = 0; i < discreteUnits; i++)
+                {
+                    var hueAverage = endHlsColor.Hue + (int)((startHlsColor.Hue - endHlsColor.Hue) * i / size);
+                    var saturationAverage = endHlsColor.Saturation + (int)((startHlsColor.Saturation - endHlsColor.Saturation) * i / size);
+                    var luminosityAverage = endHlsColor.Luminosity + (int)((startHlsColor.Luminosity - endHlsColor.Luminosity) * i / size);
+                    colors.Add(new HSLColor(hueAverage, saturationAverage, luminosityAverage));
+                }
+                return colors;
+            }).ConfigureAwait(false);
         }
 
         public static String HexConverter(System.Drawing.Color c)
         {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
-           
+
         }
 
         public static String RGBConverter(System.Drawing.Color c)

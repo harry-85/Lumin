@@ -44,6 +44,7 @@ namespace HeliosClockCommon.LedCommon
         {
             if (index >= controller.LedCount)
                 index = 0;
+            //index = controller.LedCount - index;
         }
     }
 

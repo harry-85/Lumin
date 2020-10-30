@@ -1,38 +1,40 @@
-﻿using HeliosClockApp.Models;
-using HeliosClockApp.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using HeliosClockApp.ViewModels;
 using System.ComponentModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace HeliosClockApp.Views
 {
     public partial class GradientColorPage : ContentPage
     {
-        public Item Item { get; set; }
+        /// <summary>The gradient color view model</summary>
+        private GradientColorViewModel gradientColorViewModel;
 
-        private GradientColorViewModel GradientColorViewModel;
-
+        /// <summary>Initializes a new instance of the <see cref="GradientColorPage"/> class.</summary>
         public GradientColorPage()
         {
             InitializeComponent();
             BindingContext = new GradientColorViewModel();
-            GradientColorViewModel = (GradientColorViewModel)BindingContext;
+            gradientColorViewModel = (GradientColorViewModel)BindingContext;
 
             ((GradientColorViewModel)BindingContext).PropertyChanged += GradientColorPage_PropertyChanged;
+
+            GradientStart.Color = ((GradientColorViewModel)BindingContext).HeliosService.StartColor;
+            GradientStop.Color = ((GradientColorViewModel)BindingContext).HeliosService.EndColor;
         }
 
+        /// <summary>Handles the PropertyChanged event of the GradientColorPage control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
         private void GradientColorPage_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(GradientColorViewModel.StartColor))
+            if (e.PropertyName == nameof(gradientColorViewModel.StartColor))
             {
-                GradientStart.Color = GradientColorViewModel.StartColor;
+                GradientStart.Color = gradientColorViewModel.StartColor;
             }
 
-            if (e.PropertyName == nameof(GradientColorViewModel.EndColor))
+            if (e.PropertyName == nameof(gradientColorViewModel.EndColor))
             {
-                GradientStop.Color = GradientColorViewModel.EndColor;
+                GradientStop.Color = gradientColorViewModel.EndColor;
             }
         }
     }

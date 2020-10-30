@@ -32,14 +32,14 @@ namespace HeliosClockApp.ViewModels
             {
                 HeliosService.StartColor = System.Drawing.Color.Black;
                 HeliosService.EndColor = System.Drawing.Color.Black;
-                await HeliosService.SendColor().ConfigureAwait(false);
+                await HeliosService.SetOnOff("off").ConfigureAwait(false);
             });
 
             WhiteCommand = new Command(async () =>
             {
                 HeliosService.StartColor = System.Drawing.Color.White;
                 HeliosService.EndColor = System.Drawing.Color.White;
-                await HeliosService.SendColor().ConfigureAwait(false);
+                await HeliosService.SetOnOff("on").ConfigureAwait(false);
             });
 
             StartSpinCommand = new Command(async () =>
@@ -47,9 +47,14 @@ namespace HeliosClockApp.ViewModels
                 await HeliosService.StartMode(LedMode.Spin).ConfigureAwait(false);
             });
 
+            StartKnightRiderCommand = new Command(async () =>
+            {
+                await HeliosService.StartMode(LedMode.KnightRider).ConfigureAwait(false);
+            });
+
             StopCommand = new Command(async () =>
             {
-                await HeliosService.Stop().ConfigureAwait(false);
+                await HeliosService.StopMode().ConfigureAwait(false);
             });
 
             SetRefreshRateCommand = new Command<double>(async (speed) =>
@@ -67,6 +72,8 @@ namespace HeliosClockApp.ViewModels
         public ICommand BlackCommand { get; }
 
         public ICommand WhiteCommand { get; }
+
+        public ICommand StartKnightRiderCommand { get; }
 
         public ICommand SetRefreshRateCommand { get; }
 

@@ -1,5 +1,6 @@
 ﻿using HeliosClockCommon.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,11 +10,30 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Hubs
 {
+    public static class UserHandler
+    {
+        public static HashSet<string> ConnectedIds = new HashSet<string>();
+    }
+
     public class HeliosHub : Hub<IHeliosHub>
     {
+        private readonly ILogger<IHeliosHub> _logger;
+
+        /// <summary>Initializes a new instance of the <see cref="HeliosHub"/> class.</summary>
+        /// <param name="logger">The logger.</param>
+        public HeliosHub(ILogger<IHeliosHub> logger)
+        {
+            this._logger = logger;
+        }
+
         public async Task SetColorString(string startColor, string endColor)
         {
             await Clients.All.SetColorString(startColor, endColor).ConfigureAwait(false);
+        }
+
+        public async Task SetOnoff(string onOff)
+        {
+            await Clients.All.SetOnOff(onOff).ConfigureAwait(false);
         }
 
         public async Task StartMode(string mode)
@@ -26,16 +46,22 @@ namespace HeliosClockCommon.Hubs
             await Clients.All.Stop().ConfigureAwait(false);
         }
 
-
         public async Task SetRefreshSpeed(string speed)
         {
             await Clients.All.SetRefreshSpeed(speed).ConfigureAwait(false);
         }
 
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            UserHandler.ConnectedIds.Remove(Context.ConnectionId);
+            _logger.LogInformation("Client Disonnected. Id: {0} | Client Count: {1} ...", Context.ConnectionId, UserHandler.ConnectedIds.Count);
+            return base.OnDisconnectedAsync(exception);
+        }
 
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine("New Client Connected ...");
+            UserHandler.ConnectedIds.Add(Context.ConnectionId);
+            _logger.LogInformation("New Client Connected. Id: {0} | Client Count: {1} ...", Context.ConnectionId, UserHandler.ConnectedIds.Count);
             return base.OnConnectedAsync();
         }
     }

@@ -12,6 +12,10 @@ namespace HeliosClockCommon.LedCommon
     /// <seealso cref="IDisposable" />
     public interface ILedController : IDisposable
     {
+        /// <summary>Gets or sets a value indicating whether this instance is smoothing.</summary>
+        /// <value><c>true</c> if this instance is smoothing; otherwise, <c>false</c>.</value>
+        public bool IsSmoothing { get; set; }
+
         /// <summary>
         /// Gets or sets the actual screen.
         /// </summary>

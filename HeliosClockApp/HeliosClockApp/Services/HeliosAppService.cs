@@ -1,25 +1,22 @@
 ﻿using HeliosClockCommon.Clients;
 using HeliosClockCommon.Enumerations;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Systems;
 
 namespace HeliosClockApp.Services
 {
-    public class HeliosService : IHeliosService
+    public class HeliosAppService : IHeliosAppService
     {
         public HeliosAppClient Client { get; set; }
-        public event EventHandler OnConnected;
-        public CancellationToken token;
 
-        public bool IsStartup { get; private set; } = true;
+        public CancellationToken token;
 
         public event EventHandler<EventArgs<Color>> OnStartColorChanged;
         public event EventHandler<EventArgs<Color>> OnEndColorChanged;
+        public event EventHandler<EventArgs<bool>> OnConnected;
+        public event EventHandler<EventArgs<LedMode>> OnModeChange;
 
         private CancellationTokenSource cancellationTokenSource;
         private Color startColor;
@@ -44,33 +41,77 @@ namespace HeliosClockApp.Services
             }
         }
 
-        public HeliosService()
+        public HeliosAppService()
         {
             Client = new HeliosAppClient();
-            Client.OnConnected += (s, e) =>
+            Client.OnConnected += async (s, e) =>
             {
                 OnConnected?.Invoke(this, e);
+
+                if (e.Args)
+                {
+                    await StopMode().ConfigureAwait(false);
+                }
             };
         }
 
+        /// <summary>Sends the color to the server.</summary>
         public async Task SendColor()
         {
-            await Client.SendColor(StartColor, EndColor).ConfigureAwait(false);
+            try
+            {
+                await Client.SendColor(StartColor, EndColor).ConfigureAwait(false);
+            }
+            catch
+            {
+            }
+        }
+
+        public async Task SetOnOff(string onOff)
+        {
+            try
+            {
+                await Client.SetOnOff(onOff).ConfigureAwait(false);
+                await StopMode().ConfigureAwait(false);
+            }
+            catch
+            {
+            }
         }
 
         public async Task StartMode(LedMode mode)
         {
-            await Client.StartMode(mode.ToString()).ConfigureAwait(false);
+            try
+            {
+                OnModeChange?.Invoke(this, new EventArgs<LedMode>(mode));
+                await Client.StartMode(mode.ToString()).ConfigureAwait(false);
+            }
+            catch
+            {
+            }
         }
 
         public async Task SetRefreshSpeed(int speed)
         {
-            await Client.SetRefreshSpeed(speed.ToString()).ConfigureAwait(false);
+            try
+            {
+                await Client.SetRefreshSpeed(speed.ToString()).ConfigureAwait(false);
+            }
+            catch
+            {
+            }
         }
 
-        public async Task Stop()
+        public async Task StopMode()
         {
-            await Client.Stop().ConfigureAwait(false);
+            try
+            {
+                OnModeChange?.Invoke(this, new EventArgs<LedMode>(LedMode.None));
+                await Client.Stop().ConfigureAwait(false);
+            }
+            catch
+            {
+            }
         }
 
         public async Task ConnectToServer()

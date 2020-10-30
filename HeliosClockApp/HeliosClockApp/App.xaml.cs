@@ -9,15 +9,15 @@ namespace HeliosClockApp
 {
     public partial class App : Application
     {
-        private IHeliosService heliosService;
+        private IHeliosAppService heliosService;
         public App()
         {
             InitializeComponent();
 
             DependencyService.Register<MockDataStore>();
-            DependencyService.Register<HeliosService>();
+            DependencyService.Register<HeliosAppService>();
 
-            heliosService = DependencyService.Get<IHeliosService>();
+            heliosService = DependencyService.Get<IHeliosAppService>();
 
             MainPage = new AppShell();
         }

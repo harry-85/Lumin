@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              mc:Ignorable="d"
              xmlns:vm="clr-namespace:HeliosClockApp.ViewModels"
+             xmlns:controls="clr-namespace:HeliosClockApp.Controls"
              x:Class="HeliosClockApp.Views.ColorPickerPage"
              Title="{Binding Title}">
 
@@ -12,10 +13,22 @@
         <vm:ColorPickerModel />
     </ContentPage.BindingContext>
 
-    <skia:SKCanvasView
-                x:Name="SkCanvasView"
-                EnableTouchEvents="True"
-                PaintSurface="SkCanvasView_OnPaintSurface"
-                Touch="SkCanvasView_OnTouch" />
+    <Grid Padding="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Frame Grid.Row="0" Grid.Column="0" BorderColor="LightGray"
+                BackgroundColor="{Binding SelectedColor}"
+                HasShadow="True"
+                CornerRadius="12"
+                HeightRequest="50">
+        </Frame>
+        <controls:ColorPickerControl Grid.Row="1" Grid.Column="0" x:Name="ColorPicker"></controls:ColorPickerControl>
+    </Grid>
 
 </ContentPage>

@@ -11,7 +11,7 @@ namespace HeliosClockApp.ViewModels
     public class BaseViewModel : INotifyPropertyChanged
     {
         public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
-        public IHeliosService HeliosService = DependencyService.Get<IHeliosService>();
+        public IHeliosAppService HeliosService = DependencyService.Get<IHeliosAppService>();
 
         bool isBusy = false;
         public bool IsBusy

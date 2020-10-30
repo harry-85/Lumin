@@ -33,8 +33,11 @@ namespace HeliosClockCommon.Clients
             cancellationToken = cancellationTokenSource.Token;
 
             _logger = logger;
-            string URL = string.Format(DefaultValues.HubUrl, "localhost", DefaultValues.SignalPortOne);
+        }
 
+        private void Initialize()
+        {
+            string URL = string.Format(DefaultValues.HubUrl, "localhost", DefaultValues.SignalPortOne);
             _logger.LogInformation(URL);
 
             _connection = new HubConnectionBuilder().WithUrl(URL).Build();
@@ -45,21 +48,35 @@ namespace HeliosClockCommon.Clients
 
                 var leds = new LedScreen(ledController);
 
-                var colors = ColorHelpers.ColorGradient(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor), ledController.LedCount);
+                manager.StartColor = ColorHelpers.FromHex(startColor);
+                manager.EndColor = ColorHelpers.FromHex(endColor);
+
+                var colors = await ColorHelpers.ColorGradient(manager.StartColor, ColorHelpers.FromHex(endColor), ledController.LedCount).ConfigureAwait(false);
 
                 for (int i = 0; i < ledController.LedCount; i++)
                 {
                     leds.SetPixel(ref i, colors[i]);
                 }
 
+                ledController.IsSmoothing = true;
                 await ledController.SendPixels(leds.pixels).ConfigureAwait(false);
+                ledController.IsSmoothing = false;
             });
 
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
             _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
+            _connection.On<string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
 
             _logger.LogInformation("Local Helios Client Initialized ...");
+        }
+
+        /// <summary>Sets the on off.</summary>
+        /// <param name="onOff">The on off.</param>
+        public async Task SetOnOff(string onOff)
+        {
+            _logger.LogInformation("Local Helios On / Off Command : {0} ...", onOff);
+            await manager.SetOnOff(onOff).ConfigureAwait(false);
         }
 
         public Task SetAlarm(DateTime alarmTime)
@@ -74,6 +91,8 @@ namespace HeliosClockCommon.Clients
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            Initialize();
+           
             _logger.LogInformation("Local Client: Connecting ...");
             // Loop is here to wait until the server is running
             while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
@@ -108,6 +127,8 @@ namespace HeliosClockCommon.Clients
 
         private async Task OnStartMode(string mode)
         {
+            await OnStop().ConfigureAwait(false);
+
             _logger.LogInformation("Local Client: Mode change to: {0} ...", mode);
 
             Enum.TryParse(mode, out LedMode ledMode);
@@ -131,5 +152,6 @@ namespace HeliosClockCommon.Clients
 
             return Task.CompletedTask;
         }
+
     }
 }

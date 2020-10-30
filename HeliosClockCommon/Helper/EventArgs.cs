@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Systems
+namespace System
 {
     public class EventArgs<T> : EventArgs
     {

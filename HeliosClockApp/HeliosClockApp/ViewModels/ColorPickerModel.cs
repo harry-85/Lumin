@@ -8,6 +8,14 @@ namespace HeliosClockApp.ViewModels
 {
     public class ColorPickerModel : BaseViewModel
     {
+        private Color selectedColor;
+
+        public Color SelectedColor
+        {
+            get => selectedColor;
+            set => SetProperty(ref selectedColor, value);
+        }
+
         public ColorPickerModel()
         {
             Title = "Set Color";

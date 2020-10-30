@@ -24,19 +24,24 @@ namespace HeliosClockApp.Controls
 				typeof(System.Drawing.Color),
 				typeof(ColorPickerControl));
 
-		public System.Drawing.Color PickedColor
+        /// <summary>Gets or sets the color of the picked.</summary>
+        /// <value>The color of the picked.</value>
+        public System.Drawing.Color PickedColor
 		{
 			get { return (System.Drawing.Color)GetValue(PickedColorProperty); }
 			set { SetValue(PickedColorProperty, value); }
 		}
 
-
-		public ColorPickerControl()
+        /// <summary>Initializes a new instance of the <see cref="ColorPickerControl"/> class.</summary>
+        public ColorPickerControl()
 		{
 			InitializeComponent();
 		}
 
-		private void SkCanvasView_OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        /// <summary>Handles the OnPaintSurface event of the SkCanvasView control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="SKPaintSurfaceEventArgs"/> instance containing the event data.</param>
+        private void SkCanvasView_OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
 		{
 			var skImageInfo = e.Info;
 			var skSurface = e.Surface;
@@ -99,8 +104,6 @@ namespace HeliosClockApp.Controls
 				skCanvas.DrawPaint(paint);
 			}
 
-			
-
 			// Efficient and fast
 			// https://forums.xamarin.com/discussion/92899/read-a-pixel-info-from-a-canvas
 			// create the 1x1 bitmap (auto allocates the pixel buffer)
@@ -128,8 +131,7 @@ namespace HeliosClockApp.Controls
 			};
 
 			// Outer circle (Ring)
-			var outerRingRadius =
-				((float)skCanvasWidth / (float)skCanvasHeight) * (float)18;
+			var outerRingRadius = ((float)skCanvasWidth / (float)skCanvasHeight) * (float)18;
 			skCanvas.DrawCircle(
 				_lastTouchPoint.X,
 				_lastTouchPoint.Y,
@@ -139,8 +141,7 @@ namespace HeliosClockApp.Controls
 			paintTouchPoint.Color = touchPointColor;
 
 			// Outer circle (Ring)
-			var innerRingRadius =
-				((float)skCanvasWidth / (float)skCanvasHeight) * (float)12;
+			var innerRingRadius = ((float)skCanvasWidth / (float)skCanvasHeight) * (float)12;
 			skCanvas.DrawCircle(
 				_lastTouchPoint.X,
 				_lastTouchPoint.Y,

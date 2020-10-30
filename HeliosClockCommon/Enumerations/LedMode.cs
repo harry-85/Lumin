@@ -4,5 +4,6 @@
     {
         None = 0,
         Spin = 1,
+        KnightRider = 2,
     }
 }

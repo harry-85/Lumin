@@ -19,9 +19,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0" BackgroundColor="{Binding SelectedColor}" Text="Selected Color" FontSize="Medium"></Label>
+            <Frame BorderColor="LightGray"
+                BackgroundColor="{Binding SelectedColor}"
+                HasShadow="True"
+                CornerRadius="12"
+                HeightRequest="50">
+            </Frame>
 
-                <controls:ColorPickerControl Grid.Row="1" Grid.Column="0" x:Name="ColorPicker"></controls:ColorPickerControl>
+            <controls:ColorPickerControl Grid.Row="1" Grid.Column="0" x:Name="ColorPicker"></controls:ColorPickerControl>
                 
                 <StackLayout  Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
                     <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
