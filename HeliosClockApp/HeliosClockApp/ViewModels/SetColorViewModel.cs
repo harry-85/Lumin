@@ -1,4 +1,5 @@
 ﻿using HeliosClockApp.Models;
+using HeliosClockCommon.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,11 +22,6 @@ namespace HeliosClockApp.ViewModels
             SetColorCommand = new Command(OnSave, ValidateSetColor);
             CancelCommand = new Command(OnCancel);
             this.PropertyChanged += (_, __) => SetColorCommand.ChangeCanExecute();
-            PropertyChanged += SetColorViewModel_PropertyChanged;
-        }
-
-        private void SetColorViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
         }
 
         private bool ValidateSetColor()
@@ -54,7 +50,7 @@ namespace HeliosClockApp.ViewModels
             ////await DataStore.AddItemAsync(newItem);
 
             // This will pop the current page off the navigation stack
-            MessagingCenter.Send<SetColorViewModel, Color>(this, "SetColor", SelectedColor);
+            MessagingCenter.Send<SetColorFromGradientMessage, Color>(new SetColorFromGradientMessage(), "SetColor", SelectedColor);
             await Shell.Current.GoToAsync("..");
         }
     }

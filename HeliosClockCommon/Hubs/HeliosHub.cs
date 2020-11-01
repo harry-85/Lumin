@@ -26,9 +26,9 @@ namespace HeliosClockCommon.Hubs
             this._logger = logger;
         }
 
-        public async Task SetColorString(string startColor, string endColor)
+        public async Task SetColorString(string startColor, string endColor, string interpolationMode)
         {
-            await Clients.All.SetColorString(startColor, endColor).ConfigureAwait(false);
+            await Clients.All.SetColorString(startColor, endColor, interpolationMode).ConfigureAwait(false);
         }
 
         public async Task SetOnoff(string onOff)

@@ -33,7 +33,7 @@ namespace HeliosClockCommon.Discorvery
                     var ClientEp = ClientRequestData.RemoteEndPoint;
                     var ClientRequest = Encoding.ASCII.GetString(ClientRequestData.Buffer);
 
-                    _logger.LogInformation("Recived {0} from {1}, sending response", ClientRequest, ClientEp.Address.ToString());
+                    _logger.LogDebug("Recived {0} from {1}, sending response", ClientRequest, ClientEp.Address.ToString());
                     Server.Send(ResponseData, ResponseData.Length, ClientEp);
                 }
             }).ConfigureAwait(false);

@@ -4,6 +4,7 @@ using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
 using System.Net.Http.Headers;
@@ -23,8 +24,6 @@ namespace HeliosClockAPIStandard
 
         public double AutoOffTime { get; set; }
 
-        private bool colorChangingInProgress = false;
-
         public HeliosManager(ILedController ledController)
         {
             RefreshSpeed = 100;
@@ -41,33 +40,26 @@ namespace HeliosClockAPIStandard
             await SetOnOff("off").ConfigureAwait(false);
         }
 
-        public async Task SetColor(Color startColor, Color endColor, CancellationToken cancellationToken)
+        public async Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken)
         {
-            if (colorChangingInProgress)
-                return;
-
             autoOffTmer.Stop();
             autoOffTmer.Start();
-
-            colorChangingInProgress = true;
 
             var leds = new LedScreen(LedController);
 
             StartColor = startColor;
             EndColor = endColor;
 
-            var colors = await ColorHelpers.ColorGradient(StartColor, EndColor, LedController.LedCount).ConfigureAwait(false);
+            var colors = await ColorHelpers.ColorGradient(StartColor, EndColor, LedController.LedCount, interpolationMode).ConfigureAwait(false);
 
             for (int i = 0; i < LedController.LedCount; i++)
             {
                 leds.SetPixel(ref i, colors[i]);
             }
 
-            LedController.IsSmoothing = true;
+            //LedController.IsSmoothing = true;
             await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
-            LedController.IsSmoothing = false;
-
-            colorChangingInProgress = false;
+            //LedController.IsSmoothing = false;
         }
 
         public async Task RunLedMode(LedMode mode, CancellationToken cancellationToken)
@@ -147,8 +139,8 @@ namespace HeliosClockAPIStandard
             bool clockWise = true;
 
 
-            int startPoint = 0;
-            int colorCount = 0;
+            int startPoint = -1 * knightCount;
+            int knightRoundCount = 0;
             int fadeInDelta = 0;
             int knightDelta = 0;
 
@@ -164,41 +156,26 @@ namespace HeliosClockAPIStandard
 
                     int ledIndex = clockWise ? i : LedController.LedCount - 1 - i;
 
-                    if (i >= knightDelta && i < LedController.LedCount && colorCount - fadeInDelta >= 0)
+                    if (startPoint + i >= 0)
                     {
-                        leds.SetPixel(ref ledIndex, colors[colorCount - fadeInDelta]);
-                        fadeInDelta++;
-                    }
-                    else if (startPoint - knightCount + colorCount > LedController.LedCount && fadeOutDelta < knightCount && colorCount - fadeOutDelta >= 0)
-                    {
-                        leds.SetPixel(ref ledIndex, colors[colorCount - fadeOutDelta]);
-                        fadeOutDelta++;
+                        if (startPoint + i >= knightCount)
+                        {
+                        
+                        }
+
+
+                        leds.SetPixel(ref ledIndex, colors[i - (i % knightCount) * knightCount]);
                     }
                     else
-                    {
                         leds.SetPixel(ref ledIndex, Color.Black);
-                    }
-
 
                 }
-
-                if (startPoint + 1 % knightCount == 0)
-                {
-                    knightDelta++;
-                }
-
-                await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
-                await Task.Delay(RefreshSpeed).ConfigureAwait(false);
-
-                if (colorCount < knightCount - 1)
-                    colorCount++;
 
                 startPoint++;
 
-                if (startPoint >= LedController.LedCount + knightCount)
+                if (startPoint >= LedController.LedCount + 2 * knightCount)
                 {
                     startPoint = 0;
-                    knightDelta = 0;
                     clockWise = !clockWise;
                 }
             }

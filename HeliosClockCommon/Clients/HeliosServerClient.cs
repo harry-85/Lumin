@@ -42,7 +42,7 @@ namespace HeliosClockCommon.Clients
 
             _connection = new HubConnectionBuilder().WithUrl(URL).Build();
 
-            _connection.On<string, string>(nameof(IHeliosHub.SetColorString), SetColor);
+            _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
 
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
@@ -60,7 +60,7 @@ namespace HeliosClockCommon.Clients
             await manager.SetOnOff(onOff).ConfigureAwait(false);
         }
         bool isRunning = false;
-        public Task SetColor(string startColor, string endColor)
+        public Task SetColor(string startColor, string endColor, string interpolationMode)
         {
             if (isRunning) return Task.CompletedTask;
 
@@ -68,7 +68,7 @@ namespace HeliosClockCommon.Clients
             {
                 isRunning = true;
                 _logger.LogInformation("Local Color Change: Start: {0} - End: {1} ...", startColor, endColor);
-                await manager.SetColor(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor), cancellationToken).ConfigureAwait(false);
+                await manager.SetColor(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor),(ColorInterpolationMode)Enum.Parse(typeof(ColorInterpolationMode), interpolationMode), cancellationToken).ConfigureAwait(false);
                 isRunning = false;
             });
 

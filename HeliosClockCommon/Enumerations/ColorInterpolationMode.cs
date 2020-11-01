@@ -8,6 +8,7 @@ namespace HeliosClockCommon.Enumerations
     {
         Linear, 
         LinearCorrected, 
-        HueMode
+        HueMode,
+        HueNearestMode
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Views;
+using HeliosClockCommon.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -76,7 +77,7 @@ namespace HeliosClockApp.ViewModels
             //Unsubscribe from all messages
             Close();
 
-            MessagingCenter.Subscribe<SetColorViewModel, Color>(this, "SetColor", (sender, color) =>
+            MessagingCenter.Subscribe<SetColorFromGradientMessage, Color>(new SetColorFromGradientMessage(), "SetColor", (sender, color) =>
             {
                 StartColor = color;
             });
@@ -90,7 +91,7 @@ namespace HeliosClockApp.ViewModels
             //Unsubscribe from all messages
             Close();
 
-            MessagingCenter.Subscribe<SetColorViewModel, Color>(this, "SetColor", (sender, color) =>
+            MessagingCenter.Subscribe<SetColorFromGradientMessage, Color>(new SetColorFromGradientMessage(), "SetColor", (sender, color) =>
             {
                 EndColor = color;
             });
@@ -101,8 +102,8 @@ namespace HeliosClockApp.ViewModels
 
         private void Close()
         {
-            MessagingCenter.Unsubscribe<SetColorViewModel, Color>(this, "SetColor");
-            MessagingCenter.Unsubscribe<SetColorViewModel, Color>(this, "SetColor");
+            MessagingCenter.Unsubscribe<SetColorFromGradientMessage, Color>(new SetColorFromGradientMessage(), "SetColor");
+            MessagingCenter.Unsubscribe<SetColorFromGradientMessage, Color>(new SetColorFromGradientMessage(), "SetColor");
         }
     }
 }

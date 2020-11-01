@@ -1,5 +1,8 @@
 ﻿using HeliosClockApp.Services;
+using HeliosClockApp.ViewModels;
+using HeliosClockApp.Views;
 using HeliosClockCommon.Helper;
+using HeliosClockCommon.Messages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +18,6 @@ namespace HeliosClockApp.Controls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GradientTouchView : ContentView, INotifyPropertyChanged
     {
-        public event EventHandler<EventArgs> OnFrameTouchEvent;
         private Color startColor;
         private Color endColor;
         public IHeliosAppService HeliosService = DependencyService.Get<IHeliosAppService>();
@@ -76,15 +78,43 @@ namespace HeliosClockApp.Controls
             ChangeColor(e, false);
         }
 
-        private void frameTouchedEvent_Tapped(object sender, EventArgs e)
+        private async void TapGestureRecognizer_Start_Tapped(object sender, EventArgs e)
         {
-            OnFrameTouchEvent?.Invoke(sender, e);
+            await StartColorPicker(true);
         }
 
+        private async void TapGestureRecognizer_End_Tapped(object sender, EventArgs e)
+        {
+            await StartColorPicker(false);
+        }
+
+        private async Task StartColorPicker(bool isStartColor)
+        {
+            //Unsubscribe from all messages
+            Close();
+
+            MessagingCenter.Subscribe<SetColorFromGradientMessage, Color>(this, "SetColor", async (sender, color) =>
+            {
+                if (isStartColor)
+                    StartColor = color;
+                else
+                    EndColor = color;
+
+                await SendColor().ConfigureAwait(false);
+            });
+
+            //This will push the SetColorPage on the stack
+            await Shell.Current.GoToAsync(nameof(SetColorPage));
+        }
+
+        private void Close()
+        {
+            MessagingCenter.Unsubscribe<SetColorFromGradientMessage, Color>(this, "SetColor");
+        }
 
         private void ChangeColor(SwipedEventArgs e, bool isStartColor)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 Color color;
                 if (isStartColor)
@@ -102,19 +132,27 @@ namespace HeliosClockApp.Controls
                 switch (e.Direction)
                 {
                     case SwipeDirection.Down:
-                        if(isStartColor)
-                            HeliosService.StartColor = Color.FromHsla(CheckHSLValue(color.Hue - delta), color.Saturation, color.Luminosity);
+                        if (isStartColor)
+                            StartColor = Color.FromHsla(CheckHSLValue(color.Hue - delta), color.Saturation, color.Luminosity);
                         else
-                            HeliosService.EndColor = Color.FromHsla(CheckHSLValue(color.Hue - delta), color.Saturation, color.Luminosity);
+                            EndColor = Color.FromHsla(CheckHSLValue(color.Hue - delta), color.Saturation, color.Luminosity);
                         break;
                     case SwipeDirection.Up:
                         if (isStartColor)
-                            HeliosService.StartColor = Color.FromHsla(CheckHSLValue(color.Hue + delta), color.Saturation, color.Luminosity);
+                            StartColor = Color.FromHsla(CheckHSLValue(color.Hue + delta), color.Saturation, color.Luminosity);
                         else
-                            HeliosService.EndColor = Color.FromHsla(CheckHSLValue(color.Hue + delta), color.Saturation, color.Luminosity);
+                            EndColor = Color.FromHsla(CheckHSLValue(color.Hue + delta), color.Saturation, color.Luminosity);
                         break;
                 }
+                await SendColor().ConfigureAwait(false);
             });
+        }
+
+        private async Task SendColor()
+        {
+            HeliosService.StartColor = StartColor;
+            HeliosService.EndColor = EndColor;
+            await HeliosService.SendColor().ConfigureAwait(false);
         }
 
         private double CheckHSLValue(double input)

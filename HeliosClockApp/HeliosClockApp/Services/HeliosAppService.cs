@@ -62,6 +62,7 @@ namespace HeliosClockApp.Services
             {
                 Client.IPAddress = ip;
             });
+
         }
 
         /// <summary>Sends the color to the server.</summary>

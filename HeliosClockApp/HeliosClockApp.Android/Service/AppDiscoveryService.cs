@@ -36,6 +36,25 @@ namespace HeliosClockApp.Droid
 			handler = new Handler();
 		}
 
+		/// <summary>
+		/// Called by the system every time a client explicitly starts the service by calling
+		/// <see cref="M:Android.Content.Context.StartService(Android.Content.Intent)" />, providing the arguments it supplied and a
+		/// unique integer token representing the start request.
+		/// </summary>
+		/// <param name="intent">The Intent supplied to <see cref="M:Android.Content.Context.StartService(Android.Content.Intent)" />,
+		/// as given.  This may be null if the service is being restarted after
+		/// its process has gone away, and it had previously returned anything
+		/// except <format type="text/html"><a href="https://docs.microsoft.com/en-us/search/index?search='Android App Service START_STICKY_COMPATIBILITY';scope=Xamarin" title="Android.App.Service.START_STICKY_COMPATIBILITY">Android.App.Service.START_STICKY_COMPATIBILITY</a></format>.</param>
+		/// <param name="flags">Additional data about this start request.  Currently either
+		/// 0, <format type="text/html"><a href="https://docs.microsoft.com/en-us/search/index?search='Android App Service START_FLAG_REDELIVERY';scope=Xamarin" title="Android.App.Service.START_FLAG_REDELIVERY">Android.App.Service.START_FLAG_REDELIVERY</a></format>, or <format type="text/html"><a href="https://docs.microsoft.com/en-us/search/index?search='Android App Service START_FLAG_RETRY';scope=Xamarin" title="Android.App.Service.START_FLAG_RETRY">Android.App.Service.START_FLAG_RETRY</a></format>.</param>
+		/// <param name="startId">A unique integer representing this specific request to
+		/// start.  Use with <see cref="M:Android.App.Service.StopSelfResult(System.Int32)" />.</param>
+		/// <returns>To be added.</returns>
+		/// <remarks>
+		/// Portions of this page are modifications based on work created and shared by the <format type="text/html"><a href="https://developers.google.com/terms/site-policies" title="Android Open Source Project">Android Open Source Project</a></format> and used according to terms described in the <format type="text/html"><a href="https://creativecommons.org/licenses/by/2.5/" title="Creative Commons 2.5 Attribution License">Creative Commons 2.5 Attribution License.</a></format>
+		/// </remarks>
+		/// <since version="Added in API level 5" />
+		/// <altmember cref="M:Android.App.Service.StopSelfResult(System.Int32)" />
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
 			if (isStarted)
@@ -55,6 +74,15 @@ namespace HeliosClockApp.Droid
 		}
 
 
+		/// <summary>Return the communication channel to the service.</summary>
+		/// <param name="intent">The Intent that was used to bind to this service,
+		/// as given to <format type="text/html"><a href="https://docs.microsoft.com/en-us/search/index?search='M:Android Content Context BindService(Android Content Intent,Android Content IServiceConnection,Android Content IServiceConnection)';scope=Xamarin" title="M:Android.Content.Context.BindService(Android.Content.Intent,Android.Content.IServiceConnection,Android.Content.IServiceConnection)">M:Android.Content.Context.BindService(Android.Content.Intent,Android.Content.IServiceConnection,Android.Content.IServiceConnection)</a></format>.  Note that any extras that were included with
+		/// the Intent at that point will <i>not</i> be seen here.</param>
+		/// <returns>To be added.</returns>
+		/// <remarks>
+		/// Portions of this page are modifications based on work created and shared by the <format type="text/html"><a href="https://developers.google.com/terms/site-policies" title="Android Open Source Project">Android Open Source Project</a></format> and used according to terms described in the <format type="text/html"><a href="https://creativecommons.org/licenses/by/2.5/" title="Creative Commons 2.5 Attribution License">Creative Commons 2.5 Attribution License.</a></format>
+		/// </remarks>
+		/// <since version="Added in API level 1" />
 		public override IBinder OnBind(Intent intent)
 		{
 			// Return null because this is a pure started service. A hybrid service would return a binder that would
@@ -63,6 +91,11 @@ namespace HeliosClockApp.Droid
 		}
 
 
+		/// <summary>Called by the system to notify a Service that it is no longer used and is being removed.</summary>
+		/// <remarks>
+		/// Portions of this page are modifications based on work created and shared by the <format type="text/html"><a href="https://developers.google.com/terms/site-policies" title="Android Open Source Project">Android Open Source Project</a></format> and used according to terms described in the <format type="text/html"><a href="https://creativecommons.org/licenses/by/2.5/" title="Creative Commons 2.5 Attribution License">Creative Commons 2.5 Attribution License.</a></format>
+		/// </remarks>
+		/// <since version="Added in API level 1" />
 		public override void OnDestroy()
 		{
 			// We need to shut things down.
@@ -90,37 +123,44 @@ namespace HeliosClockApp.Droid
 		////	notificationManager.Notify(NOTIFICATION_ID, notificationBuilder.Build());
 		////}
 
+		/// <summary>Starts the client discovery.</summary>
 		private async Task StartClientDiscovery()
 		{
+			var Client = new UdpClient();
+			var RequestData = Encoding.ASCII.GetBytes("HeliosClockIpBroadcast");
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			Task.Run(async () =>
+			{
+				while (isStarted)
+				{
+					await Client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 8888)).ConfigureAwait(false);
+					await Task.Delay(500).ConfigureAwait(false);
+				}
+			});
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
 			while (isStarted)
 			{
-				var Client = new UdpClient();
-				var RequestData = Encoding.ASCII.GetBytes("SomeRequestData");
-				var ServerEp = new IPEndPoint(IPAddress.Any, 0);
-
 				Client.EnableBroadcast = true;
 
 				try
 				{
+					var ServerResponseData = await Client.ReceiveAsync().ConfigureAwait(false);
+					var ServerResponse = Encoding.ASCII.GetString(ServerResponseData.Buffer);
 
-					await Client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 8888)).ConfigureAwait(false);
+					
+					Log.Debug("Recived {0} from {1}", ServerResponse, ServerResponseData.RemoteEndPoint.Address);
 
-					var ServerResponseData = Client.Receive(ref ServerEp);
-					var ServerResponse = Encoding.ASCII.GetString(ServerResponseData);
+					OnIpDiscovered?.Invoke(this, new EventArgs<IPAddress>(ServerResponseData.RemoteEndPoint.Address));
 
-					Log.Info("Recived {0} from {1}", ServerResponse, ServerEp.Address.ToString());
-
-					OnIpDiscovered?.Invoke(this, new EventArgs<IPAddress>(ServerEp.Address));
-
-					MessagingCenter.Send<IpDiscoveredTaskMessage, IPAddress>(new IpDiscoveredTaskMessage(), "IpDiscovered", ServerEp.Address);
-
-					Client.Close();
+					MessagingCenter.Send<IpDiscoveredTaskMessage, IPAddress>(new IpDiscoveredTaskMessage(), "IpDiscovered", ServerResponseData.RemoteEndPoint.Address);
 				}
 				catch
-				{ 
+				{
 				}
-				await Task.Delay(200).ConfigureAwait(false);
 			}
+			Client.Close();
 		}
 	}
 }

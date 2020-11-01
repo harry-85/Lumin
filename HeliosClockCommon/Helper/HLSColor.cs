@@ -11,7 +11,7 @@ namespace HeliosClockCommon.Helper
         private double saturation = 1.0;
         private double luminosity = 1.0;
 
-        private const double scale = 240;
+        private const double scale = 240.0;
 
         public static double Scale
         {

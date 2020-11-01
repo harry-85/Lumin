@@ -13,12 +13,6 @@ namespace HeliosClockApp.Views
             InitializeComponent();
             var viewModel = (AboutViewModel)BindingContext;
 
-            gradientTouch.OnFrameTouchEvent += (s,e) =>
-                {
-                    var viewModel = (AboutViewModel)BindingContext;
-                    viewModel.AddGradientCommand.Execute(null);
-                };
-
             ((AboutViewModel)BindingContext).HeliosService.OnEndColorChanged += HeliosService_OnEndColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;

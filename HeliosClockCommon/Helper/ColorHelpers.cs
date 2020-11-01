@@ -66,6 +66,8 @@ namespace HeliosClockCommon.Helper
             {
                 case ColorInterpolationMode.HueMode:
                     return await CalculateGradientHUE(endColor, startColor, size).ConfigureAwait(false);
+                case ColorInterpolationMode.HueNearestMode:
+                    return await CalculateGradientHUENearest(endColor, startColor, size).ConfigureAwait(false);
                 case ColorInterpolationMode.Linear:
                     return CalculateGradientLinear(endColor, startColor, size);
                 case ColorInterpolationMode.LinearCorrected:
@@ -157,7 +159,58 @@ namespace HeliosClockCommon.Helper
             }).ConfigureAwait(false);
         }
 
-        public static String HexConverter(System.Drawing.Color c)
+        private static async Task<List<Color>> CalculateGradientHUENearest(Color startColor, Color endColor, int size)
+        {
+            return await Task.Run(() =>
+            {
+                bool considerNearest = true;
+                List<Color> colors = new List<Color>(size);
+                HSLColor startHlsColor = startColor;
+                HSLColor endHlsColor = endColor;
+                int discreteUnits = size;
+
+                for (int i = 0; i < discreteUnits; i++)
+                {
+                    double hueAverage;
+                    double saturationAverage;
+                    double luminosityAverage;
+
+                    if (considerNearest)
+                    {
+                        var deltaDirection = CalculateDeltaAndDirection(startHlsColor.Hue, endHlsColor.Hue, size);
+                        hueAverage = endHlsColor.Hue + deltaDirection.direction * (int)(deltaDirection.delta * i);
+
+                        deltaDirection = CalculateDeltaAndDirection(startHlsColor.Saturation, endHlsColor.Saturation, size);
+                        saturationAverage = endHlsColor.Saturation + deltaDirection.direction * (int)(deltaDirection.delta * i);
+
+                        deltaDirection = CalculateDeltaAndDirection(startHlsColor.Luminosity, endHlsColor.Luminosity, size);
+                        luminosityAverage = endHlsColor.Luminosity + deltaDirection.direction * (int)(deltaDirection.delta * i);
+                    }
+                    else
+                    {
+                        hueAverage = endHlsColor.Hue + (int)((startHlsColor.Hue - endHlsColor.Hue) * i / size);
+                        saturationAverage = endHlsColor.Saturation + (int)((startHlsColor.Saturation - endHlsColor.Saturation) * i / size);
+                        luminosityAverage = endHlsColor.Luminosity + (int)((startHlsColor.Luminosity - endHlsColor.Luminosity) * i / size);
+                    }
+                    colors.Add(new HSLColor(hueAverage, saturationAverage, luminosityAverage));
+                }
+                return colors;
+            }).ConfigureAwait(false);
+        }
+
+        private static (double delta, int direction) CalculateDeltaAndDirection(double start, double end, int size)
+        {
+            int direction = 1;
+            if (start > end)
+                direction = -1;
+
+            double delta = Math.Abs((direction == 1 ? end - start : start - end) / size);
+
+            return (delta, direction);
+
+        }
+
+        public static string HexConverter(Color c)
         {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
 

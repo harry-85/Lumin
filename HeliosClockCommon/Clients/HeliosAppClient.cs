@@ -1,4 +1,5 @@
 ﻿using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -33,7 +34,8 @@ namespace HeliosClockCommon.Clients
 
         public async Task SendColor(Color startColor, Color endColor)
         {
-            await _connection.InvokeAsync(nameof(IHeliosHub.SetColorString), ColorHelpers.HexConverter(startColor), ColorHelpers.HexConverter(endColor)).ConfigureAwait(false);
+            string mode = ColorInterpolationMode.HueMode.ToString();
+            await _connection.InvokeAsync(nameof(IHeliosHub.SetColorString), ColorHelpers.HexConverter(startColor), ColorHelpers.HexConverter(endColor), mode).ConfigureAwait(false);
         }
 
         public async Task StartMode(string mode)
@@ -66,7 +68,7 @@ namespace HeliosClockCommon.Clients
             throw new NotImplementedException();
         }
 
-        public Task SetColorString(string startColor, string endColor)
+        public Task SetColorString(string startColor, string endColor, string interpolationMode)
         {
             throw new NotImplementedException();
         }
@@ -93,16 +95,21 @@ namespace HeliosClockCommon.Clients
                 {
                     await _connection.StartAsync(cancellationToken).ConfigureAwait(false);
 
+                    while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(100).ConfigureAwait(false);
+                    }
+
                     break;
                 }
                 catch (ObjectDisposedException)
                 {
                     _connection = new HubConnectionBuilder().WithUrl(URL).Build();
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(100).ConfigureAwait(false);
                 }
                 catch
                 {
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(100).ConfigureAwait(false);
                 }
             }
 

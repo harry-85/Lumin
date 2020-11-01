@@ -44,6 +44,6 @@ namespace HeliosClockCommon.Interfaces
         /// <param name="endColor">The end color.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task SetColor(Color startColor, Color endColor, CancellationToken cancellationToken);
+        Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken);
     }
 }

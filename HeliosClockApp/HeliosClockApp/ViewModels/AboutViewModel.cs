@@ -23,11 +23,6 @@ namespace HeliosClockApp.ViewModels
                 //await Browser.OpenAsync("https://aka.ms/xamarin-quickstart");
             });
 
-            ConnectCommand = new Command(async () =>
-            {
-                await HeliosService.ConnectToServer();
-            });
-
             BlackCommand = new Command(async () =>
             {
                 HeliosService.StartColor = System.Drawing.Color.Black;
@@ -66,8 +61,6 @@ namespace HeliosClockApp.ViewModels
         }
 
         public ICommand SetRandomolorCommand { get; }
-
-        public ICommand ConnectCommand { get; }
 
         public ICommand BlackCommand { get; }
 
