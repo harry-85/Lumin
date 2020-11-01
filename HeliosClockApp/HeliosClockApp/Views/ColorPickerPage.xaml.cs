@@ -14,10 +14,7 @@ namespace HeliosClockApp.Views
 		public ColorPickerPage()
 		{
 			InitializeComponent();
-
 			ColorPicker.PickedColorChanged += ColorPicker_PickedColorChanged;
-			// ((SetColorViewModel)BindingContext).SelectedColor = ((SetColorViewModel)BindingContext).HeliosService.
-
 		}
 
 		private void ColorPicker_PickedColorChanged(object sender, System.Drawing.Color e)
@@ -27,10 +24,6 @@ namespace HeliosClockApp.Views
 			viewModel.SelectedColor = e;
 
 			viewModel.SetColorFromPickerCommand.Execute(e);
-
-
 		}
-	
-
 	}
 }

@@ -62,8 +62,6 @@ namespace HeliosClockApp.Services
             {
                 Client.IPAddress = ip;
             });
-
-            Xamarin.Forms.MessagingCenter.Send<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage");
         }
 
         /// <summary>Sends the color to the server.</summary>
@@ -131,8 +129,28 @@ namespace HeliosClockApp.Services
         /// <summary>Connects to server.</summary>
         public async Task ConnectToServer()
         {
+            cancellationTokenSource?.Cancel();
+
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
+
+            await Task.Run(async () =>
+            {
+                bool sent = false;
+                try
+                {
+                    while (!sent && !token.IsCancellationRequested)
+                    {
+                        Xamarin.Forms.MessagingCenter.Send<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage");
+                        await Task.Delay(100).ConfigureAwait(false);
+                        sent = true;
+                    }
+                }
+                catch
+                { }
+               
+            }).ConfigureAwait(false);
+
 
             while (!token.IsCancellationRequested && Client.IPAddress == null)
             {

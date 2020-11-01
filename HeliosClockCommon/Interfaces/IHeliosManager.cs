@@ -1,9 +1,6 @@
 ﻿using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.LedCommon;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +19,10 @@ namespace HeliosClockCommon.Interfaces
         /// <summary>Gets or sets the end color.</summary>
         /// <value>The end color.</value>
         Color EndColor { get; set; }
+
+        /// <summary>Gets or sets the automatic off time in [ms].</summary>
+        /// <value>The automatic off time.</value>
+        double AutoOffTime { get; set; }
 
         /// <summary>Gets or sets the refresh speed.</summary>
         /// <value>The refresh speed.</value>

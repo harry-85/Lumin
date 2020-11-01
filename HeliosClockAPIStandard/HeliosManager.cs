@@ -5,6 +5,7 @@ using HeliosClockCommon.LedCommon;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Drawing;
+using System.Dynamic;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,10 +14,14 @@ namespace HeliosClockAPIStandard
 {
     public class HeliosManager : IHeliosManager
     {
+        private System.Timers.Timer autoOffTmer;
+
         public ILedController LedController { get; set; }
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
+
+        public double AutoOffTime { get; set; }
 
         private bool colorChangingInProgress = false;
 
@@ -24,12 +29,25 @@ namespace HeliosClockAPIStandard
         {
             RefreshSpeed = 100;
             this.LedController = ledController;
+
+            AutoOffTime = 4 * 60 * 60 * 1000; // milliseconds
+
+            autoOffTmer = new System.Timers.Timer(AutoOffTime);
+            autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
+        }
+
+        private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            await SetOnOff("off").ConfigureAwait(false);
         }
 
         public async Task SetColor(Color startColor, Color endColor, CancellationToken cancellationToken)
         {
             if (colorChangingInProgress)
                 return;
+
+            autoOffTmer.Stop();
+            autoOffTmer.Start();
 
             colorChangingInProgress = true;
 
@@ -54,6 +72,8 @@ namespace HeliosClockAPIStandard
 
         public async Task RunLedMode(LedMode mode, CancellationToken cancellationToken)
         {
+            autoOffTmer.Stop();
+            autoOffTmer.Start();
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(async () =>
             {
@@ -99,6 +119,12 @@ namespace HeliosClockAPIStandard
 
         public async Task SetOnOff(string onOff)
         {
+            if (onOff == "on")
+            {
+                autoOffTmer.Stop();
+                autoOffTmer.Start();
+            }
+
             LedController.IsSmoothing = false;
 
             var leds = new LedScreen(LedController);

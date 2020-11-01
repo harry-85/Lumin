@@ -13,6 +13,12 @@ namespace HeliosClockApp.Views
             InitializeComponent();
             var viewModel = (AboutViewModel)BindingContext;
 
+            gradientTouch.OnFrameTouchEvent += (s,e) =>
+                {
+                    var viewModel = (AboutViewModel)BindingContext;
+                    viewModel.AddGradientCommand.Execute(null);
+                };
+
             ((AboutViewModel)BindingContext).HeliosService.OnEndColorChanged += HeliosService_OnEndColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
@@ -62,7 +68,7 @@ namespace HeliosClockApp.Views
         private void HeliosService_OnStartColorChanged(object sender, EventArgs<System.Drawing.Color> e)
         {
             StartColor = e.Args;
-            GradientStart.Color = StartColor;
+            gradientTouch.StartColor = StartColor;
         }
 
         /// <summary>Handles the OnEndColorChanged event of the HeliosService control.</summary>
@@ -71,7 +77,7 @@ namespace HeliosClockApp.Views
         private void HeliosService_OnEndColorChanged(object sender, EventArgs<System.Drawing.Color> e)
         {
             EndColor = e.Args;
-            GradientStop.Color = EndColor;
+            gradientTouch.EndColor = EndColor;
         }
 
         /// <summary>Gets or sets the start color.</summary>
@@ -106,15 +112,6 @@ namespace HeliosClockApp.Views
 
             var viewModel = (AboutViewModel)BindingContext;
             viewModel.SetRandomolorCommand.Execute(new ColorModel { StartColor = StartColor , EndColor = EndColor});
-        }
-
-        /// <summary>Handles the Tapped event of the TapGestureRecognizer control.</summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
-        {
-            var viewModel = (AboutViewModel)BindingContext;
-            viewModel.AddGradientCommand.Execute(null);
         }
 
         /// <summary>Handles the ValueChanged event of the Slider control.</summary>

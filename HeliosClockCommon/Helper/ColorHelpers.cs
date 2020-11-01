@@ -172,5 +172,10 @@ namespace HeliosClockCommon.Helper
         {
             return ColorTranslator.FromHtml(hexColor);
         }
+
+        public static bool CompareColor(Color colorOne, Color colorTwo)
+        {
+            return colorOne.R == colorTwo.R && colorOne.G == colorTwo.G && colorOne.B == colorTwo.B && colorOne.A == colorTwo.A;
+        }
     }
 }
