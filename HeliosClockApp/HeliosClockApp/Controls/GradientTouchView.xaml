@@ -37,7 +37,7 @@
                         <SwipeGestureRecognizer Direction="Up"  Swiped="StartSwipeGesture_Swiped"></SwipeGestureRecognizer>
                         <TapGestureRecognizer Tapped="TapGestureRecognizer_Start_Tapped" ></TapGestureRecognizer>
                     </Frame.GestureRecognizers>
-                    <Label x:Name="labelStartColor" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
+                    <Label x:Name="labelStartColor" IsVisible="False" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
                         <Label.Text>
                             <Binding Source="{x:Reference GradientTouchControl}" Path="StartColor" Converter="{StaticResource ColorToHexStringConverter}">
                             </Binding>
@@ -50,7 +50,7 @@
                         <SwipeGestureRecognizer Direction="Up" Swiped="EndSwipeGesture_Swiped"></SwipeGestureRecognizer>
                         <TapGestureRecognizer Tapped="TapGestureRecognizer_End_Tapped" ></TapGestureRecognizer>
                     </Frame.GestureRecognizers>
-                    <Label x:Name="labelEndColor" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
+                    <Label x:Name="labelEndColor" IsVisible="False" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
                         <Label.Text>
                             <Binding Source="{x:Reference GradientTouchControl}" Path="EndColor" Converter="{StaticResource ColorToHexStringConverter}">
                             </Binding>

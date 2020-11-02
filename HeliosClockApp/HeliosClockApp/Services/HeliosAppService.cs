@@ -19,6 +19,7 @@ namespace HeliosClockApp.Services
         public event EventHandler<EventArgs<Color>> OnStartColorChanged;
         public event EventHandler<EventArgs<Color>> OnEndColorChanged;
         public event EventHandler<EventArgs<bool>> OnConnected;
+        public event EventHandler<EventArgs> OnDisconnected;
         public event EventHandler<EventArgs<LedMode>> OnModeChange;
 
         private CancellationTokenSource cancellationTokenSource;
@@ -131,7 +132,6 @@ namespace HeliosClockApp.Services
         public async Task ConnectToServer()
         {
             cancellationTokenSource?.Cancel();
-
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
 
@@ -157,8 +157,6 @@ namespace HeliosClockApp.Services
             {
                 await Task.Delay(100).ConfigureAwait(false);
             }
-
-
             await Client.StartAsync(token).ConfigureAwait(false);
         }
 
@@ -167,6 +165,7 @@ namespace HeliosClockApp.Services
         {
             cancellationTokenSource?.Cancel();
             await Client.StopAsync().ConfigureAwait(false);
+            OnDisconnected?.Invoke(this, new EventArgs());
         }
     }
 }

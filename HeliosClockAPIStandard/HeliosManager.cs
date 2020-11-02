@@ -57,9 +57,9 @@ namespace HeliosClockAPIStandard
                 leds.SetPixel(ref i, colors[i]);
             }
 
-            //LedController.IsSmoothing = true;
+            LedController.IsSmoothing = true;
             await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
-            //LedController.IsSmoothing = false;
+            LedController.IsSmoothing = false;
         }
 
         public async Task RunLedMode(LedMode mode, CancellationToken cancellationToken)

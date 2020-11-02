@@ -1,5 +1,6 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.ViewModels;
+using HeliosClockCommon.Messages;
 using System;
 using Xamarin.Forms;
 
@@ -17,6 +18,17 @@ namespace HeliosClockApp.Views
             ((AboutViewModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
             ((AboutViewModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
             ((AboutViewModel)BindingContext).HeliosService.OnModeChange += HeliosService_OnModeChange;
+
+            MessagingCenter.Subscribe<ConnectedMessage>(new ConnectedMessage(), "ConnectedToServer", (s) =>
+            {
+                connectingIndicator.IsVisible = false;
+                connectingOverlay.IsVisible = false;
+            });
+            MessagingCenter.Subscribe<ConnectedMessage>(new ConnectedMessage(), "DicsonnectedFromServer", (s) =>
+            {
+                connectingIndicator.IsVisible = true;
+                connectingOverlay.IsVisible = true;
+            });
         }
 
         /// <summary>Handles the OnModeChange event of the HeliosService control.</summary>
