@@ -6,6 +6,7 @@
              xmlns:fontawesome="clr-namespace:FontAwesome"
              xmlns:controls="clr-namespace:HeliosClockApp.Controls"
              xmlns:converter="clr-namespace:HeliosClockApp.Converter;assembly=HeliosClockApp"
+             xmlns:f9p="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              x:Name="LimunControl"
              Title="{Binding Title}">
 
@@ -14,7 +15,17 @@
     </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Gradient" Command="{Binding AddGradientCommand}" />
+       
+        <ToolbarItem Text="Gradient" Command="{Binding AddGradientCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fontawesome:FontAwesomeIcons.Rainbow}" FontFamily="{StaticResource FontAwesomeSolid}"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Command="{Binding SaveColorCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fontawesome:FontAwesomeIcons.Save}" FontFamily="{StaticResource FontAwesomeRegular}"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>
@@ -30,7 +41,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0,0,0,0" Padding="0,0,0,0" BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <Grid Grid.Row="0" Margin="0,0,0,0" Padding="0,0,0,0" BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0">
             <Frame VerticalOptions="FillAndExpand" Opacity="1.0" Margin="0,0,0,0" Padding="0,0,0,0">
                 <Frame.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" >
@@ -44,7 +55,7 @@
                 <Label Text="Lumin" TextColor="White" FontSize="40"/>
             </StackLayout>
         </Grid>
-        <Grid Grid.Row="1" Padding="30,24,30,0" Margin="0,0,0,0" VerticalOptions="FillAndExpand">
+        <Grid Grid.Row="1" Padding="30,30,30,0" Margin="0,0,0,0" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -63,15 +74,16 @@
                         Clicked="ButtonRandomColor_Clicked"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
-            <Button Grid.Row="2" Margin="0,10,0,0" Text="Black"
-                        BackgroundColor="{StaticResource Primary}"
-                        x:Name="ButtonBlack"
-                        Command="{Binding BlackCommand}"
-                        TextColor="White" />
-            <Button Grid.Row="3" Margin="0,10,0,0" Text="White"
+            <Button Grid.Row="2" Margin="0,10,0,0" Text="{x:Static fontawesome:FontAwesomeIcons.Lightbulb}" FontFamily="{StaticResource FontAwesomeRegular}" FontSize="Large"
                         BackgroundColor="{StaticResource Primary}"
                         x:Name="ButtonWhite"
                         Command="{Binding WhiteCommand}"
+                        TextColor="White">
+            </Button>
+            <Button Grid.Row="3" Margin="0,10,0,0" Text="{x:Static fontawesome:FontAwesomeIcons.PowerOff}" FontFamily="{StaticResource FontAwesomeSolid}" FontSize="Large"
+                        BackgroundColor="{StaticResource Primary}"
+                        x:Name="ButtonBlack"
+                        Command="{Binding BlackCommand}"
                         TextColor="White" />
 
             <controls:GradientTouchView x:Name="gradientTouch" Grid.Row="4"></controls:GradientTouchView>

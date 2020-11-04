@@ -1,14 +1,5 @@
-﻿using HeliosClockApp.Models;
-using HeliosClockApp.ViewModels;
-using HeliosClockApp.Views;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HeliosClockApp.ViewModels;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace HeliosClockApp.Views
 {
@@ -21,12 +12,29 @@ namespace HeliosClockApp.Views
             InitializeComponent();
 
             BindingContext = _viewModel = new ItemsViewModel();
+
+
+            ////CollectionView collectionView = new CollectionView();
+            ////collectionView.SetBinding(ItemsView.ItemsSourceProperty, nameof(_viewModel.Items));
+            
+            ////collectionView.ItemTemplate = new DataTemplate(() =>
+            ////{
+            ////    StackLayout stackLayout = new StackLayout { Padding = 10 };
+                
+            ////    return stackLayout;
+            ////});
+
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
             _viewModel.OnAppearing();
+        }
+
+        private void ItemsListView_ChildAdded(object sender, ElementEventArgs e)
+        {
+           // var val = ((CollectionView)e.Element).Items;
         }
     }
 }

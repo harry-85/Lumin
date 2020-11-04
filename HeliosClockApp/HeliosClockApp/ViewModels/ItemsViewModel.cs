@@ -1,5 +1,7 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Views;
+using HeliosClockCommon.Messages;
+using HeliosClockCommon.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -10,20 +12,30 @@ namespace HeliosClockApp.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
+        /// <summary>The selected item</summary>
+        private ColorSaveItem _selectedItem;
 
-        public ObservableCollection<Item> Items { get; }
+        /// <summary>Gets the items.</summary>
+        /// <value>The items.</value>
+        public ObservableCollection<ColorSaveItem> Items { get; }
+        /// <summary>Gets the load items command.</summary>
+        /// <value>The load items command.</value>
         public Command LoadItemsCommand { get; }
+        /// <summary>Gets the add item command.</summary>
+        /// <value>The add item command.</value>
         public Command AddItemCommand { get; }
-        public Command<Item> ItemTapped { get; }
+        /// <summary>Gets the item tapped.</summary>
+        /// <value>The item tapped.</value>
+        public Command<ColorSaveItem> ItemTapped { get; }
 
+        /// <summary>Initializes a new instance of the <see cref="ItemsViewModel"/> class.</summary>
         public ItemsViewModel()
         {
             Title = "Browse";
-            Items = new ObservableCollection<Item>();
+            Items = new ObservableCollection<ColorSaveItem>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
+            ItemTapped = new Command<ColorSaveItem>(OnItemSelected);
 
             AddItemCommand = new Command(OnAddItem);
         }
@@ -57,7 +69,7 @@ namespace HeliosClockApp.ViewModels
             SelectedItem = null;
         }
 
-        public Item SelectedItem
+        public ColorSaveItem SelectedItem
         {
             get => _selectedItem;
             set
@@ -72,13 +84,20 @@ namespace HeliosClockApp.ViewModels
             await Shell.Current.GoToAsync(nameof(GradientColorPage));
         }
 
-        async void OnItemSelected(Item item)
+        async void OnItemSelected(ColorSaveItem item)
         {
             if (item == null)
                 return;
 
+            HeliosService.StartColor = item.StartColor;
+            HeliosService.EndColor = item.EndColor;
+
+            await HeliosService.SendColor().ConfigureAwait(false);
+
+            MessagingCenter.Send<NavigateHomeMessage>(new NavigateHomeMessage(), "NavigateHomeMessage");
+
             // This will push the ItemDetailPage onto the navigation stack
-            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Id}");
+            //await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Id}");
         }
     }
 }

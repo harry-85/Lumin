@@ -1,58 +1,71 @@
 ﻿using HeliosClockApp.Models;
+using HeliosClockCommon.Helper;
+using HeliosClockCommon.Models;
+using HeliosClockCommon.Serializer;
+using HeliosClockCommon.Settings;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace HeliosClockApp.Services
 {
-    public class MockDataStore : IDataStore<Item>
+    public class MockDataStore : IDataStore<ColorSaveItem>
     {
-        readonly List<Item> items;
-
+        private List<ColorSaveItem> items;
+        private SettingsSerializer serializer;
         public MockDataStore()
         {
-            items = new List<Item>()
+            items = new List<ColorSaveItem>();
+            //Environment.SpecialFolder.LocalApplication
+            FileInfo fileName = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "save.xml"));
+            serializer = new SettingsSerializer(fileName);
+
+            Task.Run(async () =>
             {
-                new Item { Id = Guid.NewGuid().ToString(), Text = "First item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Second item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Third item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Fourth item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Fifth item", Description="This is an item description." },
-                new Item { Id = Guid.NewGuid().ToString(), Text = "Sixth item", Description="This is an item description." }
-            };
+                var newItems  = (await serializer.DesirializeAppSettings().ConfigureAwait(false)).Items;
+              //  items.Add(new ColorSaveItem { Id = Guid.NewGuid().ToString(), Name = "First item", StartColor = ColorHelpers.HexConverter(Color.Blue), EndColor = Color.Purple });
+              //  items.Add(new ColorSaveItem { Id = Guid.NewGuid().ToString(), Name = "Second item", StartColor=Color.Red, EndColor=Color.Green });
+                items.AddRange(newItems);
+            });
         }
 
-        public async Task<bool> AddItemAsync(Item item)
+        public async Task<bool> AddItemAsync(ColorSaveItem item)
         {
             items.Add(item);
+
+            await serializer.SerilaizeAppSettings(new HeliosSettings { Items = items }).ConfigureAwait(false);
 
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateItemAsync(Item item)
+        public async Task<bool> UpdateItemAsync(ColorSaveItem item)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == item.Id).FirstOrDefault();
+            var oldItem = items.Where((ColorSaveItem arg) => arg.Id == item.Id).FirstOrDefault();
             items.Remove(oldItem);
             items.Add(item);
+
+            await serializer.SerilaizeAppSettings(new HeliosSettings { Items = items }).ConfigureAwait(false);
 
             return await Task.FromResult(true);
         }
 
         public async Task<bool> DeleteItemAsync(string id)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == id).FirstOrDefault();
+            var oldItem = items.Where((ColorSaveItem arg) => arg.Id == id).FirstOrDefault();
             items.Remove(oldItem);
 
             return await Task.FromResult(true);
         }
 
-        public async Task<Item> GetItemAsync(string id)
+        public async Task<ColorSaveItem> GetItemAsync(string id)
         {
             return await Task.FromResult(items.FirstOrDefault(s => s.Id == id));
         }
 
-        public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)
+        public async Task<IEnumerable<ColorSaveItem>> GetItemsAsync(bool forceRefresh = false)
         {
             return await Task.FromResult(items);
         }

@@ -114,6 +114,8 @@ namespace HeliosClockApp.Views
         {
             Random rnd = new Random();
             StartColor = System.Drawing.Color.FromArgb(255, rnd.Next(256), rnd.Next(256), rnd.Next(256));
+            
+            rnd = new Random();
             EndColor = System.Drawing.Color.FromArgb(255, rnd.Next(256), rnd.Next(256), rnd.Next(256));
 
             var viewModel = (AboutViewModel)BindingContext;

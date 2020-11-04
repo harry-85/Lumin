@@ -4,32 +4,44 @@
              x:Class="HeliosClockApp.Views.ItemsPage"
              Title="{Binding Title}"
              xmlns:local="clr-namespace:HeliosClockApp.ViewModels"  
-             xmlns:model="clr-namespace:HeliosClockApp.Models"  
+             xmlns:model="clr-namespace:HeliosClockCommon.Models;assembly=HeliosClockCommon"  
+             xmlns:forms9patch="clr-namespace:Forms9Patch;assembly=Forms9Patch"
+             xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
              x:Name="BrowseItemsPage">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
         <ToolbarItem Text="Remove" Command="{Binding AddItemCommand}" />
     </ContentPage.ToolbarItems>
+    
     <!--
       x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
       https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
     -->
     <RefreshView x:DataType="local:ItemsViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <CollectionView x:Name="ItemsListView"
+        <CollectionView x:Name="ItemsListView" ChildAdded="ItemsListView_ChildAdded"
                 ItemsSource="{Binding Items}"
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Padding="10" x:DataType="model:Item">
-                        <Label Text="{Binding Text}" 
-                            LineBreakMode="NoWrap" 
-                            Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
-                        <Label Text="{Binding Description}" 
+
+                    <StackLayout Padding="10" x:DataType="model:ColorSaveItem"
+                            touch:TouchEff.PressedAnimationDuration="100"
+                            touch:TouchEff.RegularAnimationDuration="100"
+                            touch:TouchEff.PressedScale="0.95"
+                            touch:TouchEff.PressedOpacity="0.6"
+                            touch:TouchEff.RippleCount="0">
+                        <Label Text="{Binding Name}" 
                             LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="13" />
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16"/>
+                        <Frame Grid.Row="0" BorderColor="LightGray" Margin="0" Padding="0" x:DataType="model:ColorSaveItem" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                                HasShadow="True"
+                                CornerRadius="12"
+                                HeightRequest="20"
+                                >
+                            <forms9patch:ColorGradientBox Orientation="Horizontal" StartColor="{Binding EndColor}" HeightRequest="2000" WidthRequest="2000" EndColor="{Binding StartColor}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"></forms9patch:ColorGradientBox>
+                        </Frame>
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer 
                                 NumberOfTapsRequired="1"

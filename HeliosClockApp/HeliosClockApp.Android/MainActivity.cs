@@ -10,6 +10,7 @@ using HeliosClockApp.Services;
 using Android.Content;
 using Android.Util;
 using HeliosClockCommon.Messages;
+using TouchEffect.Android;
 
 namespace HeliosClockApp.Droid
 {
@@ -35,6 +36,7 @@ namespace HeliosClockApp.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             var app = new App();
 
+            TouchEffectPreserver.Preserve();
             LoadApplication(app);
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

@@ -2,6 +2,7 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:HeliosClockApp.Views"
+       xmlns:fontawesome="clr-namespace:FontAwesome"
        Title="HeliosClockApp"
        x:Class="HeliosClockApp.AppShell">
 
@@ -29,9 +30,17 @@
         </ResourceDictionary>
     </Shell.Resources>
 
-    <TabBar>
-        <ShellContent Title="About" Icon="icon_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-     <ShellContent Title="Color Picker" Icon="icon_about.png" Route="Color Picker" ContentTemplate="{DataTemplate local:ColorPickerPage}" /> 
+    <TabBar x:Name="TabBar">
+        <ShellContent Title="About" x:Name="TabPageHome" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="{x:Static fontawesome:FontAwesomeIcons.PaintBrush}" FontFamily="{StaticResource FontAwesomeSolid}"/>
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Title="Color Picker" Route="Color Picker" ContentTemplate="{DataTemplate local:ColorPickerPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="{x:Static fontawesome:FontAwesomeIcons.EyeDropper}" FontFamily="{StaticResource FontAwesomeSolid}"/>
+            </ShellContent.Icon>
+        </ShellContent>
         <ShellContent Title="Browse" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:ItemsPage}" />
     </TabBar>
 

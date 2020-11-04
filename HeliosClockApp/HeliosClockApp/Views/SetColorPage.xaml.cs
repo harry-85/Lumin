@@ -1,5 +1,6 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.ViewModels;
+using HeliosClockCommon.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ namespace HeliosClockApp.Views
 {
     public partial class SetColorPage : ContentPage
     {
-        public Item Item { get; set; }
+        public ColorSaveItem Item { get; set; }
 
         public SetColorPage()
         {

@@ -1,6 +1,8 @@
 ﻿using HeliosClockApp.Models;
+using HeliosClockApp.Models;
 using HeliosClockApp.Views;
 using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Models;
 using System;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -15,7 +17,6 @@ namespace HeliosClockApp.ViewModels
             Title = "Lumin Control";
             SetRandomolorCommand = new Command<ColorModel>(async (colorModel) =>
             {
-                var rand = new Random();
                 HeliosService.StartColor = colorModel.StartColor;
                 HeliosService.EndColor = colorModel.EndColor;
                 await HeliosService.SendColor().ConfigureAwait(false);
@@ -55,6 +56,11 @@ namespace HeliosClockApp.ViewModels
                 await HeliosService.SetRefreshSpeed((int)speed).ConfigureAwait(false);
             });
 
+            SaveColorCommand = new Command(async () =>
+            {
+                await DataStore.AddItemAsync(new ColorSaveItem { StartColor = HeliosService.StartColor, EndColor = HeliosService.EndColor, Name = "Test", Id = Guid.NewGuid().ToString() }).ConfigureAwait(false);
+            });
+
             AddGradientCommand = new Command(OnAddGradient);
         }
 
@@ -81,6 +87,8 @@ namespace HeliosClockApp.ViewModels
         /// <summary>Gets the add gradient command.</summary>
         /// <value>The add gradient command.</value>
         public ICommand AddGradientCommand { get; }
+
+        public ICommand SaveColorCommand { get; }
 
         /// <summary>Gets the start spin command.</summary>
         /// <value>The start spin command.</value>

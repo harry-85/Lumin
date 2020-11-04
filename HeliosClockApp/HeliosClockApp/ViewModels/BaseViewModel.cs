@@ -1,5 +1,6 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Services;
+using HeliosClockCommon.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ namespace HeliosClockApp.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<ColorSaveItem> DataStore => DependencyService.Get<IDataStore<ColorSaveItem>>();
         public IHeliosAppService HeliosService = DependencyService.Get<IHeliosAppService>();
 
         bool isBusy = false;

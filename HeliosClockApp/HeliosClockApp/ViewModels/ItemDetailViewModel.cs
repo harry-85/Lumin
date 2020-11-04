@@ -10,20 +10,26 @@ namespace HeliosClockApp.ViewModels
     public class ItemDetailViewModel : BaseViewModel
     {
         private string itemId;
-        private string text;
-        private string description;
+        private string name;
+        private Color startColor;
+        private Color endColor;
         public string Id { get; set; }
 
-        public string Text
+        public string Name
         {
-            get => text;
-            set => SetProperty(ref text, value);
+            get => name;
+            set => SetProperty(ref name, value);
         }
 
-        public string Description
+        public Color StartColor
         {
-            get => description;
-            set => SetProperty(ref description, value);
+            get => startColor;
+            set => SetProperty(ref startColor, value);
+        }
+        public Color EndColor
+        {
+            get => endColor;
+            set => SetProperty(ref endColor, value);
         }
 
         public string ItemId
@@ -45,8 +51,9 @@ namespace HeliosClockApp.ViewModels
             {
                 var item = await DataStore.GetItemAsync(itemId);
                 Id = item.Id;
-                Text = item.Text;
-                Description = item.Description;
+                Name = item.Name;
+                StartColor = item.StartColor;
+                EndColor = item.EndColor;
             }
             catch (Exception)
             {
