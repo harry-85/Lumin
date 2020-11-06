@@ -1,4 +1,5 @@
 ﻿using HeliosClockAPIStandard.Enumeration;
+using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.ServiceOptions;
@@ -17,9 +18,6 @@ namespace HeliosClockAPIStandard.GPIOListeners
         private IHeliosManager heliosManager;
         private ILogger<GPIOService> logger;
         private GpioController gpioController;
-
-        private const int MinShortPressDuration = 150; // ms
-        private const int MinLongPressDuration = 1000; // ms
 
         private Stopwatch stopwatchLeft;
         private Stopwatch stopwatchRight;
@@ -44,7 +42,6 @@ namespace HeliosClockAPIStandard.GPIOListeners
             heliosManager = manager;
             stopwatchLeft = new Stopwatch();
             stopwatchRight = new Stopwatch();
-
             logger.LogInformation("Started GPIO Watch initialied ...");
         }
 
@@ -60,13 +57,6 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 return;
             }
 
-            //Run first half in seperate task to simulate parallel checking of sides
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            //  Task.Run(async () => await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, cancellationToken).ConfigureAwait(false));
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-            //Wait here until second half is finished, first half runs in seperate task to simulate parallel checking of sides
-
             logger.LogInformation("Started GPIO Watch ...");
 
             try
@@ -77,15 +67,12 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     isOn = heliosManager.IsRunning;
-                   
-                    //await Task.Delay(50).ConfigureAwait(false);
                     await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, cancellationToken).ConfigureAwait(false);
-                    //await Task.Delay(50).ConfigureAwait(false);
                     await ExecuteTouchWatcher(LedSide.Right, stopwatchRight, cancellationToken).ConfigureAwait(false);
                 }
 
                 gpioController.ClosePin((int)GpioInputPin.LeftSide);
-               // gpioController.ClosePin((int)GpioInputPin.RightSide);
+                gpioController.ClosePin((int)GpioInputPin.RightSide);
             }
             catch (Exception ex)
             {
@@ -107,22 +94,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
                 var input = gpioController.Read((side == LedSide.Left ? (int)GpioInputPin.LeftSide : (int)GpioInputPin.RightSide));
 
-                if (side == LedSide.Left)
-                {
-                    if (pinLeftOld != input)
-                    {
-                        logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
-                        pinLeftOld = input;
-                    }
-                }
-                if (side == LedSide.Right)
-                {
-                    if (pinRightOld != input)
-                    {
-                        logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
-                        pinRightOld = input;
-                    }
-                }
+                //Check for flip
+                CheckTouchFlip(side, input);
 
                 if (input == PinValue.High)
                 {
@@ -141,7 +114,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 {
                     //logger.LogInformation("Switch {0} High ...", side);
                     stopwatch.Stop();
-                    logger.LogInformation("Touch duration: {0} ...", elapsed);
+                    elapsed = stopwatch.ElapsedMilliseconds;
+                    logger.LogInformation("Touch duration: {0} ms ...", elapsed);
                     stopwatch.Reset();
                 }
 
@@ -149,7 +123,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 if (stopwatch.IsRunning)
                 {
                     //Random Color Full
-                    if ((elapsed - (touchCound * MinLongPressDuration)) >= MinLongPressDuration)
+                    if ((elapsed - (touchCound * TouchDefaultValues.MinLongPressDuration)) >= TouchDefaultValues.MinLongPressDuration)
                     {
                         logger.LogInformation("Touch random color ...");
 
@@ -159,8 +133,10 @@ namespace HeliosClockAPIStandard.GPIOListeners
                         return;
                     }
 
-                    if (elapsed >= MinLongPressDuration && (MinLongPressDuration % elapsed) == 0)
+                    if (elapsed >= TouchDefaultValues.MinLongPressDuration && (TouchDefaultValues.MinLongPressDuration % elapsed) == 0)
                     {
+                        logger.LogInformation("First long press Power: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
+
                         side = LedSide.Full;
                         await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
                         //Flip between on off
@@ -180,7 +156,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     return;
                 }
 
-                if (elapsed >= MinShortPressDuration && elapsed < MinLongPressDuration)
+                if (elapsed >= TouchDefaultValues.MinShortPressDuration && elapsed < TouchDefaultValues.MinLongPressDuration)
                 {
                     if (side == LedSide.Left)
                     {
@@ -215,6 +191,32 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 logger.LogError("Error in GPIO Service. Message: {0}", ex.Message);
             }
             return Task.CompletedTask;
+        }
+
+        /// <summary>Checks the touch flip.</summary>
+        /// <param name="side">The side.</param>
+        /// <param name="input">The input.</param>
+        private bool CheckTouchFlip(LedSide side, PinValue input)
+        {
+            if (side == LedSide.Left)
+            {
+                if (pinLeftOld != input)
+                {
+                    logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                    pinLeftOld = input;
+                    return true;
+                }
+            }
+            if (side == LedSide.Right)
+            {
+                if (pinRightOld != input)
+                {
+                    logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                    pinRightOld = input;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
