@@ -4,9 +4,10 @@ using System.Text;
 
 namespace HeliosClockAPIStandard.Enumeration
 {
+    //Mapping GPIO pin to enum value
     public enum GpioInputPin
     {
-        LeftSide = 5,
-        RightSide = 6
+        LeftSide = 17,
+        RightSide = 16
     }
 }

@@ -18,13 +18,20 @@ namespace HeliosClockAPIStandard.GPIOListeners
         private ILogger<GPIOService> logger;
         private GpioController gpioController;
 
-        private const int MinShortPressDuration = 200; // ms
-        private const int MinLongPressDuration = 1500; // ms
+        private const int MinShortPressDuration = 150; // ms
+        private const int MinLongPressDuration = 1000; // ms
 
         private Stopwatch stopwatchLeft;
         private Stopwatch stopwatchRight;
 
+        private int touchCound = 0;
+
         private bool isOn = false;
+        private bool isLeftOn = false;
+        private bool isRightOn = false;
+
+        PinValue pinLeftOld = PinValue.High;
+        PinValue pinRightOld = PinValue.High;
 
         public LedSide side;
 
@@ -69,6 +76,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
+                    isOn = heliosManager.IsRunning;
+                   
                     //await Task.Delay(50).ConfigureAwait(false);
                     await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, cancellationToken).ConfigureAwait(false);
                     //await Task.Delay(50).ConfigureAwait(false);
@@ -94,46 +103,96 @@ namespace HeliosClockAPIStandard.GPIOListeners
         {
             await Task.Run(async () =>
             {
+                long elapsed = 0;
+
                 var input = gpioController.Read((side == LedSide.Left ? (int)GpioInputPin.LeftSide : (int)GpioInputPin.RightSide));
 
-                GpioPressDuration duration = GpioPressDuration.None;
-
-                if (input == PinValue.Low)
+                if (side == LedSide.Left)
                 {
-                    logger.LogInformation("Switch {0} down ...", side);
-                    if (!stopwatch.IsRunning)
-                        stopwatch.Start();
-                    return;
+                    if (pinLeftOld != input)
+                    {
+                        logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                        pinLeftOld = input;
+                    }
                 }
-
-                if (!stopwatch.IsRunning)
-                    return;
+                if (side == LedSide.Right)
+                {
+                    if (pinRightOld != input)
+                    {
+                        logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                        pinRightOld = input;
+                    }
+                }
 
                 if (input == PinValue.High)
                 {
-                    stopwatch.Stop();
+                    //logger.LogInformation("Switch {0} down ...", side);
+                    if (!stopwatch.IsRunning)
+                    {
+                        stopwatch.Start();
+                        touchCound = 1;
+                    }
+                }
 
-                    if (stopwatch.ElapsedMilliseconds >= MinShortPressDuration)
-                    {
-                        duration = GpioPressDuration.Short;
-                    }
-                    if (stopwatch.ElapsedMilliseconds >= MinLongPressDuration)
-                    {
-                        duration = GpioPressDuration.Long;
-                    }
+                elapsed = stopwatch.ElapsedMilliseconds;
+
+                //If touch is released
+                if (input == PinValue.Low && stopwatch.IsRunning)
+                {
+                    //logger.LogInformation("Switch {0} High ...", side);
+                    stopwatch.Stop();
+                    logger.LogInformation("Touch duration: {0} ...", elapsed);
                     stopwatch.Reset();
                 }
 
-                if (duration == GpioPressDuration.None)
+                //If touch is pressed continiously
+                if (stopwatch.IsRunning)
+                {
+                    //Random Color Full
+                    if ((elapsed - (touchCound * MinLongPressDuration)) >= MinLongPressDuration)
+                    {
+                        logger.LogInformation("Touch random color ...");
+
+                        touchCound++;
+
+                        await heliosManager.SetRandomColor(cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
+
+                    if (elapsed >= MinLongPressDuration && (MinLongPressDuration % elapsed) == 0)
+                    {
+                        side = LedSide.Full;
+                        await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        //Flip between on off
+                        isOn = !isOn;
+
+                        if (isOn)
+                        {
+                            isLeftOn = true;
+                            isRightOn = true;
+                        }
+                        else
+                        {
+                            isLeftOn = false;
+                            isRightOn = false;
+                        }
+                    }
                     return;
-                if (duration == GpioPressDuration.Long)
-                    side = LedSide.Full;
+                }
 
-                await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
-
-                    //Flip between on off
-                    isOn = !isOn;
-
+                if (elapsed >= MinShortPressDuration && elapsed < MinLongPressDuration)
+                {
+                    if (side == LedSide.Left)
+                    {
+                        await heliosManager.SetOnOff(isLeftOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        isLeftOn = !isLeftOn;
+                    }
+                    if (side == LedSide.Right)
+                    {
+                        await heliosManager.SetOnOff(isRightOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        isRightOn = !isRightOn;
+                    }
+                }
             }).ConfigureAwait(false);
         }
 

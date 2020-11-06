@@ -8,6 +8,10 @@ namespace HeliosClockCommon.Interfaces
 {
     public interface IHeliosManager
     {
+        /// <summary>Gets a value indicating whether this instance is running.</summary>
+        /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
+        bool IsRunning { get; }
+
         /// <summary>Gets or sets the led controller.</summary>
         /// <value>The led controller.</value>
         ILedController LedController { get; set; }
@@ -45,5 +49,9 @@ namespace HeliosClockCommon.Interfaces
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken);
+
+        /// <summary>Sets the random color.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        Task SetRandomColor(CancellationToken cancellationToken);
     }
 }
