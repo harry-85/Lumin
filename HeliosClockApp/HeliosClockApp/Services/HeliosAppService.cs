@@ -78,11 +78,11 @@ namespace HeliosClockApp.Services
             }
         }
 
-        public async Task SetOnOff(string onOff)
+        public async Task SetOnOff(PowerOnOff onOff, LedSide side = LedSide.Full)
         {
             try
             {
-                await Client.SetOnOff(onOff).ConfigureAwait(false);
+                await Client.SetOnOff(onOff.ToString(), side.ToString()).ConfigureAwait(false);
                 await StopMode().ConfigureAwait(false);
             }
             catch

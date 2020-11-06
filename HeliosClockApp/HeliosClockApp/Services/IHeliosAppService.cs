@@ -46,7 +46,7 @@ namespace HeliosClockApp.Services
         /// <summary>Sets the on off.</summary>
         /// <param name="onOff">The on off.</param>
         /// <returns></returns>
-        Task SetOnOff(string onOff);
+        Task SetOnOff(PowerOnOff onOff, LedSide side = LedSide.Full);
 
         /// <summary>Stops the actual running task on the server.</summary>
         Task StopMode();

@@ -1,5 +1,6 @@
 using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
+using HeliosClockAPIStandard.GPIOListeners;
 using HeliosClockCommon.Clients;
 using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Discorvery;
@@ -42,12 +43,25 @@ namespace HeliosService
 
             services.AddHostedService<Worker>();
             services.AddSingleton<HeliosServerClient>();
+            try
+            {
+                services.AddSingleton<GPIOService>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: Starting GPIO Service: {0}", ex.Message);
+            }
+
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
             var provider = services.BuildServiceProvider();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-            var client = provider.GetService<HeliosServerClient>();
-            Task.Run(async () => await client.StartAsync(token));
+
+            var heliosServerClient = provider.GetService<HeliosServerClient>();
+            Task.Run(async () => await heliosServerClient.StartAsync(token));
+
+            var gpioService = provider.GetService<GPIOService>();
+            Task.Run(async () => await gpioService.StartAsync(token));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

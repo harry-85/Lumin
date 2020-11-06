@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HeliosClockCommon.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -21,6 +22,6 @@ namespace HeliosClockCommon.Interfaces
 
         Task SetRefreshSpeed(string speed);
 
-        Task SetOnOff(string onOff);
+        Task SetOnOff(string onOff, string side);
     }
 }

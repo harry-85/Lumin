@@ -47,17 +47,17 @@ namespace HeliosClockCommon.Clients
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
             _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
-            _connection.On<string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
+            _connection.On<string, string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
 
             _logger.LogInformation("Local Helios Client Initialized ...");
         }
 
         /// <summary>Sets the on off.</summary>
         /// <param name="onOff">The on off.</param>
-        public async Task SetOnOff(string onOff)
+        public async Task SetOnOff(string onOff, string side)
         {
             _logger.LogInformation("Local Helios On / Off Command : {0} ...", onOff);
-            await manager.SetOnOff(onOff).ConfigureAwait(false);
+            await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side)).ConfigureAwait(false);
         }
         bool isRunning = false;
         public Task SetColor(string startColor, string endColor, string interpolationMode)

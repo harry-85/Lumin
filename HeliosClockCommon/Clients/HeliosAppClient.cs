@@ -43,9 +43,9 @@ namespace HeliosClockCommon.Clients
             await _connection.InvokeAsync(nameof(IHeliosHub.StartMode), mode).ConfigureAwait(false);
         }
 
-        public async Task SetOnOff(string onOff)
+        public async Task SetOnOff(string onOff, string side)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetOnOff), onOff).ConfigureAwait(false);
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetOnOff), onOff, side).ConfigureAwait(false);
         }
 
         public async Task Stop()

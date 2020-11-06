@@ -1,5 +1,4 @@
 ﻿using HeliosClockApp.Models;
-using HeliosClockApp.Models;
 using HeliosClockApp.Views;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Models;
@@ -26,14 +25,14 @@ namespace HeliosClockApp.ViewModels
             {
                 HeliosService.StartColor = System.Drawing.Color.Black;
                 HeliosService.EndColor = System.Drawing.Color.Black;
-                await HeliosService.SetOnOff("off").ConfigureAwait(false);
+                await HeliosService.SetOnOff(PowerOnOff.Off, LedSide.Full).ConfigureAwait(false);
             });
 
             WhiteCommand = new Command(async () =>
             {
                 HeliosService.StartColor = System.Drawing.Color.White;
                 HeliosService.EndColor = System.Drawing.Color.White;
-                await HeliosService.SetOnOff("on").ConfigureAwait(false);
+                await HeliosService.SetOnOff(PowerOnOff.On, LedSide.Full).ConfigureAwait(false);
             });
 
             StartSpinCommand = new Command(async () =>

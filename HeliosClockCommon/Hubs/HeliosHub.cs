@@ -31,9 +31,9 @@ namespace HeliosClockCommon.Hubs
             await Clients.All.SetColorString(startColor, endColor, interpolationMode).ConfigureAwait(false);
         }
 
-        public async Task SetOnoff(string onOff)
+        public async Task SetOnoff(string onOff, string side)
         {
-            await Clients.All.SetOnOff(onOff).ConfigureAwait(false);
+            await Clients.All.SetOnOff(onOff, side).ConfigureAwait(false);
         }
 
         public async Task StartMode(string mode)

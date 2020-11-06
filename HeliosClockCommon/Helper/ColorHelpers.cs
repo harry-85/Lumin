@@ -223,7 +223,7 @@ namespace HeliosClockCommon.Helper
 
         public static Color FromHex(string hexColor)
         {
-            int r = int.Parse(hexColor.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            int r = int.Parse(hexColor.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
             int g = int.Parse(hexColor.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
             int b = int.Parse(hexColor.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
 

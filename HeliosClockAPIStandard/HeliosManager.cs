@@ -37,7 +37,7 @@ namespace HeliosClockAPIStandard
 
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            await SetOnOff("off").ConfigureAwait(false);
+            await SetOnOff(PowerOnOff.Off, LedSide.Full).ConfigureAwait(false);
         }
 
         public async Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken)
@@ -109,9 +109,9 @@ namespace HeliosClockAPIStandard
             await LedController.Repaint().ConfigureAwait(false);
         }
 
-        public async Task SetOnOff(string onOff)
+        public async Task SetOnOff(PowerOnOff onOff, LedSide side)
         {
-            if (onOff == "on")
+            if (onOff == PowerOnOff.On)
             {
                 autoOffTmer.Stop();
                 autoOffTmer.Start();
@@ -123,7 +123,22 @@ namespace HeliosClockAPIStandard
 
             for (int i = 0; i < LedController.LedCount; i++)
             {
-                leds.SetPixel(ref i, onOff == "on" ? Color.White : Color.Black);
+                if (side == LedSide.Full)
+                {
+                    leds.SetPixel(ref i, onOff == PowerOnOff.On ? Color.White : Color.Black);
+                }
+                else if (side == LedSide.Left && i < (int)Math.Round(LedController.LedCount / 2.0))
+                {
+                    leds.SetPixel(ref i, onOff == PowerOnOff.On ? Color.White : Color.Black);
+                }
+                else if (side == LedSide.Right && i >= (int)Math.Round(LedController.LedCount / 2.0))
+                {
+                    leds.SetPixel(ref i, onOff == PowerOnOff.On ? Color.White : Color.Black);
+                }
+                else
+                {
+                    leds.SetPixel(ref i, Color.Black);
+                }
             }
 
             await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
@@ -140,15 +155,11 @@ namespace HeliosClockAPIStandard
 
 
             int startPoint = -1 * knightCount;
-            int knightRoundCount = 0;
-            int fadeInDelta = 0;
-            int knightDelta = 0;
+            
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                int fadeOutDelta = 0;
-                fadeInDelta = 0;
-                fadeOutDelta = 0;
+
 
                 for (int i = 0; i < LedController.LedCount; i++)
                 {

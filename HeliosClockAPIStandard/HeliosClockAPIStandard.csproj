@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <UserSecretsId>569edb84-f160-4871-8a78-77c1b91f53e1</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="1.1.0-prerelease.20276.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0-rc.2.20475.5" />
+    <PackageReference Include="System.Device.Gpio" Version="1.1.0-prerelease.20555.1" />
   </ItemGroup>
 
   <ItemGroup>
