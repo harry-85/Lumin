@@ -87,33 +87,36 @@ namespace HeliosClockCommon.Clients
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            Initialize();
-           
-            _logger.LogInformation("Local Client: Connecting ...");
-            // Loop is here to wait until the server is running
-            while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
+            await Task.Run(async () =>
             {
-                try
+                Initialize();
+
+                _logger.LogInformation("Local Client: Connecting ...");
+                // Loop is here to wait until the server is running
+                while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
                 {
-                    await _connection.StartAsync(cancellationToken);
-
-                    // _logger.LogInformation("Local Client: Status: {0} ...", _connection.State.ToString());
-
-                    // break;
-
-                    while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                    try
                     {
-                        await Task.Delay(1000);
+                        await _connection.StartAsync(cancellationToken);
+
+                        // _logger.LogInformation("Local Client: Status: {0} ...", _connection.State.ToString());
+
+                        // break;
+
+                        while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                        {
+                            await Task.Delay(1000);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("Local Client: Error Connecting: {0}", ex.Message);
+                        await Task.Delay(1000, cancellationToken);
                     }
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError("Local Client: Error Connecting: {0}", ex.Message);
-                    await Task.Delay(1000, cancellationToken);
-                }
-            }
 
-            _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
+                _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
+            }).ConfigureAwait(false);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

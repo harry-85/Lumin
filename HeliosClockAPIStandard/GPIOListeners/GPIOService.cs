@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HeliosClockAPIStandard.GPIOListeners
 {
-    public partial class GPIOService : IHostedService
+    public partial class GPIOService : BackgroundService
     {
         private IHeliosManager heliosManager;
         private ILogger<GPIOService> logger;
@@ -28,8 +28,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
         private bool isLeftOn = false;
         private bool isRightOn = false;
 
-        PinValue pinLeftOld = PinValue.High;
-        PinValue pinRightOld = PinValue.High;
+        PinValue pinLeftOld = PinValue.Low;
+        PinValue pinRightOld = PinValue.Low;
 
         public LedSide side;
 
@@ -45,7 +45,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             logger.LogInformation("Started GPIO Watch initialied ...");
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
@@ -64,11 +64,11 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 gpioController.OpenPin((int)GpioInputPin.LeftSide, PinMode.Input);
                 gpioController.OpenPin((int)GpioInputPin.RightSide, PinMode.Input);
 
-                while (!cancellationToken.IsCancellationRequested)
+                while (!stoppingToken.IsCancellationRequested)
                 {
                     isOn = heliosManager.IsRunning;
-                    await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, cancellationToken).ConfigureAwait(false);
-                    await ExecuteTouchWatcher(LedSide.Right, stopwatchRight, cancellationToken).ConfigureAwait(false);
+                    await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, stoppingToken).ConfigureAwait(false);
+                    await ExecuteTouchWatcher(LedSide.Right, stopwatchRight, stoppingToken).ConfigureAwait(false);
                 }
 
                 gpioController.ClosePin((int)GpioInputPin.LeftSide);
@@ -82,7 +82,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             logger.LogInformation("Stopped GPIO Watch ...");
         }
 
-        /// <summary>Executes the touch watcher.</summary>
+        /// <summary>Executes the touch watcher. Checks if short or long press. On or Off.</summary>
         /// <param name="side">The side.</param>
         /// <param name="stopwatch">The stopwatch.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -133,9 +133,10 @@ namespace HeliosClockAPIStandard.GPIOListeners
                         return;
                     }
 
+                    //First long press, only white / black in full mode
                     if (elapsed >= TouchDefaultValues.MinLongPressDuration && (TouchDefaultValues.MinLongPressDuration % elapsed) == 0)
                     {
-                        logger.LogInformation("First long press Power: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
+                        logger.LogInformation("First long press. Mode: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
 
                         side = LedSide.Full;
                         await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
@@ -174,7 +175,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
         /// <summary>Triggered when the application host is performing a graceful shutdown.</summary>
         /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
-        public Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
             try
             {
