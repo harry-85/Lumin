@@ -10,7 +10,7 @@ namespace HeliosClockCommon.LedCommon
         /// <summary>The disposed indicator.</summary>
         protected bool disposed = false;
 
-        public int DimRatio { get; set; }
+        public int Brightness { get; set; }
 
         /// <summary>Gets or sets a value indicating whether this instance is smoothing.</summary>
         /// <value><c>true</c> if this instance is smoothing; otherwise, <c>false</c>.</value>
@@ -24,7 +24,6 @@ namespace HeliosClockCommon.LedCommon
         /// <param name="settings">The settings.</param>
         public AbstractLedController() 
         {
-            DimRatio = 100;
         }
 
         public static ILedController CreateController<T>(APIServiceSettings serviceSettings) where T : ILedController, new()

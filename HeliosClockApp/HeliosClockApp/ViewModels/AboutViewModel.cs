@@ -67,8 +67,8 @@ namespace HeliosClockApp.ViewModels
             AddGradientCommand = new Command(OnAddGradient);
         }
 
-        /// <summary>Gets the set randomolor command.</summary>
-        /// <value>The set randomolor command.</value>
+        /// <summary>Gets the set randomcolor command.</summary>
+        /// <value>The set randomcolor command.</value>
         public ICommand SetRandomolorCommand { get; }
 
         /// <summary>Gets the black command.</summary>

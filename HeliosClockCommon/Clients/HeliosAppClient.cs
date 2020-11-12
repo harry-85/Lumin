@@ -20,7 +20,7 @@ namespace HeliosClockCommon.Clients
 
         public IPAddress IPAddress { get; set; }
 
-        /// <summary>Occurs when connection tu hub established.</summary>
+        /// <summary>Occurs when connection to hub established.</summary>
         public event EventHandler<EventArgs<bool>> OnConnected;
 
         /// <summary>The connection.</summary>

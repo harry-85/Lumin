@@ -48,7 +48,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             heliosManager = manager;
             stopwatchLeft = new Stopwatch();
             stopwatchRight = new Stopwatch();
-            logger.LogInformation("Started GPIO Watch initialied ...");
+            logger.LogInformation("Started GPIO Watch initialized ...");
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             }
             catch (Exception ex)
             {
-                logger.LogError("Error Read Pin GPIO Service. Message: {0}", ex.Message);
+                logger.LogInformation("Error Read Pin GPIO Service. Message: {0}", ex.Message);
             }
 
             logger.LogInformation("Stopped GPIO Watch ...");

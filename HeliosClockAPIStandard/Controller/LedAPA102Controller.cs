@@ -30,6 +30,7 @@ namespace HeliosClockAPIStandard.Controller
         /// <param name="numLeds">Number of LEDs in the strip</param>
         public LedAPA102Controller() : base()
         {
+            Brightness = 255;
             // The actual logic here is that we need to send a zero to be sent for every 16 pixels in the strip, to signify the end
             // of the color data and reset the addressing.
             int endFrameSize = (LedCount + 14) / 16;
@@ -108,7 +109,7 @@ namespace HeliosClockAPIStandard.Controller
                         else
                             sendColor = pixels[realIndex].LedColor;
 
-                        int alpha = DimRatio;//255 * DimRatio / 100;
+                        int alpha = Brightness;//255 * DimRatio / 100;
 
                         spiDataBytes.Add((byte)(0xE0 | (byte)(alpha >> 3)));
 

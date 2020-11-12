@@ -18,7 +18,7 @@ namespace HeliosClockCommon.LedCommon
 
         /// <summary>Gets or sets the dim ratio.</summary>
         /// <value>The dim ratio.</value>
-        int DimRatio { get; set; }
+        int Brightness { get; set; }
 
         /// <summary>
         /// Gets or sets the actual screen.

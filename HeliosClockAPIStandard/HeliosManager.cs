@@ -2,12 +2,8 @@
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Dynamic;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,12 +17,14 @@ namespace HeliosClockAPIStandard
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
-        public int DimRatio { get { return LedController.DimRatio; } set { LedController.DimRatio = value; } }
+        public int Brightness { get { return LedController.Brightness; } set { LedController.Brightness = value; } }
 
         public bool IsRunning { get => autoOffTmer.Enabled; }
 
         public double AutoOffTime { get; set; }
 
+        /// <summary>Initializes a new instance of the <see cref="HeliosManager"/> class.</summary>
+        /// <param name="ledController">The led controller.</param>
         public HeliosManager(ILedController ledController)
         {
             RefreshSpeed = 100;
@@ -38,16 +36,22 @@ namespace HeliosClockAPIStandard
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
         }
 
+        /// <summary>Refreshes the screen.</summary>
         public async Task RefreshScreen()
         {
             await LedController.Repaint().ConfigureAwait(false);
         }
 
+        /// <summary>Handles the Elapsed event of the AutoOffTmer control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             await SetOnOff(PowerOnOff.Off, LedSide.Full, Color.White).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the random color.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         public async Task SetRandomColor(CancellationToken cancellationToken)
         {
             Random rnd = new Random();
@@ -61,6 +65,11 @@ namespace HeliosClockAPIStandard
             await SetColor(startColor, endColor, ColorInterpolationMode.HueMode, cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the color.</summary>
+        /// <param name="startColor">The start color.</param>
+        /// <param name="endColor">The end color.</param>
+        /// <param name="interpolationMode"></param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         public async Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken)
         {
             autoOffTmer.Stop();
@@ -83,6 +92,9 @@ namespace HeliosClockAPIStandard
             LedController.IsSmoothing = false;
         }
 
+        /// <summary>Runs the led mode.</summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         public async Task RunLedMode(LedMode mode, CancellationToken cancellationToken)
         {
             autoOffTmer.Stop();

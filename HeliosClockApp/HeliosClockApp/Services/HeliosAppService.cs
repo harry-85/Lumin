@@ -56,6 +56,7 @@ namespace HeliosClockApp.Services
                 if (e.Args)
                 {
                     await StopMode().ConfigureAwait(false);
+                    await SetBrightness(255).ConfigureAwait(false);
                 }
             };
 

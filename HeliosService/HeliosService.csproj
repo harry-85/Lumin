@@ -14,8 +14,4 @@
     <ProjectReference Include="..\HeliosClockAPIStandard\HeliosClockAPIStandard.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;C:\Users\richy\source\iot\artifacts\bin\System.Device.Gpio\Debug\net5.0\System.Device.Gpio.dll&quot; &quot;$(outdir)System.Device.Gpio.dll&quot; /Y" />
-  </Target>
-
 </Project>

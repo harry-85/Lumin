@@ -81,7 +81,7 @@ namespace HeliosClockCommon.Clients
         public async Task SetBrightness(string brightness)
         {
             _logger.LogDebug("Set Brightness level to: {0} ...", brightness);
-            manager.DimRatio = int.Parse(brightness);
+            manager.Brightness = int.Parse(brightness);
             await manager.RefreshScreen().ConfigureAwait(false);
         }
 

@@ -8,7 +8,7 @@ namespace HeliosClockCommon.Interfaces
 {
     public interface IHeliosManager
     {
-        int DimRatio { get; set; }
+        int Brightness { get; set; }
 
         /// <summary>Gets a value indicating whether this instance is running.</summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
