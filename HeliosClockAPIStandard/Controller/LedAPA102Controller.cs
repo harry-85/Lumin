@@ -108,7 +108,9 @@ namespace HeliosClockAPIStandard.Controller
                         else
                             sendColor = pixels[realIndex].LedColor;
 
-                        spiDataBytes.Add((byte)(0xE0 | (byte)(sendColor.A >> 3)));
+                        int alpha = DimRatio;//255 * DimRatio / 100;
+
+                        spiDataBytes.Add((byte)(0xE0 | (byte)(alpha >> 3)));
 
                         // APA102/DotStar leds take the color data in Blue, Green, Red order.  Weirdly, according to the spec these are supposed
                         // to take a 0-255 value for R/G/B.  However, on the ones I have they only seem to take 0-126.  Specifying 127-255 doesn't

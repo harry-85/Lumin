@@ -8,6 +8,8 @@ namespace HeliosClockCommon.Interfaces
 {
     public interface IHeliosManager
     {
+        int DimRatio { get; set; }
+
         /// <summary>Gets a value indicating whether this instance is running.</summary>
         /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         bool IsRunning { get; }
@@ -53,5 +55,8 @@ namespace HeliosClockCommon.Interfaces
         /// <summary>Sets the random color.</summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         Task SetRandomColor(CancellationToken cancellationToken);
+
+        /// <summary>Refreshes the screen.</summary>
+        Task RefreshScreen();
     }
 }

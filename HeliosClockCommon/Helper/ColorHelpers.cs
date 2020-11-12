@@ -212,23 +212,23 @@ namespace HeliosClockCommon.Helper
 
         public static string HexConverter(Color c)
         {
-            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+            return "#" + c.A.ToString("X2")  + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
 
         }
 
         public static String RGBConverter(System.Drawing.Color c)
         {
-            return "RGB(" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString() + ")";
+            return "ARGB(" + c.A.ToString() + "," + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString() + ")";
         }
 
         public static Color FromHex(string hexColor)
         {
-            int r = int.Parse(hexColor.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
-            int g = int.Parse(hexColor.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
-            int b = int.Parse(hexColor.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
+            int a = int.Parse(hexColor.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
+            int r = int.Parse(hexColor.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+            int g = int.Parse(hexColor.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
+            int b = int.Parse(hexColor.Substring(7, 2), System.Globalization.NumberStyles.HexNumber);
 
-            return Color.FromArgb(r, g, b);
-            // return ColorTranslator.FromHtml(hexColor);
+            return Color.FromArgb(a, r, g, b);
         }
 
         public static bool CompareColor(Color colorOne, Color colorTwo)

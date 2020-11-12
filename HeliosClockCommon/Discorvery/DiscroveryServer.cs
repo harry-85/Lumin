@@ -21,7 +21,7 @@ namespace HeliosClockCommon.Discorvery
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Started Discrovery Server ...");
+            _logger.LogInformation("Started Discovery Server ...");
             var Server = new UdpClient(8888);
             var ResponseData = Encoding.ASCII.GetBytes("SomeResponseData");
 
@@ -33,7 +33,7 @@ namespace HeliosClockCommon.Discorvery
                     var ClientEp = ClientRequestData.RemoteEndPoint;
                     var ClientRequest = Encoding.ASCII.GetString(ClientRequestData.Buffer);
 
-                    _logger.LogDebug("Recived {0} from {1}, sending response", ClientRequest, ClientEp.Address.ToString());
+                    _logger.LogTrace("Received {0} from {1}, sending response", ClientRequest, ClientEp.Address.ToString());
                     Server.Send(ResponseData, ResponseData.Length, ClientEp);
                 }
             }).ConfigureAwait(false);

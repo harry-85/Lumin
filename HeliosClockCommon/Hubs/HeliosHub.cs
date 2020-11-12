@@ -46,6 +46,11 @@ namespace HeliosClockCommon.Hubs
             await Clients.All.Stop().ConfigureAwait(false);
         }
 
+        public async Task SetBrightness(string brightness)
+        {
+            await Clients.All.SetBrightness(brightness).ConfigureAwait(false);
+        }
+
         public async Task SetRefreshSpeed(string speed)
         {
             await Clients.All.SetRefreshSpeed(speed).ConfigureAwait(false);

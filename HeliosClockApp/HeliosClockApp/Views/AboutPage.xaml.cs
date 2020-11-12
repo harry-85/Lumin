@@ -1,6 +1,5 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.ViewModels;
-using HeliosClockCommon.Messages;
 using System;
 using Xamarin.Forms;
 
@@ -130,7 +129,15 @@ namespace HeliosClockApp.Views
             labelSpeed.Text = ((int)e.NewValue).ToString();
             var viewModel = (AboutViewModel)BindingContext;
             viewModel.SetRefreshRateCommand.Execute(e.NewValue);
+        }
 
+        /// <summary>Handles the 1 event of the Slider_ValueChanged control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ValueChangedEventArgs"/> instance containing the event data.</param>
+        private void Slider_ValueChanged_1(object sender, ValueChangedEventArgs e)
+        {
+            var viewModel = (AboutViewModel)BindingContext;
+            viewModel.SetBrightnessCommand.Execute((int)e.NewValue);
         }
     }
 }

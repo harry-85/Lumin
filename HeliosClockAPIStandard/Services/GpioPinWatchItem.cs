@@ -12,10 +12,10 @@ namespace HeliosClockAPIStandard.Services
         public GpioInputPin Pin { get; }
         public event EventHandler<GpioTriggeredEventArgs> PinTriggeredEvent;
         
-        private CancellationTokenSource tokenSource;
-        private CancellationToken token;
-        private GpioController gpioController;
-        private Stopwatch touchDurationWatch;
+        private readonly CancellationTokenSource tokenSource;
+        private readonly CancellationToken token;
+        private readonly GpioController gpioController;
+        private readonly Stopwatch touchDurationWatch;
 
         private Task fallingTask;
         private Task risingTask;
@@ -39,9 +39,7 @@ namespace HeliosClockAPIStandard.Services
             stopwatch.Start();
             gpioController.OpenPin((int)Pin, PinMode.Input);
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-            //Watch fallign edge
+            //Watch falling edge
             fallingTask = Task.Run(async () =>
             {
                 while (!token.IsCancellationRequested)
@@ -78,7 +76,6 @@ namespace HeliosClockAPIStandard.Services
                     touchDurationWatch.Start();
                 }
             });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         public Task StopAsync()

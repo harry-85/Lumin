@@ -10,6 +10,8 @@ namespace HeliosClockCommon.LedCommon
         /// <summary>The disposed indicator.</summary>
         protected bool disposed = false;
 
+        public int DimRatio { get; set; }
+
         /// <summary>Gets or sets a value indicating whether this instance is smoothing.</summary>
         /// <value><c>true</c> if this instance is smoothing; otherwise, <c>false</c>.</value>
         public bool IsSmoothing { get; set; }
@@ -22,6 +24,7 @@ namespace HeliosClockCommon.LedCommon
         /// <param name="settings">The settings.</param>
         public AbstractLedController() 
         {
+            DimRatio = 100;
         }
 
         public static ILedController CreateController<T>(APIServiceSettings serviceSettings) where T : ILedController, new()
@@ -75,7 +78,7 @@ namespace HeliosClockCommon.LedCommon
         /// <summary>Gets or sets the CancellationToken.</summary>
         /// <value>The token.</value>
         public CancellationToken Token { get; set; }
-      
+       
         /// <summary>Repaints this instance.</summary>
         public async Task Repaint()
         {

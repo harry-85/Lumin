@@ -23,5 +23,7 @@ namespace HeliosClockCommon.Interfaces
         Task SetRefreshSpeed(string speed);
 
         Task SetOnOff(string onOff, string side);
+
+        Task SetBrightness(string brightness);
     }
 }

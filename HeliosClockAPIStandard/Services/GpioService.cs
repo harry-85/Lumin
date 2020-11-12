@@ -12,10 +12,9 @@ namespace HeliosClockAPIStandard.Services
 {
     public class GpioService : BackgroundService
     {
-        public event EventHandler<EventArgs<(TouchDuration TouchDuration, GpioInputPin Pin)>> GpioPinTouched;
-        private GpioController gpioController;
+        private readonly GpioController gpioController;
 
-        private List<GpioPinWatchItem> pinWatchers;
+        private readonly List<GpioPinWatchItem> pinWatchers;
 
         public GpioService()
         {
@@ -47,8 +46,6 @@ namespace HeliosClockAPIStandard.Services
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-
-          
             throw new NotImplementedException();
         }
     }

@@ -58,6 +58,11 @@ namespace HeliosClockCommon.Clients
             await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRefreshSpeed), speed).ConfigureAwait(false);
         }
 
+        public async Task SetBrightness(string brightness)
+        {
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetBrightness), brightness).ConfigureAwait(false);
+        }
+
         public Task SetAlarm(DateTime alarmTime)
         {
             throw new NotImplementedException();
@@ -136,6 +141,5 @@ namespace HeliosClockCommon.Clients
             catch
             { }
         }
-
     }
 }

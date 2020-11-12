@@ -78,6 +78,17 @@ namespace HeliosClockApp.Services
             }
         }
 
+        public async Task SetBrightness(int brightness)
+        {
+            try
+            {
+                await Client.SetBrightness(brightness.ToString()).ConfigureAwait(false);
+            }
+            catch
+            {
+            }
+        }
+
         public async Task SetOnOff(PowerOnOff onOff, LedSide side = LedSide.Full)
         {
             try

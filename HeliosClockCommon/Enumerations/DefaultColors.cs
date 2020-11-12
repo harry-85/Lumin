@@ -8,6 +8,6 @@ namespace HeliosClockCommon.Enumerations
 {
     public class DefaultColors
     {
-        public static Color WarmWhite = ColorHelpers.FromHex("#FFF5B6");
+        public static Color WarmWhite = ColorHelpers.FromHex("#FFFFF5B6");
     }
 }

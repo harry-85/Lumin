@@ -18,24 +18,24 @@ namespace HeliosClockAPIStandard.GPIOListeners
 {
     public partial class GPIOService : BackgroundService
     {
-        private IHeliosManager heliosManager;
+        private readonly IHeliosManager heliosManager;
         private readonly ILogger<GPIOService> logger;
         private GpioController gpioController;
 
-        private Stopwatch stopwatchLeft;
-        private Stopwatch stopwatchRight;
+        private readonly Stopwatch stopwatchLeft;
+        private readonly Stopwatch stopwatchRight;
 
         private int touchCound = 0;
 
         private bool isOn = false;
         private bool isLeftOn = false;
         private bool isRightOn = false;
-        private bool longOccured = false;
+        private bool firstLongToucgOccurred = false;
 
         PinValue pinLeftOld = PinValue.Low;
         PinValue pinRightOld = PinValue.Low;
 
-        private Color onOffColor = DefaultColors.WarmWhite;
+        private readonly Color onOffColor = DefaultColors.WarmWhite;
 
         public LedSide side;
 
@@ -121,7 +121,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     {
                         stopwatch.Start();
                         touchCound = 1;
-                        longOccured = false;
+                        firstLongToucgOccurred = false;
                     }
                 }
 
@@ -136,7 +136,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     stopwatch.Reset();
                 }
 
-                //If touch is pressed continiously
+                //If touch is pressed continuously
                 if (stopwatch.IsRunning)
                 {
                     //Random Color Full
@@ -151,7 +151,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     }
 
                     //First long press, only white / black in full mode
-                    if (elapsed >= TouchDefaultValues.MinLongPressDuration && !longOccured)
+                    if (elapsed >= TouchDefaultValues.MinLongPressDuration && !firstLongToucgOccurred)
                     {
                         logger.LogInformation("First long press. Mode: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
 
@@ -171,7 +171,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                             isRightOn = false;
                         }
 
-                        longOccured = true;
+                        firstLongToucgOccurred = true;
                     }
                     return;
                 }
@@ -222,7 +222,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             {
                 if (pinLeftOld != input)
                 {
-                    logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                    logger.LogInformation("Switch {0} toggled. Value: {1} ...", side, input);
                     pinLeftOld = input;
                     return true;
                 }
@@ -231,7 +231,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
             {
                 if (pinRightOld != input)
                 {
-                    logger.LogInformation("Switch {0} toggeled. Value: {1} ...", side, input);
+                    logger.LogInformation("Switch {0} toggled. Value: {1} ...", side, input);
                     pinRightOld = input;
                     return true;
                 }

@@ -15,12 +15,13 @@ namespace HeliosClockAPIStandard
 {
     public class HeliosManager : IHeliosManager
     {
-        private System.Timers.Timer autoOffTmer;
+        private readonly System.Timers.Timer autoOffTmer;
 
         public ILedController LedController { get; set; }
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
+        public int DimRatio { get { return LedController.DimRatio; } set { LedController.DimRatio = value; } }
 
         public bool IsRunning { get => autoOffTmer.Enabled; }
 
@@ -35,6 +36,11 @@ namespace HeliosClockAPIStandard
 
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
+        }
+
+        public async Task RefreshScreen()
+        {
+            await LedController.Repaint().ConfigureAwait(false);
         }
 
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

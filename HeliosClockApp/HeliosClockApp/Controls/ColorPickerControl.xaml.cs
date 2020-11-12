@@ -150,7 +150,7 @@ namespace HeliosClockApp.Controls
 
 		private void SkCanvasView_OnTouch(object sender, SKTouchEventArgs e)
 		{
-			// to fix the UWP touch bevaior
+			// to fix the UWP touch behavior
 			if (Device.RuntimePlatform == Device.UWP)
 			{
 				// avoid mouse over touch events
@@ -163,7 +163,7 @@ namespace HeliosClockApp.Controls
 			var canvasSize = SkCanvasView.CanvasSize;
 
 			// Check for each touch point XY position to be inside Canvas
-			// Ignore any Touch event ocurred outside the Canvas region 
+			// Ignore any Touch event occurred outside the Canvas region 
 			if ((e.Location.X > 0 && e.Location.X < canvasSize.Width) &&
 				(e.Location.Y > 0 && e.Location.Y < canvasSize.Height))
 			{

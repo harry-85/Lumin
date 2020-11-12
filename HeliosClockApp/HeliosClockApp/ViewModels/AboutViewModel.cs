@@ -59,6 +59,10 @@ namespace HeliosClockApp.ViewModels
             {
                 await DataStore.AddItemAsync(new ColorSaveItem { StartColor = HeliosService.StartColor, EndColor = HeliosService.EndColor, Name = "Test", Id = Guid.NewGuid().ToString() }).ConfigureAwait(false);
             });
+            SetBrightnessCommand = new Command<int>(async (brightness) =>
+            {
+                await HeliosService.SetBrightness(brightness).ConfigureAwait(false);
+            });
 
             AddGradientCommand = new Command(OnAddGradient);
         }
@@ -96,6 +100,7 @@ namespace HeliosClockApp.ViewModels
         /// <summary>Gets the stop command.</summary>
         /// <value>The stop command.</value>
         public ICommand StopCommand { get; }
+        public ICommand SetBrightnessCommand { get; }
 
         /// <summary>Called when [add gradient].</summary>
         /// <param name="obj">The object.</param>

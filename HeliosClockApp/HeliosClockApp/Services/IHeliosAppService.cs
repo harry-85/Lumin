@@ -45,7 +45,6 @@ namespace HeliosClockApp.Services
 
         /// <summary>Sets the on off.</summary>
         /// <param name="onOff">The on off.</param>
-        /// <returns></returns>
         Task SetOnOff(PowerOnOff onOff, LedSide side = LedSide.Full);
 
         /// <summary>Stops the actual running task on the server.</summary>
@@ -54,5 +53,9 @@ namespace HeliosClockApp.Services
         /// <summary>Sets the refresh speed of the actual running task on the server.</summary>
         /// <param name="speed">The speed.</param>
         Task SetRefreshSpeed(int speed);
+
+        /// <summary>Sets the brightness.</summary>
+        /// <param name="brightness">The brightness.</param>
+        Task SetBrightness(int brightness);
     }
 }
