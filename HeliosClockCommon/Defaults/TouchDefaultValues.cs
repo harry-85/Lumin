@@ -6,7 +6,7 @@ namespace HeliosClockCommon.Defaults
 {
     public class TouchDefaultValues
     {
-        public const int MinShortPressDuration = 100; // ms
+        public const int MinShortPressDuration = 70; // ms
         public const int MinLongPressDuration = 1000; // ms
     }
 }

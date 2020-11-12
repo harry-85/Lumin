@@ -39,16 +39,18 @@ namespace HeliosClockAPIStandard
 
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            await SetOnOff(PowerOnOff.Off, LedSide.Full).ConfigureAwait(false);
+            await SetOnOff(PowerOnOff.Off, LedSide.Full, Color.White).ConfigureAwait(false);
         }
 
         public async Task SetRandomColor(CancellationToken cancellationToken)
         {
             Random rnd = new Random();
             Color startColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+            //Color startColor = Color.FromArgb(RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255));
 
             rnd = new Random();
             Color endColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+            //Color endColor = Color.FromArgb(RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255));
 
             await SetColor(startColor, endColor, ColorInterpolationMode.HueMode, cancellationToken).ConfigureAwait(false);
         }
@@ -122,7 +124,7 @@ namespace HeliosClockAPIStandard
             await LedController.Repaint().ConfigureAwait(false);
         }
 
-        public async Task SetOnOff(PowerOnOff onOff, LedSide side)
+        public async Task SetOnOff(PowerOnOff onOff, LedSide side, Color color)
         {
             if (onOff == PowerOnOff.On)
             {
@@ -133,7 +135,6 @@ namespace HeliosClockAPIStandard
                 autoOffTmer.Stop();
             }
             
-
             LedController.IsSmoothing = false;
 
             var leds = new LedScreen(LedController);

@@ -6,12 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iot.Device.Bindings" Version="1.1.0-prerelease.20555.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.0-rc.2.20478.4" />
+    <PackageReference Include="Iot.Device.Bindings" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HeliosClockAPIStandard\HeliosClockAPIStandard.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;C:\Users\richy\source\iot\artifacts\bin\System.Device.Gpio\Debug\net5.0\System.Device.Gpio.dll&quot; &quot;$(outdir)System.Device.Gpio.dll&quot; /Y" />
+  </Target>
 
 </Project>

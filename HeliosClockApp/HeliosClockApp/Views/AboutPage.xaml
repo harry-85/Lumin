@@ -121,7 +121,7 @@
                         Command="{Binding StopCommand}"
                         TextColor="White" />
 
-        <Frame Grid.Row="1" Grid.RowSpan="2" x:Name="connectingOverlay" IsVisible="True" Opacity="0.9" Margin="0" Padding="0" VerticalOptions="FillAndExpand" BackgroundColor="LightGray"/>
+        <!--<Frame Grid.Row="1" Grid.RowSpan="2" x:Name="connectingOverlay" IsVisible="True" Opacity="0.9" Margin="0" Padding="0" VerticalOptions="FillAndExpand" BackgroundColor="LightGray"/>
         <StackLayout Grid.Row="1" x:Name="connectingIndicator" HorizontalOptions="Center" VerticalOptions="Center" Orientation="Vertical">
             <ActivityIndicator Grid.RowSpan="2"
                            IsRunning="True"
@@ -130,7 +130,7 @@
                            Color="Purple"
                            HeightRequest="250"/>
             <Label Text="Connecting ..." FontSize="Title"></Label>
-        </StackLayout>
+        </StackLayout>-->
 
     </Grid>
 </ContentPage>

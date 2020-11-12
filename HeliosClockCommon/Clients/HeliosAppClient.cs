@@ -86,7 +86,7 @@ namespace HeliosClockCommon.Clients
             Task.Run(async () => await StopOldConnection(_connection).ConfigureAwait(false));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-            _connection = new HubConnectionBuilder().WithUrl(URL).Build();
+            _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
             // Loop is here to wait until the server is running
             while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)

@@ -1,4 +1,5 @@
 ﻿using HeliosClockAPIStandard.Enumeration;
+using HeliosClockAPIStandard.Services;
 using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Interfaces;
@@ -7,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Device.Gpio;
+using System.Device.Gpio.Drivers;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +19,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
     public partial class GPIOService : BackgroundService
     {
         private IHeliosManager heliosManager;
-        private ILogger<GPIOService> logger;
+        private readonly ILogger<GPIOService> logger;
         private GpioController gpioController;
 
         private Stopwatch stopwatchLeft;
@@ -27,9 +30,12 @@ namespace HeliosClockAPIStandard.GPIOListeners
         private bool isOn = false;
         private bool isLeftOn = false;
         private bool isRightOn = false;
+        private bool longOccured = false;
 
         PinValue pinLeftOld = PinValue.Low;
         PinValue pinRightOld = PinValue.Low;
+
+        private Color onOffColor = DefaultColors.WarmWhite;
 
         public LedSide side;
 
@@ -45,11 +51,16 @@ namespace HeliosClockAPIStandard.GPIOListeners
             logger.LogInformation("Started GPIO Watch initialied ...");
         }
 
+        /// <summary>
+        /// This method is called when the <see cref="T:Microsoft.Extensions.Hosting.IHostedService" /> starts. The implementation should return a task that represents
+        /// the lifetime of the long running operation(s) being performed.
+        /// </summary>
+        /// <param name="stoppingToken">Triggered when <see cref="M:Microsoft.Extensions.Hosting.IHostedService.StopAsync(System.Threading.CancellationToken)" /> is called.</param>
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
-                gpioController = new GpioController();
+                gpioController = new GpioController(PinNumberingScheme.Logical, new RaspberryPi3Driver());
             }
             catch (Exception ex)
             {
@@ -59,16 +70,24 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
             logger.LogInformation("Started GPIO Watch ...");
 
+
             try
             {
-                gpioController.OpenPin((int)GpioInputPin.LeftSide, PinMode.Input);
-                gpioController.OpenPin((int)GpioInputPin.RightSide, PinMode.Input);
+                // await ExecuteTouchCheckAsync(stoppingToken).ConfigureAwait(false);
+
+                gpioController.OpenPin((int)GpioInputPin.LeftSide, PinMode.InputPullDown);
+                gpioController.OpenPin((int)GpioInputPin.RightSide, PinMode.InputPullDown);
+
+                var side = LedSide.Left;
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     isOn = heliosManager.IsRunning;
-                    await ExecuteTouchWatcher(LedSide.Left, stopwatchLeft, stoppingToken).ConfigureAwait(false);
-                    await ExecuteTouchWatcher(LedSide.Right, stopwatchRight, stoppingToken).ConfigureAwait(false);
+
+                    var input = gpioController.Read(side == LedSide.Left ? (int)GpioInputPin.LeftSide : (int)GpioInputPin.RightSide);
+                    await ExecuteTouchWatcher(side, input, side == LedSide.Left ? stopwatchLeft : stopwatchRight, stoppingToken).ConfigureAwait(false);
+                    side = side == LedSide.Left ? LedSide.Right : LedSide.Left;
+                    await Task.Delay(5).ConfigureAwait(false);
                 }
 
                 gpioController.ClosePin((int)GpioInputPin.LeftSide);
@@ -82,28 +101,27 @@ namespace HeliosClockAPIStandard.GPIOListeners
             logger.LogInformation("Stopped GPIO Watch ...");
         }
 
+
         /// <summary>Executes the touch watcher. Checks if short or long press. On or Off.</summary>
         /// <param name="side">The side.</param>
         /// <param name="stopwatch">The stopwatch.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        private async Task ExecuteTouchWatcher(LedSide side, Stopwatch stopwatch, CancellationToken cancellationToken)
+        private async Task ExecuteTouchWatcher(LedSide side, PinValue input, Stopwatch stopwatch, CancellationToken cancellationToken)
         {
             await Task.Run(async () =>
             {
                 long elapsed = 0;
 
-                var input = gpioController.Read((side == LedSide.Left ? (int)GpioInputPin.LeftSide : (int)GpioInputPin.RightSide));
-
                 //Check for flip
-                CheckTouchFlip(side, input);
+                CheckTouchFlipSetOld(side, input);
 
                 if (input == PinValue.High)
                 {
-                    //logger.LogInformation("Switch {0} down ...", side);
                     if (!stopwatch.IsRunning)
                     {
                         stopwatch.Start();
                         touchCound = 1;
+                        longOccured = false;
                     }
                 }
 
@@ -112,7 +130,6 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 //If touch is released
                 if (input == PinValue.Low && stopwatch.IsRunning)
                 {
-                    //logger.LogInformation("Switch {0} High ...", side);
                     stopwatch.Stop();
                     elapsed = stopwatch.ElapsedMilliseconds;
                     logger.LogInformation("Touch duration: {0} ms ...", elapsed);
@@ -134,12 +151,12 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     }
 
                     //First long press, only white / black in full mode
-                    if (elapsed >= TouchDefaultValues.MinLongPressDuration && (TouchDefaultValues.MinLongPressDuration % elapsed) == 0)
+                    if (elapsed >= TouchDefaultValues.MinLongPressDuration && !longOccured)
                     {
                         logger.LogInformation("First long press. Mode: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
 
                         side = LedSide.Full;
-                        await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
                         //Flip between on off
                         isOn = !isOn;
 
@@ -153,6 +170,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
                             isLeftOn = false;
                             isRightOn = false;
                         }
+
+                        longOccured = true;
                     }
                     return;
                 }
@@ -161,12 +180,12 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 {
                     if (side == LedSide.Left)
                     {
-                        await heliosManager.SetOnOff(isLeftOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isLeftOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
                         isLeftOn = !isLeftOn;
                     }
                     if (side == LedSide.Right)
                     {
-                        await heliosManager.SetOnOff(isRightOn ? PowerOnOff.Off : PowerOnOff.On, side).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isRightOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
                         isRightOn = !isRightOn;
                     }
                 }
@@ -197,7 +216,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
         /// <summary>Checks the touch flip.</summary>
         /// <param name="side">The side.</param>
         /// <param name="input">The input.</param>
-        private bool CheckTouchFlip(LedSide side, PinValue input)
+        private bool CheckTouchFlipSetOld(LedSide side, PinValue input)
         {
             if (side == LedSide.Left)
             {

@@ -28,7 +28,6 @@ namespace HeliosClockCommon.Clients
         {
             this.manager = manager;
             ledController = manager.LedController;
-
             cancellationTokenSource = new CancellationTokenSource();
             cancellationToken = cancellationTokenSource.Token;
 
@@ -40,7 +39,7 @@ namespace HeliosClockCommon.Clients
             string URL = string.Format(DefaultValues.HubUrl, "localhost", DefaultValues.SignalPortOne);
             _logger.LogInformation(URL);
 
-            _connection = new HubConnectionBuilder().WithUrl(URL).Build();
+            _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
 
@@ -57,7 +56,7 @@ namespace HeliosClockCommon.Clients
         public async Task SetOnOff(string onOff, string side)
         {
             _logger.LogInformation("Local Helios On / Off Command : {0} ...", onOff);
-            await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side)).ConfigureAwait(false);
+            await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side), Color.White).ConfigureAwait(false);
         }
         bool isRunning = false;
         public Task SetColor(string startColor, string endColor, string interpolationMode)
