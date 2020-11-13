@@ -15,7 +15,7 @@ namespace HeliosClockApp.ViewModels
         public AboutViewModel()
         {
             Title = "Lumin Control";
-            SetRandomolorCommand = new Command<ColorModel>(async (colorModel) =>
+            SetRandomColorCommand = new Command<ColorModel>(async (colorModel) =>
             {
                 HeliosService.StartColor = colorModel.StartColor;
                 HeliosService.EndColor = colorModel.EndColor;
@@ -79,9 +79,9 @@ namespace HeliosClockApp.ViewModels
             AddGradientCommand = new Command(OnAddGradient);
         }
 
-        /// <summary>Gets the set randomcolor command.</summary>
-        /// <value>The set randomcolor command.</value>
-        public ICommand SetRandomolorCommand { get; }
+        /// <summary>Gets the set random color command.</summary>
+        /// <value>The set random color command.</value>
+        public ICommand SetRandomColorCommand { get; }
 
         /// <summary>Gets the black command.</summary>
         /// <value>The black command.</value>

@@ -5,10 +5,10 @@ using Xamarin.Forms;
 
 namespace HeliosClockApp.Views
 {
-    public partial class AboutPage : ContentPage
+    public partial class ColorControlPage : ContentPage
     {
-        /// <summary>Initializes a new instance of the <see cref="AboutPage"/> class.</summary>
-        public AboutPage()
+        /// <summary>Initializes a new instance of the <see cref="ColorControlPage"/> class.</summary>
+        public ColorControlPage()
         {
             InitializeComponent();
             var viewModel = (AboutViewModel)BindingContext;
@@ -118,7 +118,7 @@ namespace HeliosClockApp.Views
             EndColor = System.Drawing.Color.FromArgb(255, rnd.Next(256), rnd.Next(256), rnd.Next(256));
 
             var viewModel = (AboutViewModel)BindingContext;
-            viewModel.SetRandomolorCommand.Execute(new ColorModel { StartColor = StartColor , EndColor = EndColor});
+            viewModel.SetRandomColorCommand.Execute(new ColorModel { StartColor = StartColor , EndColor = EndColor});
         }
 
         /// <summary>Handles the ValueChanged event of the Slider control.</summary>
