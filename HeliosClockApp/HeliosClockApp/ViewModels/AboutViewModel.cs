@@ -3,6 +3,7 @@ using HeliosClockApp.Views;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Models;
 using System;
+using System.Net;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -57,7 +58,18 @@ namespace HeliosClockApp.ViewModels
 
             SaveColorCommand = new Command(async () =>
             {
-                await DataStore.AddItemAsync(new ColorSaveItem { StartColor = HeliosService.StartColor, EndColor = HeliosService.EndColor, Name = "Test", Id = Guid.NewGuid().ToString() }).ConfigureAwait(false);
+                string randomWord = "Saved Color";
+                try
+                {
+                    WebClient client = new WebClient();
+                    var downloadedString = client.DownloadString("https://www.wordgenerator.net/application/p.php?id=dictionary_words&type=1&spaceflag=false");
+                    randomWord = downloadedString.Split(",")[0];
+                }
+                catch
+                {
+                }
+
+                await DataStore.AddItemAsync(new ColorSaveItem { StartColor = HeliosService.StartColor, EndColor = HeliosService.EndColor, Name = randomWord, Id = Guid.NewGuid().ToString() }).ConfigureAwait(false);
             });
             SetBrightnessCommand = new Command<int>(async (brightness) =>
             {

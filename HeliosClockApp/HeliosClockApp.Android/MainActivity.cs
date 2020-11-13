@@ -1,20 +1,15 @@
-﻿using System;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Android.OS;
-using HeliosClockApp.Services;
+﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
+using Android.OS;
+using Android.Runtime;
 using Android.Util;
 using HeliosClockCommon.Messages;
 using TouchEffect.Android;
 
 namespace HeliosClockApp.Droid
 {
-    [Activity(Label = "Lumin", Icon = "@mipmap/lumin_icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait )]
+    [Activity(Label = "Lumin", Icon = "@mipmap/lumin_icon", Theme = "@style/MainTheme", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         static readonly string TAG = typeof(MainActivity).FullName;
