@@ -9,7 +9,7 @@ using TouchEffect.Android;
 
 namespace HeliosClockApp.Droid
 {
-    [Activity(Label = "Lumin", Icon = "@mipmap/lumin_icon", Theme = "@style/MainTheme", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait )]
+    [Activity(Label = "Lumin", Icon = "@mipmap/lumin_icon", Theme = "@style/MainTheme", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         static readonly string TAG = typeof(MainActivity).FullName;
@@ -49,7 +49,7 @@ namespace HeliosClockApp.Droid
 
         protected override void OnStart()
         {
-          base.OnStart();
+            base.OnStart();
         }
 
         protected override void OnRestart()

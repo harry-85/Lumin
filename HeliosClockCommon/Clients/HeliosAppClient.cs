@@ -87,8 +87,9 @@ namespace HeliosClockCommon.Clients
         {
             string URL = string.Format(DefaultValues.HubUrl, IPAddress, DefaultValues.SignalPortOne);
 
+            HubConnection oldConnection = _connection;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            Task.Run(async () => await StopOldConnection(_connection).ConfigureAwait(false));
+            Task.Run(async () => await StopOldConnection(oldConnection).ConfigureAwait(false));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();

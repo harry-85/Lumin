@@ -9,10 +9,10 @@ using Xamarin.Forms;
 
 namespace HeliosClockApp.ViewModels
 {
-    public class AboutViewModel : BaseViewModel
+    public class ColorControlModel : BaseViewModel
     {
-        /// <summary>Initializes a new instance of the <see cref="AboutViewModel"/> class.</summary>
-        public AboutViewModel()
+        /// <summary>Initializes a new instance of the <see cref="ColorControlModel"/> class.</summary>
+        public ColorControlModel()
         {
             Title = "Lumin Control";
             SetRandomColorCommand = new Command<ColorModel>(async (colorModel) =>

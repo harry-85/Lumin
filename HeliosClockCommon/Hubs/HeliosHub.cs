@@ -59,7 +59,7 @@ namespace HeliosClockCommon.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             UserHandler.ConnectedIds.Remove(Context.ConnectionId);
-            _logger.LogInformation("Client Disonnected. Id: {0} | Client Count: {1} ...", Context.ConnectionId, UserHandler.ConnectedIds.Count);
+            _logger.LogInformation("Client Disconnected. Id: {0} | Client Count: {1} ...", Context.ConnectionId, UserHandler.ConnectedIds.Count);
             return base.OnDisconnectedAsync(exception);
         }
 

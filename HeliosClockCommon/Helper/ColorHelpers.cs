@@ -78,14 +78,14 @@ namespace HeliosClockCommon.Helper
             return new List<Color>();
         }
 
-        public static async Task<List<Color>> DimColor(Color color, int size)
+        public static async Task<List<Color>> DimColor(Color color, int size, bool reverse = false)
         {
             return await Task.Run(() =>
             {
-                double decrement = 100.0 / ((double)size) / 100.0;
-                double actualDecrement = 0;
-
                 HSLColor hslColor = color;
+
+                double decrement = hslColor.Luminosity / ((double)size);
+                double actualDecrement = 0;
 
                 List<Color> colors = new List<Color>(size);
 
@@ -94,6 +94,10 @@ namespace HeliosClockCommon.Helper
                     colors.Add(new HSLColor(hslColor.Hue, hslColor.Saturation, hslColor.Luminosity - actualDecrement));
                     actualDecrement += decrement;
                 }
+
+                if (reverse)
+                    colors.Reverse();
+
                 return colors;
             }).ConfigureAwait(false);
         }

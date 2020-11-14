@@ -11,12 +11,12 @@ namespace HeliosClockApp.Views
         public ColorControlPage()
         {
             InitializeComponent();
-            var viewModel = (AboutViewModel)BindingContext;
+            var viewModel = (ColorControlModel)BindingContext;
 
-            ((AboutViewModel)BindingContext).HeliosService.OnEndColorChanged += HeliosService_OnEndColorChanged;
-            ((AboutViewModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
-            ((AboutViewModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
-            ((AboutViewModel)BindingContext).HeliosService.OnModeChange += HeliosService_OnModeChange;
+            ((ColorControlModel)BindingContext).HeliosService.OnEndColorChanged += HeliosService_OnEndColorChanged;
+            ((ColorControlModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
+            ((ColorControlModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
+            ((ColorControlModel)BindingContext).HeliosService.OnModeChange += HeliosService_OnModeChange;
 
             ////MessagingCenter.Subscribe<ConnectedMessage>(new ConnectedMessage(), "ConnectedToServer", (s) =>
             ////{
@@ -57,7 +57,7 @@ namespace HeliosClockApp.Views
         /// <param name="e">The <see cref="EventArgs{System.Boolean}"/> instance containing the event data.</param>
         private void HeliosService_OnConnected(object sender, EventArgs<bool> e)
         {
-            var viewModel = (AboutViewModel)BindingContext;
+            var viewModel = (ColorControlModel)BindingContext;
 
             //Set default values only when app was closed (shutdown) and reopened 
             if (e.Args)
@@ -117,7 +117,7 @@ namespace HeliosClockApp.Views
             rnd = new Random();
             EndColor = System.Drawing.Color.FromArgb(255, rnd.Next(256), rnd.Next(256), rnd.Next(256));
 
-            var viewModel = (AboutViewModel)BindingContext;
+            var viewModel = (ColorControlModel)BindingContext;
             viewModel.SetRandomColorCommand.Execute(new ColorModel { StartColor = StartColor , EndColor = EndColor});
         }
 
@@ -127,7 +127,7 @@ namespace HeliosClockApp.Views
         private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
             labelSpeed.Text = ((int)e.NewValue).ToString();
-            var viewModel = (AboutViewModel)BindingContext;
+            var viewModel = (ColorControlModel)BindingContext;
             viewModel.SetRefreshRateCommand.Execute(e.NewValue);
         }
 
@@ -136,7 +136,7 @@ namespace HeliosClockApp.Views
         /// <param name="e">The <see cref="ValueChangedEventArgs"/> instance containing the event data.</param>
         private void Slider_ValueChanged_1(object sender, ValueChangedEventArgs e)
         {
-            var viewModel = (AboutViewModel)BindingContext;
+            var viewModel = (ColorControlModel)BindingContext;
             viewModel.SetBrightnessCommand.Execute((int)e.NewValue);
         }
     }

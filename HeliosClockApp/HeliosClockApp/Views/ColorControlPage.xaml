@@ -11,7 +11,7 @@
              Title="{Binding Title}">
 
     <ContentPage.BindingContext>
-        <vm:AboutViewModel />
+        <vm:ColorControlModel />
     </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>

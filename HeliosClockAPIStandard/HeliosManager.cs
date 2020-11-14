@@ -107,11 +107,10 @@ namespace HeliosClockAPIStandard
                     case LedMode.Spin:
                         await SpinLeds(cancellationToken).ConfigureAwait(false);
                         break;
-                    /*
+                    
                     case LedMode.KnightRider:
                         await KnightRiderMode(cancellationToken).ConfigureAwait(false);
                         break;
-                    */
                     default:
                         break;
                 }
@@ -183,50 +182,49 @@ namespace HeliosClockAPIStandard
 
         private async Task KnightRiderMode(CancellationToken cancellationToken)
         {
-            int ledCount = LedController.LedCount;
-            int knightCount = (int)Math.Round(((double)ledCount / 100.0 * 10.0), 0);
-
-            var leds = new LedScreen(LedController);
-
-            bool clockWise = true;
-
-
-            int startPoint = -1 * knightCount;
-            
-
-            while (!cancellationToken.IsCancellationRequested)
+            await Task.Run(async () =>
             {
+                int ledCount = LedController.LedCount;
+                int knightCount = (int)Math.Round(((double)ledCount / 100.0 * 20.0), 0);
 
+                var leds = new LedScreen(LedController);
 
-                for (int i = 0; i < LedController.LedCount; i++)
+                int colorCount = 1;
+                int startIndex = 0;
+
+                bool isClockwise = true;
+
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    var colors = await ColorHelpers.DimColor(StartColor, knightCount).ConfigureAwait(false);
+                    var colors = await ColorHelpers.DimColor(StartColor, knightCount, true).ConfigureAwait(false);
 
-                    int ledIndex = clockWise ? i : LedController.LedCount - 1 - i;
-
-                    if (startPoint + i >= 0)
+                    for (int i = 0; i < ledCount; i++)
                     {
-                        if (startPoint + i >= knightCount)
-                        {
-                        
-                        }
+                        int index = isClockwise ? i : ledCount - i - 1;
+                        if (i >= startIndex && i < startIndex + colorCount)
+                            leds.SetPixel(ref index, colors[i - startIndex]);
+                        else
+                            leds.SetPixel(ref index, Color.Black);
 
-
-                        leds.SetPixel(ref ledIndex, colors[i - (i % knightCount) * knightCount]);
                     }
-                    else
-                        leds.SetPixel(ref ledIndex, Color.Black);
 
+                    if (colorCount < knightCount - 1)
+                        colorCount++;
+
+                    await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
+                    
+                    startIndex++;
+
+                    if (startIndex >= ledCount)
+                    {
+                        colorCount = 1;
+                        startIndex = 0;
+                        isClockwise = !isClockwise;
+                    }
+
+                    await Task.Delay(RefreshSpeed).ConfigureAwait(false);
                 }
-
-                startPoint++;
-
-                if (startPoint >= LedController.LedCount + 2 * knightCount)
-                {
-                    startPoint = 0;
-                    clockWise = !clockWise;
-                }
-            }
+            }).ConfigureAwait(false);
         }
     }
 }

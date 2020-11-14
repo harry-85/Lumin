@@ -169,6 +169,7 @@ namespace HeliosClockApp.Services
             {
                 await Task.Delay(100).ConfigureAwait(false);
             }
+
             await Client.StartAsync(token).ConfigureAwait(false);
         }
 

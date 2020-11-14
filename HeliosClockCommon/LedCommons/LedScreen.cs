@@ -20,7 +20,7 @@ namespace HeliosClockCommon.LedCommon
 
         public void SetPixel(ref int index, Color color)
         {
-            CheckIndexOverflw(ref index);
+            if (CheckIndexOverflw(ref index)) return;
 
             if (pixels[index] == null)
                 pixels[index] = new LedPixel();
@@ -40,10 +40,12 @@ namespace HeliosClockCommon.LedCommon
             }
         }
 
-        private void CheckIndexOverflw(ref int index)
+        private bool CheckIndexOverflw(ref int index)
         {
             if (index >= controller.LedCount)
-                index = 0;
+                return true;
+
+            return false;
             //index = controller.LedCount - index;
         }
     }
