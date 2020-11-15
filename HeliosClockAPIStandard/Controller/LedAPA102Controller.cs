@@ -63,12 +63,10 @@ namespace HeliosClockAPIStandard.Controller
 
             await Task.Run(async () =>
             {
-
                 Color sendColor;
 
                 List<List<Color>> smoothColors = null;
 
-                
                 if (IsSmoothing)
                 {
                     SmoothTime = 30; //5 * 5; //(5*0,5 ms = 1ms * 5 = 5ms)

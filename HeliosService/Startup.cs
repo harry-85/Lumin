@@ -28,7 +28,7 @@ namespace HeliosService
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
 
-            ILedController controller = new LedAPA102Controller { LedCount = 59 };
+            ILedController controller = new LedAPA102Controller { LedCount = 58 };
             IHeliosManager heliosManager = new HeliosManager(controller);
 
             services.AddHostedService<DiscroveryServer>();

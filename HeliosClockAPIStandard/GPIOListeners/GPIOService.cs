@@ -1,9 +1,7 @@
 ﻿using HeliosClockAPIStandard.Enumeration;
-using HeliosClockAPIStandard.Services;
 using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Interfaces;
-using HeliosClockCommon.ServiceOptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -35,7 +33,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
         PinValue pinLeftOld = PinValue.Low;
         PinValue pinRightOld = PinValue.Low;
 
-        private readonly Color onOffColor = DefaultColors.WarmWhite;
+        private readonly Color onColor = DefaultColors.WarmWhite;
 
         public LedSide side;
 
@@ -70,11 +68,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
             logger.LogInformation("Started GPIO Watch ...");
 
-
             try
             {
-                // await ExecuteTouchCheckAsync(stoppingToken).ConfigureAwait(false);
-
                 gpioController.OpenPin((int)GpioInputPin.LeftSide, PinMode.InputPullDown);
                 gpioController.OpenPin((int)GpioInputPin.RightSide, PinMode.InputPullDown);
 
@@ -146,7 +141,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
                         touchCound++;
 
-                        await heliosManager.SetRandomColor(cancellationToken).ConfigureAwait(false);
+                        await heliosManager.SetRandomColor().ConfigureAwait(false);
                         return;
                     }
 
@@ -156,7 +151,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
                         logger.LogInformation("First long press. Mode: {} ...", isOn ? PowerOnOff.Off : PowerOnOff.On);
 
                         side = LedSide.Full;
-                        await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isOn ? PowerOnOff.Off : PowerOnOff.On, side, onColor).ConfigureAwait(false);
                         //Flip between on off
                         isOn = !isOn;
 
@@ -180,12 +175,12 @@ namespace HeliosClockAPIStandard.GPIOListeners
                 {
                     if (side == LedSide.Left)
                     {
-                        await heliosManager.SetOnOff(isLeftOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isLeftOn ? PowerOnOff.Off : PowerOnOff.On, side, onColor).ConfigureAwait(false);
                         isLeftOn = !isLeftOn;
                     }
                     if (side == LedSide.Right)
                     {
-                        await heliosManager.SetOnOff(isRightOn ? PowerOnOff.Off : PowerOnOff.On, side, onOffColor).ConfigureAwait(false);
+                        await heliosManager.SetOnOff(isRightOn ? PowerOnOff.Off : PowerOnOff.On, side, onColor).ConfigureAwait(false);
                         isRightOn = !isRightOn;
                     }
                 }

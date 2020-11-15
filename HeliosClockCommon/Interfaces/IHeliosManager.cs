@@ -41,20 +41,21 @@ namespace HeliosClockCommon.Interfaces
 
         /// <summary>Runs the led mode.</summary>
         /// <param name="mode">The mode.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task RunLedMode(LedMode mode, CancellationToken cancellationToken);
+        Task RunLedMode(LedMode mode);
+
+        /// <summary>Stops the led mode.</summary>
+        Task StopLedMode();
 
         /// <summary>Sets the color.</summary>
         /// <param name="startColor">The start color.</param>
         /// <param name="endColor">The end color.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode, CancellationToken cancellationToken);
+        Task SetColor(Color startColor, Color endColor, ColorInterpolationMode interpolationMode);
 
         /// <summary>Sets the random color.</summary>
         /// <param name="cancellationToken">The cancellation token.</param>
-        Task SetRandomColor(CancellationToken cancellationToken);
+        Task SetRandomColor();
 
         /// <summary>Refreshes the screen.</summary>
         Task RefreshScreen();

@@ -20,9 +20,6 @@ namespace HeliosClockCommon.Clients
         private readonly IHeliosManager manager;
         private readonly ILedController ledController;
 
-        private CancellationTokenSource cancellationTokenSource;
-        private CancellationToken cancellationToken;
-
         /// <summary>Initializes a new instance of the <see cref="HeliosServerClient"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
@@ -30,8 +27,6 @@ namespace HeliosClockCommon.Clients
         {
             this.manager = manager;
             ledController = manager.LedController;
-            cancellationTokenSource = new CancellationTokenSource();
-            cancellationToken = cancellationTokenSource.Token;
 
             _logger = logger;
         }
@@ -71,7 +66,7 @@ namespace HeliosClockCommon.Clients
             {
                 isRunning = true;
                 _logger.LogDebug("Local Color Change: Start: {0} - End: {1} ...", startColor, endColor);
-                await manager.SetColor(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor),(ColorInterpolationMode)Enum.Parse(typeof(ColorInterpolationMode), interpolationMode), cancellationToken).ConfigureAwait(false);
+                await manager.SetColor(ColorHelpers.FromHex(startColor), ColorHelpers.FromHex(endColor),(ColorInterpolationMode)Enum.Parse(typeof(ColorInterpolationMode), interpolationMode)).ConfigureAwait(false);
                 isRunning = false;
             });
 
@@ -141,7 +136,7 @@ namespace HeliosClockCommon.Clients
             _logger.LogDebug("Local Client: Mode change to: {0} ...", mode);
 
             Enum.TryParse(mode, out LedMode ledMode);
-            await manager.RunLedMode(ledMode, cancellationToken).ConfigureAwait(false);
+            await manager.RunLedMode(ledMode).ConfigureAwait(false);
         }
 
         private Task OnSetRefreshSpeed(string speed)
@@ -151,16 +146,10 @@ namespace HeliosClockCommon.Clients
             return Task.CompletedTask;
         }
 
-        private Task OnStop()
+        private async Task OnStop()
         {
             _logger.LogDebug("Local Client: Mode stop command ...");
-
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource = new CancellationTokenSource();
-            cancellationToken = cancellationTokenSource.Token;
-
-            return Task.CompletedTask;
+            await manager.StopLedMode().ConfigureAwait(false);
         }
-
     }
 }
