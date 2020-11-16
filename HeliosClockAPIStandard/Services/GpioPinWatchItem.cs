@@ -33,24 +33,21 @@ namespace HeliosClockAPIStandard.Services
             touchDurationWatch = new Stopwatch();
         }
 
-        public void StartWatchingPinAsync()
+        public void StartWatchingPin()
         {
             stopwatch = new Stopwatch();
             stopwatch.Start();
-            gpioController.OpenPin((int)Pin, PinMode.Input);
+            gpioController.OpenPin((int)Pin, PinMode.InputPullDown);
 
             //Watch falling edge
             fallingTask = Task.Run(async () =>
             {
                 while (!token.IsCancellationRequested)
                 {
-                    Console.WriteLine("Falling Edge Detection Started .........................................................................................");
                     var valueTask = await gpioController.WaitForEventAsync((int)Pin, PinEventTypes.Falling, token).ConfigureAwait(false);
 
                     var duration = touchDurationWatch.ElapsedMilliseconds;
-                    PinTriggeredEvent?.Invoke(this, new GpioTriggeredEventArgs(PinValue.Low, Pin, duration));
-
-                    Console.WriteLine("Falling Edge Detected ... {0} .......................................................................................", stopwatch.ElapsedMilliseconds);
+                    PinTriggeredEvent?.Invoke(this, new GpioTriggeredEventArgs { PinValue = PinValue.Low, InputPin = Pin, TouchDuration = duration, WaitForEventResult = valueTask });
 
                     touchDurationWatch.Stop();
                     touchDurationWatch.Reset();
@@ -63,14 +60,11 @@ namespace HeliosClockAPIStandard.Services
             {
                 while (!token.IsCancellationRequested)
                 {
-                    Console.WriteLine("Rising Edge Detection Started .........................................................................................");
-
                     var valueTask = await gpioController.WaitForEventAsync((int)Pin, PinEventTypes.Rising, token).ConfigureAwait(false);
 
-                    Console.WriteLine("Rising Edge Detected ...{0} .......................................................................................", stopwatch.ElapsedMilliseconds);
-
                     var duration = touchDurationWatch.ElapsedMilliseconds;
-                    PinTriggeredEvent?.Invoke(this, new GpioTriggeredEventArgs(PinValue.High, Pin, duration));
+                    PinTriggeredEvent?.Invoke(this, new GpioTriggeredEventArgs { PinValue = PinValue.High, InputPin = Pin, TouchDuration = duration, WaitForEventResult = valueTask });
+
                     touchDurationWatch.Stop();
                     touchDurationWatch.Reset();
                     touchDurationWatch.Start();
@@ -80,6 +74,7 @@ namespace HeliosClockAPIStandard.Services
 
         public Task StopAsync()
         {
+            gpioController.ClosePin((int)Pin);
             tokenSource.Cancel();
             return Task.CompletedTask;            
         }

@@ -1,22 +1,25 @@
 ﻿using HeliosClockAPIStandard.Enumeration;
 using System;
-using System.Collections.Generic;
 using System.Device.Gpio;
-using System.Text;
 
 namespace HeliosClockAPIStandard.Services
 {
-   public class GpioTriggeredEventArgs : EventArgs
+    public class GpioTriggeredEventArgs : EventArgs
     {
-        public PinValue PinValue { get; set; }
-        public GpioInputPin InputPin { get; set; }
-        public long TouchDuration { get; set; }
+        /// <summary>Gets the pin value.</summary>
+        /// <value>The pin value.</value>
+        public PinValue PinValue { get; init; }
 
-        public GpioTriggeredEventArgs(PinValue pinValue, GpioInputPin inputPin, long touchDuration)
-        {
-            PinValue = pinValue;
-            InputPin = inputPin;
-            TouchDuration = touchDuration;
-        }
+        /// <summary>Gets or sets the input pin.</summary>
+        /// <value>The input pin.</value>
+        public GpioInputPin InputPin { get; init; }
+
+        /// <summary>Gets or sets the duration of the touch.</summary>
+        /// <value>The duration of the touch.</value>
+        public long TouchDuration { get; init; }
+
+        /// <summary>Gets or sets the wait for event result.</summary>
+        /// <value>The wait for event result.</value>
+        public WaitForEventResult WaitForEventResult { get; init; }
     }
 }

@@ -38,7 +38,7 @@ namespace HeliosService
             services.AddSingleton(heliosManager);
 
 
-            services.AddHostedService<Worker>();
+            //services.AddHostedService<Worker>();
             services.AddHostedService<GPIOService>();
             services.AddSingleton<HeliosServerClient>();
 

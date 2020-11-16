@@ -13,14 +13,14 @@ namespace HeliosClockCommon.LedCommon
             this.controller = controller;
 
             if (controller == null)
-                throw new Exception("Led Controller musst not be Null in LedScreen");
+                throw new Exception("Led Controller must not be Null in LedScreen");
 
             pixels = new LedPixel[controller.LedCount];
         }
 
         public void SetPixel(ref int index, Color color)
         {
-            if (CheckIndexOverflw(ref index)) return;
+            if (CheckIndexOverflow(ref index)) return;
 
             if (pixels[index] == null)
                 pixels[index] = new LedPixel();
@@ -40,7 +40,7 @@ namespace HeliosClockCommon.LedCommon
             }
         }
 
-        private bool CheckIndexOverflw(ref int index)
+        private bool CheckIndexOverflow(ref int index)
         {
             if (index >= controller.LedCount)
                 return true;

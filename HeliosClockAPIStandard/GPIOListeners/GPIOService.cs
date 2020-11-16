@@ -30,8 +30,8 @@ namespace HeliosClockAPIStandard.GPIOListeners
         private bool isRightOn = false;
         private bool firstLongToucgOccurred = false;
 
-        PinValue pinLeftOld = PinValue.Low;
-        PinValue pinRightOld = PinValue.Low;
+        private PinValue pinLeftOld = PinValue.Low;
+        private PinValue pinRightOld = PinValue.Low;
 
         private readonly Color onColor = DefaultColors.WarmWhite;
 
@@ -46,7 +46,6 @@ namespace HeliosClockAPIStandard.GPIOListeners
             heliosManager = manager;
             stopwatchLeft = new Stopwatch();
             stopwatchRight = new Stopwatch();
-            logger.LogInformation("Started GPIO Watch initialized ...");
         }
 
         /// <summary>
@@ -80,9 +79,9 @@ namespace HeliosClockAPIStandard.GPIOListeners
                     isOn = heliosManager.IsRunning;
 
                     var input = gpioController.Read(side == LedSide.Left ? (int)GpioInputPin.LeftSide : (int)GpioInputPin.RightSide);
-                    await ExecuteTouchWatcher(side, input, side == LedSide.Left ? stopwatchLeft : stopwatchRight, stoppingToken).ConfigureAwait(false);
+                    await ExecuteTouchWatcher(side, input, side == LedSide.Left ? stopwatchLeft : stopwatchRight).ConfigureAwait(false);
                     side = side == LedSide.Left ? LedSide.Right : LedSide.Left;
-                    await Task.Delay(5).ConfigureAwait(false);
+                    await Task.Delay(5, stoppingToken).ConfigureAwait(false);
                 }
 
                 gpioController.ClosePin((int)GpioInputPin.LeftSide);
@@ -90,18 +89,16 @@ namespace HeliosClockAPIStandard.GPIOListeners
             }
             catch (Exception ex)
             {
-                logger.LogInformation("Error Read Pin GPIO Service. Message: {0}", ex.Message);
+                logger.LogInformation("Error Read Pin GPIO Service. Message: {0} ...", ex.Message);
             }
 
             logger.LogInformation("Stopped GPIO Watch ...");
         }
 
-
         /// <summary>Executes the touch watcher. Checks if short or long press. On or Off.</summary>
         /// <param name="side">The side.</param>
         /// <param name="stopwatch">The stopwatch.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        private async Task ExecuteTouchWatcher(LedSide side, PinValue input, Stopwatch stopwatch, CancellationToken cancellationToken)
+        private async Task ExecuteTouchWatcher(LedSide side, PinValue input, Stopwatch stopwatch)
         {
             await Task.Run(async () =>
             {

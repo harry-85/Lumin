@@ -40,7 +40,6 @@ namespace HeliosClockCommon.Clients
             _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
-
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
             _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
@@ -60,8 +59,10 @@ namespace HeliosClockCommon.Clients
         bool isRunning = false;
         public Task SetColor(string startColor, string endColor, string interpolationMode)
         {
+            //return if color change is already in progress
             if (isRunning) return Task.CompletedTask;
 
+            // Start task to avoid input jam
             Task.Run(async () =>
             {
                 isRunning = true;

@@ -33,7 +33,7 @@ namespace HeliosClockApp.Droid
 
 			runnable = async () => await StartClientDiscovery().ConfigureAwait(false);
 
-			handler = new Handler();
+			handler = new Handler(Looper.MainLooper);
 		}
 
 		/// <summary>
@@ -150,7 +150,7 @@ namespace HeliosClockApp.Droid
 					var ServerResponse = Encoding.ASCII.GetString(ServerResponseData.Buffer);
 
 					
-					Log.Debug("Recived {0} from {1}", ServerResponse, ServerResponseData.RemoteEndPoint.Address);
+					Log.Debug("Revived {0} from {1}", ServerResponse, ServerResponseData.RemoteEndPoint.Address);
 
 					OnIpDiscovered?.Invoke(this, new EventArgs<IPAddress>(ServerResponseData.RemoteEndPoint.Address));
 

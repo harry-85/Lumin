@@ -103,7 +103,7 @@ namespace HeliosClockAPIStandard
         {
             cancellationTokenSource?.Cancel();
 
-            while (IsModeRunning && cancellationToken != null && !cancellationToken.IsCancellationRequested)
+            while (IsModeRunning && !cancellationToken.IsCancellationRequested)
                 await Task.Delay(1).ConfigureAwait(false);
 
             cancellationTokenSource = new CancellationTokenSource();

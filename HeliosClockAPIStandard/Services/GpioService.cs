@@ -26,6 +26,7 @@ namespace HeliosClockAPIStandard.Services
         {
             var newItem = new GpioPinWatchItem(gpioController, pin);
             newItem.PinTriggeredEvent += NewItem_PinTriggeredEvent;
+            newItem.StartWatchingPin();
             pinWatchers.Add(newItem);
         }
 
@@ -41,8 +42,16 @@ namespace HeliosClockAPIStandard.Services
 
         private void NewItem_PinTriggeredEvent(object sender, GpioTriggeredEventArgs e)
         {
-            throw new NotImplementedException();
+            if (e.PinValue == PinValue.Low)
+            {
+                
+            }
         }
+
+        ////private async Task TouchedLow()
+        ////{
+           
+        ////}
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
