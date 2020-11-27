@@ -52,13 +52,13 @@ namespace HeliosClockCommon.Clients
 
         /// <summary>Sets the on off.</summary>
         /// <param name="onOff">The on off.</param>
-        public async Task SetOnOff(string onOff, string side)
+        private async Task SetOnOff(string onOff, string side)
         {
             _logger.LogDebug("Local Helios On / Off Command : {0} ...", onOff);
             await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side), Color.White).ConfigureAwait(false);
         }
         bool isRunning = false;
-        public Task SetColor(string startColor, string endColor, string interpolationMode)
+        private Task SetColor(string startColor, string endColor, string interpolationMode)
         {
             //return if color change is already in progress
             if (isRunning) return Task.CompletedTask;
@@ -73,67 +73,6 @@ namespace HeliosClockCommon.Clients
             });
 
             return Task.CompletedTask;
-        }
-
-        public async Task SetRandomColor()
-        {
-            await manager.SetRandomColor().ConfigureAwait(false);
-        }
-
-        public async Task SetBrightness(string brightness)
-        {
-            _logger.LogDebug("Set Brightness level to: {0} ...", brightness);
-            manager.Brightness = int.Parse(brightness);
-            await manager.RefreshScreen().ConfigureAwait(false);
-        }
-
-        public Task SetAlarm(DateTime alarmTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SignalClient(string user, string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await Task.Run(async () =>
-            {
-                Initialize();
-
-                _logger.LogInformation("Local Client: Connecting ...");
-                // Loop is here to wait until the server is running
-                while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
-                {
-                    try
-                    {
-                        await _connection.StartAsync(cancellationToken);
-
-                        // _logger.LogInformation("Local Client: Status: {0} ...", _connection.State.ToString());
-
-                        // break;
-
-                        while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
-                        {
-                            await Task.Delay(1000);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning("Local Client: Error Connecting: {0}", ex.Message);
-                        await Task.Delay(1000, cancellationToken);
-                    }
-                }
-
-                _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
-            }).ConfigureAwait(false);
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            await _connection.DisposeAsync().ConfigureAwait(false);
         }
 
         private async Task OnStartMode(string mode)
@@ -153,10 +92,67 @@ namespace HeliosClockCommon.Clients
             return Task.CompletedTask;
         }
 
+        private async Task SetRandomColor()
+        {
+            await manager.SetRandomColor().ConfigureAwait(false);
+        }
+
+        private async Task SetBrightness(string brightness)
+        {
+            _logger.LogDebug("Set Brightness level to: {0} ...", brightness);
+            manager.Brightness = int.Parse(brightness);
+            await manager.RefreshScreen().ConfigureAwait(false);
+        }
+
         private async Task OnStop()
         {
             _logger.LogDebug("Local Client: Mode stop command ...");
             await manager.StopLedMode().ConfigureAwait(false);
+        }
+
+        private Task SetAlarm(DateTime alarmTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task SignalClient(string user, string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await Task.Run(async () =>
+            {
+                Initialize();
+
+                _logger.LogInformation("Local Client: Connecting ...");
+                // Loop is here to wait until the server is running
+                while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await _connection.StartAsync(cancellationToken).ConfigureAwait(false); ;
+
+                        while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                        {
+                            await Task.Delay(1000).ConfigureAwait(false);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning("Local Client: Error Connecting: {0}", ex.Message);
+                        await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+
+                _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
+            }).ConfigureAwait(false);
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _connection.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

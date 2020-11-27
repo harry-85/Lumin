@@ -40,6 +40,8 @@ namespace HeliosService
 
             //services.AddHostedService<Worker>();
             services.AddHostedService<GPIOService>();
+            //services.AddHostedService<HeliosServerClient>();
+
             services.AddSingleton<HeliosServerClient>();
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'

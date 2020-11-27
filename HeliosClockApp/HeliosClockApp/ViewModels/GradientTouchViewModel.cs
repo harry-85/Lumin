@@ -12,6 +12,7 @@ namespace HeliosClockApp.ViewModels
 {
     public class GradientTouchViewModel: BaseViewModel, INotifyPropertyChanged
     {
+        //Referenced from XAML Code
         public ObservableCollection<string> ColorValues { get; } = new ObservableCollection<string>(Enumerable.Range(0, (int)HSLColor.Scale).Select(s => s.ToString()));
         public Command<(int, int, IList<int>)> ItemSelectedCommand { get; }
 
@@ -39,6 +40,7 @@ namespace HeliosClockApp.ViewModels
             }
         }
 
+        /// <summary>Initializes a new instance of the <see cref="GradientTouchViewModel"/> class.</summary>
         public GradientTouchViewModel()
         {
             StartColor = Color.Black;
@@ -111,7 +113,6 @@ namespace HeliosClockApp.ViewModels
         {
             MessagingCenter.Unsubscribe<SetColorFromGradientMessage, Color>(this, "SetColor");
         }
-
 
         /// <summary>Sends the color.</summary>
         private async Task SendColor()
