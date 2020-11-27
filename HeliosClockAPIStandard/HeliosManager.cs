@@ -52,6 +52,7 @@ namespace HeliosClockAPIStandard
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             await SetOnOff(PowerOnOff.Off, LedSide.Full, Color.Black).ConfigureAwait(false);
+            Brightness = 255;
         }
 
         /// <summary>Sets the random color.</summary>

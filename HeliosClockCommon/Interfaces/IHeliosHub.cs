@@ -14,6 +14,8 @@ namespace HeliosClockCommon.Interfaces
         Task SetAlarm(DateTime alarmTime);
         Task SetColor(Color startColor, Color endColor);
 
+        Task SetRandomColor();
+
         Task SetColorString(string startColor, string endColor, string interpolationMode);
 
         Task StartMode(string mode);

@@ -62,6 +62,10 @@ namespace HeliosClockCommon.Clients
         {
             await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetBrightness), brightness).ConfigureAwait(false);
         }
+        public async Task SetRandomColor()
+        {
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRandomColor)).ConfigureAwait(false);
+        }
 
         public Task SetAlarm(DateTime alarmTime)
         {

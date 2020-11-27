@@ -40,6 +40,7 @@ namespace HeliosClockCommon.Clients
             _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
+            _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
             _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
@@ -72,6 +73,11 @@ namespace HeliosClockCommon.Clients
             });
 
             return Task.CompletedTask;
+        }
+
+        public async Task SetRandomColor()
+        {
+            await manager.SetRandomColor().ConfigureAwait(false);
         }
 
         public async Task SetBrightness(string brightness)

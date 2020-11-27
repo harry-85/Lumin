@@ -7,6 +7,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,11 +16,12 @@ namespace HeliosClockApp.Droid
 	[Service]
 	public class AppDiscoveryService : Service
 	{
+		private CancellationTokenSource cancellationTokenSource;
+		private CancellationToken cancellationToken;
 		public event EventHandler<EventArgs<IPAddress>> OnIpDiscovered;
 		static readonly string TAG = typeof(AppDiscoveryService).FullName;
 		static readonly int NOTIFICATION_ID = 10000;
 
-		bool isStarted;
 		Handler handler;
 		Action runnable;
 
@@ -30,8 +32,6 @@ namespace HeliosClockApp.Droid
 			base.OnCreate();
 
 			Log.Info(TAG, "OnCreate: the discovery service is initializing.");
-
-			runnable = async () => await StartClientDiscovery().ConfigureAwait(false);
 
 			handler = new Handler(Looper.MainLooper);
 		}
@@ -57,17 +57,25 @@ namespace HeliosClockApp.Droid
 		/// <altmember cref="M:Android.App.Service.StopSelfResult(System.Int32)" />
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
-			if (isStarted)
-			{
-				Log.Info(TAG, "OnStartCommand: This discovery service has already been started.");
-			}
-			else
-			{
-				Log.Info(TAG, "OnStartCommand: The discovery service is starting.");
-				//DispatchNotificationThatServiceIsRunning();
-				handler.Post(runnable);
-				isStarted = true;
-			}
+			Log.Info(TAG, "OnStartCommand: Stop running discovery service!");
+			cancellationTokenSource?.Cancel();
+
+
+			if (runnable != null)
+				handler.RemoveCallbacks(runnable);
+
+			runnable = null;
+
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+
+			runnable = async () => await StartClientDiscovery().ConfigureAwait(false);
+			
+
+			Log.Info(TAG, "OnStartCommand: Discovery Service Starting.");
+
+			//DispatchNotificationThatServiceIsRunning();
+			handler.Post(runnable);
 
 			// This tells Android to restart the service if it is killed.
 			return StartCommandResult.Sticky;
@@ -101,6 +109,9 @@ namespace HeliosClockApp.Droid
 			// We need to shut things down.
 			Log.Info(TAG, "OnDestroy: The discovery service is shutting down.");
 
+			//Stop the service
+			cancellationTokenSource?.Cancel();
+
 			// Stop the handler.
 			handler.RemoveCallbacks(runnable);
 
@@ -108,7 +119,6 @@ namespace HeliosClockApp.Droid
 			var notificationManager = (NotificationManager)GetSystemService(NotificationService);
 			notificationManager.Cancel(NOTIFICATION_ID);
 
-			isStarted = false;
 			base.OnDestroy();
 		}
 
@@ -132,7 +142,7 @@ namespace HeliosClockApp.Droid
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 			Task.Run(async () =>
 			{
-				while (isStarted)
+				while (!cancellationToken.IsCancellationRequested)
 				{
 					await Client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 8888)).ConfigureAwait(false);
 					await Task.Delay(500).ConfigureAwait(false);
@@ -140,7 +150,7 @@ namespace HeliosClockApp.Droid
 			});
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-			while (isStarted)
+			while (!cancellationToken.IsCancellationRequested)
 			{
 				Client.EnableBroadcast = true;
 

@@ -6,7 +6,6 @@
              xmlns:fontawesome="clr-namespace:FontAwesome"
              xmlns:controls="clr-namespace:HeliosClockApp.Controls"
              xmlns:converter="clr-namespace:HeliosClockApp.Converter;assembly=HeliosClockApp"
-             xmlns:f9p="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              x:Name="LimunControl"
              Title="{Binding Title}">
 
@@ -84,7 +83,7 @@
                         Command="{Binding BlackCommand}"
                         TextColor="White" />
 
-            <controls:GradientTouchView x:Name="gradientTouch" Grid.Row="4"></controls:GradientTouchView>
+            <controls:GradientTouchView Grid.Row="4" x:Name="gradientTouch"></controls:GradientTouchView>
 
             <Button Grid.Row="5" Margin="0,10,0,0" Text="Spin"
                         BackgroundColor="{StaticResource Primary}"

@@ -2,15 +2,20 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converter="clr-namespace:HeliosClockApp.Converter;assembly=HeliosClockApp"
+             xmlns:wp="clr-namespace:Vapolia.WheelPickerForms;assembly=Vapolia.WheelPickerForms"
+             xmlns:vm="clr-namespace:HeliosClockApp.ViewModels"
              x:Class="HeliosClockApp.Controls.GradientTouchView"
              x:Name="GradientTouchControl">
+
+    <ContentView.BindingContext>
+        <vm:GradientTouchViewModel />
+    </ContentView.BindingContext>
 
     <ContentView.Resources>
         <ResourceDictionary>
             <converter:ColorToHexStringConverter x:Key="ColorToHexStringConverter"></converter:ColorToHexStringConverter>
         </ResourceDictionary>
     </ContentView.Resources>
-
 
     <ContentView.Content>
         <Grid Grid.Row="1" Margin="0,10,0,0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
@@ -31,7 +36,7 @@
             </Frame>
             <StackLayout Grid.Row="0" Margin="0" Padding="0" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
                 <Frame BackgroundColor="Transparent" Opacity="1" Margin="0" Padding="0"  HorizontalOptions="FillAndExpand">
-                    
+
                     <Frame.GestureRecognizers >
                         <SwipeGestureRecognizer Direction="Down"  Swiped="StartSwipeGesture_Swiped"></SwipeGestureRecognizer>
                         <SwipeGestureRecognizer Direction="Up"  Swiped="StartSwipeGesture_Swiped"></SwipeGestureRecognizer>
@@ -50,12 +55,23 @@
                         <SwipeGestureRecognizer Direction="Up" Swiped="EndSwipeGesture_Swiped"></SwipeGestureRecognizer>
                         <TapGestureRecognizer Tapped="TapGestureRecognizer_End_Tapped" ></TapGestureRecognizer>
                     </Frame.GestureRecognizers>
-                    <Label x:Name="labelEndColor" IsVisible="False" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
+                    <StackLayout BackgroundColor="Transparent">
+                        <wp:WheelPicker ItemsSourceSimple="{Binding ColorValues}" HeightRequest="50"
+                        ItemTextSelectedColor="Lime"
+                        ItemTextFont="Italic"
+                        HorizontalOptions="Fill"
+                        Command="{Binding ItemSelectedCommand}"
+                        SelectedItemIndexChanged="WheelPicker_SelectedItemIndexChanged"
+                        SelectionLinesColor="Transparent">
+                            <wp:WheelDefinition Width="*" HorizontalOptions="Center" Alignment="Center" IsCircular="True" RowHeight="100"/>
+                        </wp:WheelPicker>
+                    </StackLayout>
+                    <!--<Label x:Name="labelEndColor" IsVisible="False" VerticalOptions="Center" HorizontalOptions="Center" FontSize="Title">
                         <Label.Text>
                             <Binding Source="{x:Reference GradientTouchControl}" Path="EndColor" Converter="{StaticResource ColorToHexStringConverter}">
                             </Binding>
                         </Label.Text>
-                    </Label>
+                    </Label>-->
                 </Frame>
             </StackLayout>
         </Grid>

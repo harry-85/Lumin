@@ -13,7 +13,6 @@ namespace HeliosClockApp.Services
     {
         public HeliosAppClient Client { get; set; }
 
-
         public CancellationToken token;
 
         public event EventHandler<EventArgs<Color>> OnStartColorChanged;
@@ -64,7 +63,6 @@ namespace HeliosClockApp.Services
             {
                 Client.IPAddress = ip;
             });
-
         }
 
         /// <summary>Sends the color to the server.</summary>

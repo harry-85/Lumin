@@ -56,6 +56,11 @@ namespace HeliosClockCommon.Hubs
             await Clients.All.SetRefreshSpeed(speed).ConfigureAwait(false);
         }
 
+        public async Task SetRandomColor()
+        {
+            await Clients.All.SetRandomColor().ConfigureAwait(false);
+        }
+
         public override Task OnDisconnectedAsync(Exception exception)
         {
             UserHandler.ConnectedIds.Remove(Context.ConnectionId);
