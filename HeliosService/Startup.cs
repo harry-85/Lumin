@@ -36,20 +36,8 @@ namespace HeliosService
             services.AddSignalR(options => { options.EnableDetailedErrors = true; });
             services.AddSingleton(controller);
             services.AddSingleton(heliosManager);
-
-
-            //services.AddHostedService<Worker>();
             services.AddHostedService<GPIOService>();
-            //services.AddHostedService<HeliosServerClient>();
-
-            services.AddSingleton<HeliosServerClient>();
-
-#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-            var provider = services.BuildServiceProvider();
-#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-
-            var heliosServerClient = provider.GetService<HeliosServerClient>();
-            Task.Run(async () => await heliosServerClient.StartAsync(token).ConfigureAwait(false));
+            services.AddHostedService<HeliosServerClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

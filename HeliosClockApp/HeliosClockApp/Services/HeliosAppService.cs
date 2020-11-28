@@ -1,4 +1,5 @@
 ﻿using HeliosClockCommon.Clients;
+using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Messages;
 using System;
@@ -58,11 +59,6 @@ namespace HeliosClockApp.Services
                     await SetBrightness(255).ConfigureAwait(false);
                 }
             };
-
-            Xamarin.Forms.MessagingCenter.Subscribe<IpDiscoveredTaskMessage, IPAddress>(new IpDiscoveredTaskMessage(), "IpDiscovered", (s, ip) =>
-            {
-                Client.IPAddress = ip;
-            });
         }
 
         /// <summary>Sends the color to the server.</summary>
@@ -139,36 +135,26 @@ namespace HeliosClockApp.Services
         }
 
         /// <summary>Connects to server.</summary>
-        public async Task ConnectToServer()
+        public async Task StartAsync(CancellationToken cancellationToken, IPAddress serverAddress)
         {
             cancellationTokenSource?.Cancel();
             cancellationTokenSource = new CancellationTokenSource();
             token = cancellationTokenSource.Token;
 
-            await Task.Run(async () =>
-            {
-                bool sent = false;
-                try
-                {
-                    while (!sent && !token.IsCancellationRequested)
-                    {
-                        Xamarin.Forms.MessagingCenter.Send<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage");
-                        await Task.Delay(100).ConfigureAwait(false);
-                        sent = true;
-                    }
-                }
-                catch
-                { }
-               
-            }).ConfigureAwait(false);
-
-
-            while (!token.IsCancellationRequested && Client.IPAddress == null)
-            {
-                await Task.Delay(100).ConfigureAwait(false);
-            }
-
+            Client.IPAddress = serverAddress;
             await Client.StartAsync(token).ConfigureAwait(false);
+        }
+
+        public async Task ConnectToServer(CancellationToken cancellationToken)
+        {
+            DiscoveryClient discoveryClient = new DiscoveryClient();
+            discoveryClient.OnIpDiscovered += async (s, e) =>
+            {
+                discoveryClient.StopDiscoveryClien();
+                await StartAsync(cancellationToken, e.Args).ConfigureAwait(false);
+            };
+
+            await discoveryClient.StartDiscoveryCient(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Stops the server.</summary>

@@ -1,4 +1,5 @@
 ﻿using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,10 +36,7 @@ namespace HeliosClockCommon.Clients
         /// <summary>Initializes this instance.</summary>
         private void Initialize()
         {
-            string URL = string.Format(DefaultValues.HubUrl, "localhost", DefaultValues.SignalPortOne);
-            _logger.LogInformation(URL);
-
-            _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
+           
 
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
             _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
@@ -120,8 +119,31 @@ namespace HeliosClockCommon.Clients
             throw new NotImplementedException();
         }
 
+        private bool isConnecting;
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            DiscoveryClient discoveryClient = new DiscoveryClient();
+            discoveryClient.OnIpDiscovered += async (s, e) =>
+            {
+                discoveryClient.StopDiscoveryClien();
+                await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
+            };
+
+            await discoveryClient.StartDiscoveryCient(cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task ConnectToServer(CancellationToken cancellationToken, IPAddress serverIpAddress)
+        {
+            if (isConnecting)
+                return;
+
+            isConnecting = true;
+
+            string URL = string.Format(DefaultValues.HubUrl, serverIpAddress.ToString(), DefaultValues.SignalPortOne);
+            _logger.LogInformation("Connecting to Server with address: {0} ...", URL);
+
+            _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
+
             await Task.Run(async () =>
             {
                 Initialize();
@@ -148,6 +170,8 @@ namespace HeliosClockCommon.Clients
 
                 _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
             }).ConfigureAwait(false);
+
+            isConnecting = false;
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

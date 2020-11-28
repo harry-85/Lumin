@@ -20,12 +20,12 @@ namespace HeliosClockApp.Droid
 
             base.OnCreate(savedInstanceState);
 
-            Xamarin.Forms.MessagingCenter.Subscribe<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage", (s) =>
-            {
-                Intent i = new Intent(this, typeof(AppDiscoveryService));
-                i.AddFlags(ActivityFlags.NewTask);
-                StartService(i);
-            });
+            ////Xamarin.Forms.MessagingCenter.Subscribe<StartServerDiscoveryServiceMessage>(new StartServerDiscoveryServiceMessage(), "StartDiscoveryMessage", (s) =>
+            ////{
+            ////    Intent i = new Intent(this, typeof(AppDiscoveryService));
+            ////    i.AddFlags(ActivityFlags.NewTask);
+            ////    StartService(i);
+            ////});
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
@@ -54,7 +54,6 @@ namespace HeliosClockApp.Droid
 
         protected override void OnRestart()
         {
-            //StartService(serviceToStart);
             base.OnRestart();
         }
 

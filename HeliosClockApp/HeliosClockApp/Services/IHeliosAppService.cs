@@ -3,6 +3,7 @@ using HeliosClockCommon.Enumerations;
 using System;
 using System.Drawing;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HeliosClockApp.Services
@@ -37,7 +38,7 @@ namespace HeliosClockApp.Services
         Task SendColor();
 
         /// <summary>Connects to server.</summary>
-        Task ConnectToServer();
+        Task ConnectToServer(CancellationToken cancellationToken);
 
         /// <summary>Starts the mode.</summary>
         /// <param name="mode">The mode.</param>
