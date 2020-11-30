@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using HeliosClockCommon.Defaults;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,17 +24,21 @@ namespace HeliosClockCommon.Discorvery
         {
             _logger.LogInformation("Started Discovery Server ...");
             var Server = new UdpClient(8888);
-            var ResponseData = Encoding.ASCII.GetBytes("SomeResponseData");
+            var ResponseData = Encoding.ASCII.GetBytes(DefaultDiscoveryValues.DefaultDiscoveryResponse);
 
             await Task.Run(async () =>
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var ClientRequestData = await Server.ReceiveAsync().ConfigureAwait(false);
-                    var ClientEp = ClientRequestData.RemoteEndPoint;
-                    var ClientRequest = Encoding.ASCII.GetString(ClientRequestData.Buffer);
+                    var clientRequest = Encoding.ASCII.GetString(ClientRequestData.Buffer);
 
-                    _logger.LogTrace("Received {0} from {1}, sending response", ClientRequest, ClientEp.Address.ToString());
+                    if (clientRequest != DefaultDiscoveryValues.DefaultDiscoveryRequest)
+                        continue;
+
+                    var ClientEp = ClientRequestData.RemoteEndPoint;
+
+                    _logger.LogTrace("Received {0} from {1}, sending response", clientRequest, ClientEp.Address.ToString());
                     Server.Send(ResponseData, ResponseData.Length, ClientEp);
                 }
             }).ConfigureAwait(false);

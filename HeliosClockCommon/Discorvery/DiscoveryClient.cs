@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HeliosClockCommon.Defaults;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -14,15 +15,16 @@ namespace HeliosClockCommon.Discorvery
 		private CancellationTokenSource localCancellationTokenSource;
 		private CancellationToken localCancellationToken;
 
+		/// <summary>Starts the discovery cient.</summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task StartDiscoveryCient(CancellationToken cancellationToken)
 		{
 			localCancellationTokenSource?.Cancel();
 			localCancellationTokenSource = new CancellationTokenSource();
 			localCancellationToken = localCancellationTokenSource.Token;
 
-
 			var Client = new UdpClient();
-			var RequestData = Encoding.ASCII.GetBytes("HeliosClockIpBroadcast");
+			var RequestData = Encoding.ASCII.GetBytes(DefaultDiscoveryValues.DefaultDiscoveryRequest);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 			Task.Run(async () =>
@@ -42,7 +44,10 @@ namespace HeliosClockCommon.Discorvery
 				try
 				{
 					var ServerResponseData = await Client.ReceiveAsync().ConfigureAwait(false);
-					var ServerResponse = Encoding.ASCII.GetString(ServerResponseData.Buffer);
+					var serverResponse = Encoding.ASCII.GetString(ServerResponseData.Buffer);
+
+					if (serverResponse != DefaultDiscoveryValues.DefaultDiscoveryResponse)
+						continue;
 
 					OnIpDiscovered?.Invoke(this, new EventArgs<IPAddress>(ServerResponseData.RemoteEndPoint.Address));
 				}
@@ -53,8 +58,8 @@ namespace HeliosClockCommon.Discorvery
 			Client.Close();
 		}
 
-
-		public void StopDiscoveryClien()
+		/// <summary>Stops the discovery client.</summary>
+		public void StopDiscoveryClient()
 		{
 			localCancellationTokenSource?.Cancel();
 		}

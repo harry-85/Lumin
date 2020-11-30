@@ -125,7 +125,7 @@ namespace HeliosClockCommon.Clients
             DiscoveryClient discoveryClient = new DiscoveryClient();
             discoveryClient.OnIpDiscovered += async (s, e) =>
             {
-                discoveryClient.StopDiscoveryClien();
+                discoveryClient.StopDiscoveryClient();
                 await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
             };
 

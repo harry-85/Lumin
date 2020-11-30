@@ -1,7 +1,6 @@
 ﻿using HeliosClockCommon.Clients;
 using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Messages;
 using System;
 using System.Drawing;
 using System.Net;
@@ -73,6 +72,8 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Sets the brightness.</summary>
+        /// <param name="brightness">The brightness.</param>
         public async Task SetBrightness(int brightness)
         {
             try
@@ -84,6 +85,9 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Sets the on off.</summary>
+        /// <param name="onOff">The on off.</param>
+        /// <param name="side"></param>
         public async Task SetOnOff(PowerOnOff onOff, LedSide side = LedSide.Full)
         {
             try
@@ -96,6 +100,8 @@ namespace HeliosClockApp.Services
             }
         }
 
+        /// <summary>Starts the mode.</summary>
+        /// <param name="mode">The mode.</param>
         public async Task StartMode(LedMode mode)
         {
             try
@@ -145,12 +151,14 @@ namespace HeliosClockApp.Services
             await Client.StartAsync(token).ConfigureAwait(false);
         }
 
+        /// <summary>Connects to server.</summary>
+        /// <param name="cancellationToken"></param>
         public async Task ConnectToServer(CancellationToken cancellationToken)
         {
             DiscoveryClient discoveryClient = new DiscoveryClient();
             discoveryClient.OnIpDiscovered += async (s, e) =>
             {
-                discoveryClient.StopDiscoveryClien();
+                discoveryClient.StopDiscoveryClient();
                 await StartAsync(cancellationToken, e.Args).ConfigureAwait(false);
             };
 
