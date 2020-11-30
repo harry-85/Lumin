@@ -27,5 +27,11 @@ namespace HeliosClockCommon.Interfaces
         Task SetOnOff(string onOff, string side);
 
         Task SetBrightness(string brightness);
+
+        Task RegisterAsLedClient(string clientId);
+
+        Task RegisterAsController(string startColor, string endColor, string interpolationMode);
+
+        Task LedClientChanged(string clientList);
     }
 }

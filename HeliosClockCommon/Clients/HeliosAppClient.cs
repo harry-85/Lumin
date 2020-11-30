@@ -12,11 +12,15 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Clients
 {
-    public partial class HeliosAppClient : IHeliosHub
+    public partial class HeliosAppClient
     {
         /// <summary>Gets or sets a value indicating whether this instance is initial connection.</summary>
         /// <value><c>true</c> if this instance is initial connection; otherwise, <c>false</c>.</value>
         public static bool IsInitialConnection { get; set; } = true;
+
+        /// <summary>Gets the client identifier.</summary>
+        /// <value>The client identifier.</value>
+        public string ClientId => _connection.ConnectionId;
 
         public IPAddress IPAddress { get; set; }
 
@@ -67,24 +71,30 @@ namespace HeliosClockCommon.Clients
             await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRandomColor)).ConfigureAwait(false);
         }
 
-        public Task SetAlarm(DateTime alarmTime)
+        public async Task RegisterAsController()
         {
-            throw new NotImplementedException();
+           await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsController), ClientId).ConfigureAwait(false);
         }
 
-        public Task SetColor(Color startColor, Color endColor)
+        /// <summary>Initializes this instance.</summary>
+        public void Initialize()
         {
-            throw new NotImplementedException();
+            _connection.On<string>(nameof(IHeliosHub.LedClientChanged), OnLedClientChanged);
+            _connection.Reconnected += _connection_Reconnected;
         }
 
-        public Task SetColorString(string startColor, string endColor, string interpolationMode)
+        private Task _connection_Reconnected(string arg)
         {
-            throw new NotImplementedException();
+            OnConnected?.Invoke(this, new EventArgs<bool>(IsInitialConnection));
+            return Task.CompletedTask;
         }
 
-        public Task SignalClient(string user, string message)
+        /// <summary>Called when any LED client changed.</summary>
+        /// <param name="clients">The clients.</param>
+        private Task OnLedClientChanged(string clients)
         {
-            throw new NotImplementedException();
+            var ledClientList = clients.Split(";");
+            return Task.CompletedTask;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -97,6 +107,7 @@ namespace HeliosClockCommon.Clients
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
+            Initialize();
 
             // Loop is here to wait until the server is running
             while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)

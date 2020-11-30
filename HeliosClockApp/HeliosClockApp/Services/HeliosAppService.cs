@@ -52,6 +52,8 @@ namespace HeliosClockApp.Services
             {
                 OnConnected?.Invoke(this, e);
 
+                await Client.RegisterAsController().ConfigureAwait(false);
+
                 if (e.Args)
                 {
                     await StopMode().ConfigureAwait(false);

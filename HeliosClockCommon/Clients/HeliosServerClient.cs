@@ -22,6 +22,8 @@ namespace HeliosClockCommon.Clients
         private readonly IHeliosManager manager;
         private readonly ILedController ledController;
 
+        public string ClientId => _connection.ConnectionId;
+
         /// <summary>Initializes a new instance of the <see cref="HeliosServerClient"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
@@ -43,9 +45,16 @@ namespace HeliosClockCommon.Clients
             _connection.On(nameof(IHeliosHub.Stop), OnStop);
             _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
             _connection.On<string, string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
-            _connection.On< string>(nameof(IHeliosHub.SetBrightness), SetBrightness);
+            _connection.On<string>(nameof(IHeliosHub.SetBrightness), SetBrightness);
+
+            _connection.Reconnected += _connection_Reconnected;
 
             _logger.LogInformation("Local Helios Client Initialized ...");
+        }
+
+        private async Task _connection_Reconnected(string arg)
+        {
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId).ConfigureAwait(false);
         }
 
         /// <summary>Sets the on off.</summary>
@@ -172,6 +181,9 @@ namespace HeliosClockCommon.Clients
                 _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
             }).ConfigureAwait(false);
 
+            if(!cancellationToken.IsCancellationRequested)
+                await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId).ConfigureAwait(false);
+            
             isConnecting = false;
         }
 
