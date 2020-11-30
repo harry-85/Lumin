@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>c9f6a9ca-8747-4458-9565-6f215d586ceb</UserSecretsId>
+    <UserSecretsId>4fe27e65-ea19-43a9-a3b3-ad0118b1a44e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iot.Device.Bindings" Version="1.3.0-prerelease.20575.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="6.0.0-alpha.1.20419.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HeliosClockAPIStandard\HeliosClockAPIStandard.csproj" />
+    <ProjectReference Include="..\HeliosClockCommon\HeliosClockCommon.csproj" />
   </ItemGroup>
 
 </Project>

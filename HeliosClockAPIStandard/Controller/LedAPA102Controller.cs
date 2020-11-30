@@ -120,11 +120,13 @@ namespace HeliosClockAPIStandard.Controller
 
                     //Add one more pixel into "nothing", fix to make sure all pixels are set. 
                     sendColor = Color.Black;
-
-                    spiDataBytes.Add((byte)(0xE0 | (byte)(Brightness >> 3)));
-                    spiDataBytes.Add((byte)(sendColor.B >> 1));
-                    spiDataBytes.Add((byte)(sendColor.G >> 1));
-                    spiDataBytes.Add((byte)(sendColor.R >> 1));
+                    for (int i = 0; i < 2; i++)
+                    {
+                        spiDataBytes.Add((byte)(0xE0 | (byte)(Brightness >> 3)));
+                        spiDataBytes.Add((byte)(sendColor.B >> 1));
+                        spiDataBytes.Add((byte)(sendColor.G >> 1));
+                        spiDataBytes.Add((byte)(sendColor.R >> 1));
+                    }
 
                     spiDataBytes.AddRange(this.EndFrame);
 

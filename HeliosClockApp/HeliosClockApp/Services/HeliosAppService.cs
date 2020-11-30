@@ -162,7 +162,7 @@ namespace HeliosClockApp.Services
                 await StartAsync(cancellationToken, e.Args).ConfigureAwait(false);
             };
 
-            await discoveryClient.StartDiscoveryCient(cancellationToken).ConfigureAwait(false);
+            await discoveryClient.StartDiscoveryClient(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Stops the server.</summary>

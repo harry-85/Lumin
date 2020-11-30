@@ -27,17 +27,16 @@ namespace HeliosClockCommon.Clients
         /// <param name="manager">The manager.</param>
         public HeliosServerClient(ILogger<HeliosServerClient> logger, IHeliosManager manager)
         {
+            _logger = logger;
+            _logger.LogInformation("Initializing LuminClient ...");
             this.manager = manager;
             ledController = manager.LedController;
-
-            _logger = logger;
+            _logger.LogInformation("LuminClient Initialized...");
         }
 
         /// <summary>Initializes this instance.</summary>
         private void Initialize()
         {
-           
-
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
             _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
@@ -122,14 +121,16 @@ namespace HeliosClockCommon.Clients
         private bool isConnecting;
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Starting Lumin Client ...");
             DiscoveryClient discoveryClient = new DiscoveryClient();
             discoveryClient.OnIpDiscovered += async (s, e) =>
             {
+                _logger.LogInformation("Server IP Discovered: {0} ...", e.Args);
                 discoveryClient.StopDiscoveryClient();
                 await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
             };
 
-            await discoveryClient.StartDiscoveryCient(cancellationToken).ConfigureAwait(false);
+            await discoveryClient.StartDiscoveryClient(cancellationToken).ConfigureAwait(false);
         }
 
         private async Task ConnectToServer(CancellationToken cancellationToken, IPAddress serverIpAddress)
