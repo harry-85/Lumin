@@ -1,4 +1,5 @@
-﻿using HeliosClockCommon.Defaults;
+﻿using HeliosClockCommon.Configurator;
+using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Helper;
@@ -19,25 +20,29 @@ namespace HeliosClockCommon.Clients
     {
         private readonly ILogger<HeliosServerClient> _logger;
         private HubConnection _connection;
-        private readonly IHeliosManager manager;
+        private readonly ILuminManager manager;
         private readonly ILedController ledController;
 
+        public ConfigureService ConfigureService { get; }
         public string ClientId => _connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="HeliosServerClient"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
-        public HeliosServerClient(ILogger<HeliosServerClient> logger, IHeliosManager manager)
+        public HeliosServerClient(ILogger<HeliosServerClient> logger, ILuminManager manager, ConfigureService configureService)
         {
             _logger = logger;
             _logger.LogInformation("Initializing LuminClient ...");
+
+            ConfigureService = configureService;
+
             this.manager = manager;
             ledController = manager.LedController;
             _logger.LogInformation("LuminClient Initialized...");
         }
 
         /// <summary>Initializes this instance.</summary>
-        private void Initialize()
+        private async Task Initialize()
         {
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
             _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
@@ -49,12 +54,15 @@ namespace HeliosClockCommon.Clients
 
             _connection.Reconnected += _connection_Reconnected;
 
+            await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
+
             _logger.LogInformation("Local Helios Client Initialized ...");
+
         }
 
         private async Task _connection_Reconnected(string arg)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId).ConfigureAwait(false);
+            await RegisterAsLedClient().ConfigureAwait(false);
         }
 
         /// <summary>Sets the on off.</summary>
@@ -117,6 +125,11 @@ namespace HeliosClockCommon.Clients
             await manager.StopLedMode().ConfigureAwait(false);
         }
 
+        private async Task RegisterAsLedClient()
+        {
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId, ConfigureService.Config.Name).ConfigureAwait(false);
+        }
+
         private Task SetAlarm(DateTime alarmTime)
         {
             throw new NotImplementedException();
@@ -156,7 +169,7 @@ namespace HeliosClockCommon.Clients
 
             await Task.Run(async () =>
             {
-                Initialize();
+                await Initialize().ConfigureAwait(false);
 
                 _logger.LogInformation("Local Client: Connecting ...");
                 // Loop is here to wait until the server is running
@@ -182,8 +195,8 @@ namespace HeliosClockCommon.Clients
             }).ConfigureAwait(false);
 
             if(!cancellationToken.IsCancellationRequested)
-                await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId).ConfigureAwait(false);
-            
+                await RegisterAsLedClient().ConfigureAwait(false);
+
             isConnecting = false;
         }
 

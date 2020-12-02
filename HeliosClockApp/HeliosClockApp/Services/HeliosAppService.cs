@@ -1,6 +1,8 @@
-﻿using HeliosClockCommon.Clients;
+﻿using HeliosClockApp.Models;
+using HeliosClockCommon.Clients;
 using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Models;
 using System;
 using System.Drawing;
 using System.Net;
@@ -21,6 +23,10 @@ namespace HeliosClockApp.Services
         public event EventHandler<EventArgs> OnDisconnected;
         public event EventHandler<EventArgs<LedMode>> OnModeChange;
 
+        public LedClientManager LedClientManager;
+
+        public LedClient ActiveLedClient { get; set; } = LedClient.AllClients;
+
         private CancellationTokenSource cancellationTokenSource;
         private Color startColor;
         private Color endColor;
@@ -34,6 +40,7 @@ namespace HeliosClockApp.Services
                 OnStartColorChanged?.Invoke(this, new EventArgs<Color>(startColor));
             }
         }
+
         public Color EndColor
         {
             get => endColor;
@@ -47,6 +54,8 @@ namespace HeliosClockApp.Services
         /// <summary>Initializes a new instance of the <see cref="HeliosAppService"/> class.</summary>
         public HeliosAppService()
         {
+            LedClientManager = new LedClientManager();
+
             Client = new HeliosAppClient();
             Client.OnConnected += async (s, e) =>
             {
@@ -60,6 +69,12 @@ namespace HeliosClockApp.Services
                     await SetBrightness(255).ConfigureAwait(false);
                 }
             };
+
+            Client.LedClientChanged += (s, e) =>
+            {
+                LedClientManager.SetNewClients(e.Args);
+            };
+
         }
 
         /// <summary>Sends the color to the server.</summary>
@@ -67,7 +82,7 @@ namespace HeliosClockApp.Services
         {
             try
             {
-                await Client.SendColor(StartColor, EndColor).ConfigureAwait(false);
+                await Client.SendColor(ActiveLedClient, StartColor, EndColor).ConfigureAwait(false);
             }
             catch
             {
@@ -80,7 +95,7 @@ namespace HeliosClockApp.Services
         {
             try
             {
-                await Client.SetBrightness(brightness.ToString()).ConfigureAwait(false);
+                await Client.SetBrightness(ActiveLedClient, brightness.ToString()).ConfigureAwait(false);
             }
             catch
             {
@@ -94,7 +109,7 @@ namespace HeliosClockApp.Services
         {
             try
             {
-                await Client.SetOnOff(onOff.ToString(), side.ToString()).ConfigureAwait(false);
+                await Client.SetOnOff(ActiveLedClient, onOff.ToString(), side.ToString()).ConfigureAwait(false);
                 await StopMode().ConfigureAwait(false);
             }
             catch
@@ -109,7 +124,7 @@ namespace HeliosClockApp.Services
             try
             {
                 OnModeChange?.Invoke(this, new EventArgs<LedMode>(mode));
-                await Client.StartMode(mode.ToString()).ConfigureAwait(false);
+                await Client.StartMode(ActiveLedClient, mode.ToString()).ConfigureAwait(false);
             }
             catch
             {
@@ -122,7 +137,7 @@ namespace HeliosClockApp.Services
         {
             try
             {
-                await Client.SetRefreshSpeed(speed.ToString()).ConfigureAwait(false);
+                await Client.SetRefreshSpeed(ActiveLedClient, speed.ToString()).ConfigureAwait(false);
             }
             catch
             {
@@ -135,7 +150,7 @@ namespace HeliosClockApp.Services
             try
             {
                 OnModeChange?.Invoke(this, new EventArgs<LedMode>(LedMode.None));
-                await Client.Stop().ConfigureAwait(false);
+                await Client.Stop(ActiveLedClient).ConfigureAwait(false);
             }
             catch
             {

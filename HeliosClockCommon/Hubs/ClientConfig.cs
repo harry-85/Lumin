@@ -7,6 +7,7 @@ namespace HeliosClockCommon.Hubs
 {
     public class ClientConfig
     {
-        public ClientTypes ClientTyype { get; set; }
+        public ClientTypes ClientType { get; set; }
+        public string ClientName { get; set; }
     }
 }

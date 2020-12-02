@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Interfaces
 {
-    public interface IHeliosManager
+    public interface ILuminManager
     {
         int Brightness { get; set; }
 

@@ -2,6 +2,7 @@
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
+using HeliosClockCommon.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using System;
@@ -27,6 +28,9 @@ namespace HeliosClockCommon.Clients
         /// <summary>Occurs when connection to hub established.</summary>
         public event EventHandler<EventArgs<bool>> OnConnected;
 
+        /// <summary>Occurs when [led client changed].</summary>
+        public event EventHandler<EventArgs<string>> LedClientChanged;
+
         /// <summary>The connection.</summary>
         private HubConnection _connection;
 
@@ -36,39 +40,39 @@ namespace HeliosClockCommon.Clients
             IPAddress = null; 
         }
 
-        public async Task SendColor(Color startColor, Color endColor)
+        public async Task SendColor(LedClient ledClient, Color startColor, Color endColor)
         {
             string mode = ColorInterpolationMode.HueMode.ToString();
-            await _connection.InvokeAsync(nameof(IHeliosHub.SetColorString), ColorHelpers.HexConverter(startColor), ColorHelpers.HexConverter(endColor), mode).ConfigureAwait(false);
+            await _connection.InvokeAsync(nameof(IHeliosHub.SetColorString), ledClient.Id, ColorHelpers.HexConverter(startColor), ColorHelpers.HexConverter(endColor), mode).ConfigureAwait(false);
         }
 
-        public async Task StartMode(string mode)
+        public async Task StartMode(LedClient ledClient, string mode)
         {
-            await _connection.InvokeAsync(nameof(IHeliosHub.StartMode), mode).ConfigureAwait(false);
+            await _connection.InvokeAsync(nameof(IHeliosHub.StartMode), ledClient.Id, mode).ConfigureAwait(false);
         }
 
-        public async Task SetOnOff(string onOff, string side)
+        public async Task SetOnOff(LedClient ledClient, string onOff, string side)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetOnOff), onOff, side).ConfigureAwait(false);
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetOnOff), ledClient.Id, onOff, side).ConfigureAwait(false);
         }
 
-        public async Task Stop()
+        public async Task Stop(LedClient ledClient)
         {
-            await _connection.InvokeAsync(nameof(IHeliosHub.Stop)).ConfigureAwait(false);
+            await _connection.InvokeAsync(nameof(IHeliosHub.Stop), ledClient.Id).ConfigureAwait(false);
         }
 
-        public async Task SetRefreshSpeed(string speed)
+        public async Task SetRefreshSpeed(LedClient ledClient, string speed)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRefreshSpeed), speed).ConfigureAwait(false);
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRefreshSpeed), ledClient.Id, speed).ConfigureAwait(false);
         }
 
-        public async Task SetBrightness(string brightness)
+        public async Task SetBrightness(LedClient ledClient, string brightness)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetBrightness), brightness).ConfigureAwait(false);
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetBrightness), ledClient.Id, brightness).ConfigureAwait(false);
         }
-        public async Task SetRandomColor()
+        public async Task SetRandomColor(LedClient ledClient)
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRandomColor)).ConfigureAwait(false);
+            await _connection.InvokeAsync<string>(nameof(IHeliosHub.SetRandomColor), ledClient.Id).ConfigureAwait(false);
         }
 
         public async Task RegisterAsController()
@@ -93,7 +97,7 @@ namespace HeliosClockCommon.Clients
         /// <param name="clients">The clients.</param>
         private Task OnLedClientChanged(string clients)
         {
-            var ledClientList = clients.Split(";");
+            LedClientChanged.Invoke(this, new EventArgs<string>(clients));
             return Task.CompletedTask;
         }
 

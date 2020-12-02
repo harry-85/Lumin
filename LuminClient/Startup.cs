@@ -24,7 +24,7 @@ namespace LuminClient
             token = cancellationTokenSource.Token;
 
             ILedController controller = new LedAPA102Controller { LedCount = 92 };
-            IHeliosManager heliosManager = new HeliosManager(controller);
+            ILuminManager heliosManager = new LuminManager(controller);
 
             //services.AddSignalR(options => { options.EnableDetailedErrors = true; });
             services.AddSingleton(controller);

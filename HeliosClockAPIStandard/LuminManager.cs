@@ -1,4 +1,5 @@
-﻿using HeliosClockCommon.Enumerations;
+﻿using HeliosClockCommon.Configurator;
+using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HeliosClockAPIStandard
 {
-    public class HeliosManager : IHeliosManager
+    public class LuminManager : ILuminManager
     {
         private readonly System.Timers.Timer autoOffTmer;
         private CancellationTokenSource cancellationTokenSource;
@@ -29,7 +30,7 @@ namespace HeliosClockAPIStandard
 
         /// <summary>Initializes a new instance of the <see cref="HeliosManager"/> class.</summary>
         /// <param name="ledController">The led controller.</param>
-        public HeliosManager(ILedController ledController)
+        public LuminManager(ILedController ledController)
         {
             RefreshSpeed = 100;
             this.LedController = ledController;

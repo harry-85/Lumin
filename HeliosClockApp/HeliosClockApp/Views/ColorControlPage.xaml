@@ -14,7 +14,6 @@
     </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>
-
         <ToolbarItem Text="Gradient" Command="{Binding AddGradientCommand}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource Glyph="{x:Static fontawesome:FontAwesomeIcons.Rainbow}" FontFamily="{StaticResource FontAwesomeSolid}"/>
@@ -128,16 +127,5 @@
                         Command="{Binding StopCommand}"
                         TextColor="White" />
         </StackLayout>
-        <!--<Frame Grid.Row="1" Grid.RowSpan="2" x:Name="connectingOverlay" IsVisible="True" Opacity="0.9" Margin="0" Padding="0" VerticalOptions="FillAndExpand" BackgroundColor="LightGray"/>
-        <StackLayout Grid.Row="1" x:Name="connectingIndicator" HorizontalOptions="Center" VerticalOptions="Center" Orientation="Vertical">
-            <ActivityIndicator Grid.RowSpan="2"
-                           IsRunning="True"
-                           IsVisible="True"
-                           Margin="0"
-                           Color="Purple"
-                           HeightRequest="250"/>
-            <Label Text="Connecting ..." FontSize="Title"></Label>
-        </StackLayout>-->
-
     </Grid>
 </ContentPage>

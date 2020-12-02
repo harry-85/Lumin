@@ -16,7 +16,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
 {
     public partial class GPIOService : BackgroundService
     {
-        private readonly IHeliosManager heliosManager;
+        private readonly ILuminManager heliosManager;
         private readonly ILogger<GPIOService> logger;
         private GpioController gpioController;
 
@@ -39,7 +39,7 @@ namespace HeliosClockAPIStandard.GPIOListeners
 
         /// <summary>Initializes a new instance of the <see cref="GPIOService"/> class.</summary>
         /// <param name="manager">The manager.</param>
-        public GPIOService(ILogger<GPIOService> logger, IHeliosManager manager)
+        public GPIOService(ILogger<GPIOService> logger, ILuminManager manager)
         {
             logger.LogInformation("Started GPIO Watch initializing ...");
             this.logger = logger;
