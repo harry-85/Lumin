@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeliosClockApp.Android", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockApp", "HeliosClockApp\HeliosClockApp\HeliosClockApp.csproj", "{27D260B1-814E-4825-9836-53772DB1CC5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockAPIStandard", "HeliosClockAPIStandard\HeliosClockAPIStandard.csproj", "{2D4B917A-E466-41AE-A600-D1E73AB8F810}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminClientControlAPI", "HeliosClockAPIStandard\LuminClientControlAPI.csproj", "{2D4B917A-E466-41AE-A600-D1E73AB8F810}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminClient", "LuminClient\LuminClient.csproj", "{ABD4D102-D79F-4668-B4F1-BD4A1D1C7130}"
 EndProject

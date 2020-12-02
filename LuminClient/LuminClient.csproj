@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HeliosClockAPIStandard\HeliosClockAPIStandard.csproj" />
+    <ProjectReference Include="..\HeliosClockAPIStandard\LuminClientControlAPI.csproj" />
     <ProjectReference Include="..\HeliosClockCommon\HeliosClockCommon.csproj" />
   </ItemGroup>
 
