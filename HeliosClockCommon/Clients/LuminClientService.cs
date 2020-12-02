@@ -19,12 +19,13 @@ namespace HeliosClockCommon.Clients
     public partial class LuminClientService : IHostedService
     {
         private readonly ILogger<LuminClientService> _logger;
-        private HubConnection _connection;
+        private HubConnection connection;
         private readonly ILuminManager manager;
         private readonly ILedController ledController;
-
+        private bool isConnecting;
+        private bool isRunning = false;
         public ConfigureService ConfigureService { get; }
-        public string ClientId => _connection.ConnectionId;
+        public string ClientId => connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
         /// <param name="logger">The logger.</param>
@@ -46,26 +47,29 @@ namespace HeliosClockCommon.Clients
         {
             manager.NotifyController += async (s, e) =>
             {
-                await _connection.InvokeAsync(nameof(IHeliosHub.NotifyController), ColorHelpers.HexConverter(e.StartColor), ColorHelpers.HexConverter(e.EndColor)).ConfigureAwait(false);
+                await connection.InvokeAsync(nameof(IHeliosHub.NotifyController), ColorHelpers.HexConverter(e.StartColor), ColorHelpers.HexConverter(e.EndColor)).ConfigureAwait(false);
             };
 
-            _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
-            _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
-            _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
-            _connection.On(nameof(IHeliosHub.Stop), OnStop);
-            _connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
-            _connection.On<string, string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
-            _connection.On<string>(nameof(IHeliosHub.SetBrightness), SetBrightness);
+            connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
+            connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
+            connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
+            connection.On(nameof(IHeliosHub.Stop), OnStop);
+            connection.On<string>(nameof(IHeliosHub.SetRefreshSpeed), OnSetRefreshSpeed);
+            connection.On<string, string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
+            connection.On<string>(nameof(IHeliosHub.SetBrightness), SetBrightness);
 
-            _connection.Reconnected += _connection_Reconnected;
+            connection.Reconnected += _connection_Reconnected;
 
             await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
+
+            //Set led color count of LedController
             ledController.LedCount = ConfigureService.Config.LedCount;
 
             _logger.LogInformation("Local Lumin Client Initialized ...");
-
         }
 
+        /// <summary>On reconnected.</summary>
+        /// <param name="arg">The argument.</param>
         private async Task _connection_Reconnected(string arg)
         {
             await RegisterAsLedClient().ConfigureAwait(false);
@@ -75,10 +79,10 @@ namespace HeliosClockCommon.Clients
         /// <param name="onOff">The on off.</param>
         private async Task SetOnOff(string onOff, string side)
         {
-            _logger.LogDebug("Local Helios On / Off Command : {0} ...", onOff);
+            _logger.LogDebug("Local On / Off Command : {0} ...", onOff);
             await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side), Color.White).ConfigureAwait(false);
         }
-        bool isRunning = false;
+
         private Task SetColor(string startColor, string endColor, string interpolationMode)
         {
             //return if color change is already in progress
@@ -133,20 +137,9 @@ namespace HeliosClockCommon.Clients
 
         private async Task RegisterAsLedClient()
         {
-            await _connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId, ConfigureService.Config.Name).ConfigureAwait(false);
+            await connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId, ConfigureService.Config.Name).ConfigureAwait(false);
         }
 
-        private Task SetAlarm(DateTime alarmTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task SignalClient(string user, string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool isConnecting;
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting Lumin Client ...");
@@ -171,7 +164,7 @@ namespace HeliosClockCommon.Clients
             string URL = string.Format(DefaultValues.HubUrl, serverIpAddress.ToString(), DefaultValues.SignalPortOne);
             _logger.LogInformation("Connecting to Server with address: {0} ...", URL);
 
-            _connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
+            connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
             await Task.Run(async () =>
             {
@@ -179,25 +172,25 @@ namespace HeliosClockCommon.Clients
 
                 _logger.LogInformation("Local Client: Connecting ...");
                 // Loop is here to wait until the server is running
-                while (_connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
+                while (connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
                 {
                     try
                     {
-                        await _connection.StartAsync(cancellationToken).ConfigureAwait(false); ;
+                        await connection.StartAsync(cancellationToken).ConfigureAwait(false); ;
 
-                        while (_connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                        while (connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
                         {
                             await Task.Delay(1000).ConfigureAwait(false);
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning("Local Client: Error Connecting: {0}", ex.Message);
+                        _logger.LogWarning("Local Client: Error Connecting: {0} ...", ex.Message);
                         await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                     }
                 }
 
-                _logger.LogInformation("Local Client: Connection Successfully ... Status: {0}", _connection.State.ToString());
+                _logger.LogInformation("Local Client: Connection Successfully. Status: {0} ...", connection.State.ToString());
             }).ConfigureAwait(false);
 
             if(!cancellationToken.IsCancellationRequested)
@@ -208,7 +201,7 @@ namespace HeliosClockCommon.Clients
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _connection.DisposeAsync().ConfigureAwait(false);
+            await connection.DisposeAsync().ConfigureAwait(false);
         }
     }
 }
