@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HeliosService
 {
@@ -24,9 +22,9 @@ namespace HeliosService
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            ILedController controller = new LedAPA102Controller { LedCount = 58 };
+            ILedController controller = new LedAPA102Controller();
             ILuminManager heliosManager = new LuminManager(controller);
-            ConfigureService configureService = new ConfigureService();
+            ConfigureService configureService = new();
 
             services.AddHostedService<DiscroveryServer>();
 

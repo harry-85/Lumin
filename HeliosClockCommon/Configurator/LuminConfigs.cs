@@ -1,13 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HeliosClockCommon.Defaults;
 
 namespace HeliosClockCommon.Configurator
 {
     public class LuminConfigs
     {
+        /// <summary>Gets or sets the name of the LED Client.</summary>
+        /// <value>The name.</value>
         public string Name { get; set; }
 
-        public static LuminConfigs GetDefaultConfig() => new LuminConfigs { Name = "Lumin Client" };
+        /// <summary>Gets or sets the led count for the LED Controller.</summary>
+        /// <value>The led count.</value>
+        public int LedCount { get; set; }
+
+        /// <summary>Gets the default configuration.</summary>
+        /// <returns>A default configuration object.</returns>
+        public static LuminConfigs GetDefaultConfig() => new LuminConfigs
+        {
+            Name = DefaultValues.DefaultClientName,
+            LedCount = DefaultValues.DefaultLedCount
+        };
     }
 }

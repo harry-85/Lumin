@@ -55,6 +55,7 @@ namespace HeliosClockCommon.Clients
             _connection.Reconnected += _connection_Reconnected;
 
             await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
+            ledController.LedCount = ConfigureService.Config.LedCount;
 
             _logger.LogInformation("Local Helios Client Initialized ...");
 

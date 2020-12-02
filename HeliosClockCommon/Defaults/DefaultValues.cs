@@ -17,5 +17,10 @@ namespace HeliosClockCommon.Defaults
         public static string HubUrl => "http://{0}:{1}/hubs/helios";
 
         public static string AllClients = "AllClient";
+
+        public static string DefaultClientName = "Led Client";
+
+        public static int DefaultLedCount = 58;
+
     }
 }

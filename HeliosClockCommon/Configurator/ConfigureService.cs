@@ -50,14 +50,12 @@ namespace HeliosClockCommon.Configurator
 
             foreach (var prop in typeof(LuminConfigs).GetProperties())
             {
-                foreach (var conf in configs)
+                if (configs.ContainsKey(prop.Name))
                 {
-                    if (prop.Name == conf.Key)
+                    var configValue = configs[prop.Name];
+                    if (null != prop && prop.CanWrite)
                     {
-                        if (null != prop && prop.CanWrite)
-                        {
-                            prop.SetValue(Config, conf.Value, null);
-                        }
+                        prop.SetValue(Config, Convert.ChangeType(configValue, prop.PropertyType), null);
                     }
                 }
             }
