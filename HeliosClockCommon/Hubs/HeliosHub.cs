@@ -28,6 +28,12 @@ namespace HeliosClockCommon.Hubs
             this._logger = logger;
         }
 
+        public async Task NotifyController(string startColor, string endColor)
+        {
+            _logger.LogDebug("Notify all Controllers...");
+            await Clients.Group(ClientTypes.Controller.ToString()).NotifyController(startColor, endColor).ConfigureAwait(false);
+        }
+
         public async Task RegisterAsController(string clientId)
         {
             _logger.LogDebug("Register {0} as {1} ...", clientId, ClientTypes.Controller);

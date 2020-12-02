@@ -29,7 +29,6 @@ namespace HeliosClockCommon.Configurator
             }
 
             FileStream fileStream = new FileStream(configFile.FullName, FileMode.Open);
-
             Dictionary<string, string> configs = new Dictionary<string, string>();
 
             using (StreamReader reader = new StreamReader(fileStream))
@@ -39,12 +38,12 @@ namespace HeliosClockCommon.Configurator
                 {
                     line = line.Trim();
 
-                    //skip comments
-                    if (!line.StartsWith("#"))
-                    {
-                        var input = line.Split("=");
-                        configs.Add(input[0].Trim(), input[1].Trim());
-                    }
+                    //Skip Comments
+                    if (line.StartsWith("#"))
+                        continue;
+
+                    var input = line.Split("=");
+                    configs.Add(input[0].Trim(), input[1].Trim());
                 }
             }
 

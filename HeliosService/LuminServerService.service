@@ -4,15 +4,15 @@ Description=Lumin Service in .NET
 # After=xyz.service
 
 # Location: 
-# /etc/systemd/system/HeliosClockService.service
+# /etc/systemd/system/LuminServerService.service
 
 #some more help: 
 #https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/SystemWide/
 
 [Service]
 Type=simple
-WorkingDirectory=/home/ubuntu/HeliosClock
-ExecStart=/usr/share/dotnet/dotnet /home/ubuntu/HeliosClock/HeliosService.dll
+WorkingDirectory=/home/ubuntu/LuminServer
+ExecStart=/usr/share/dotnet/dotnet /home/ubuntu/LuminServer/LuminServer.dll
 User=ubuntu
 
 [Install]

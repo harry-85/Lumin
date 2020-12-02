@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Clients
 {
-    public partial class HeliosServerClient : IHostedService
+    public partial class LuminClientService : IHostedService
     {
-        private readonly ILogger<HeliosServerClient> _logger;
+        private readonly ILogger<LuminClientService> _logger;
         private HubConnection _connection;
         private readonly ILuminManager manager;
         private readonly ILedController ledController;
@@ -26,10 +26,10 @@ namespace HeliosClockCommon.Clients
         public ConfigureService ConfigureService { get; }
         public string ClientId => _connection.ConnectionId;
 
-        /// <summary>Initializes a new instance of the <see cref="HeliosServerClient"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
-        public HeliosServerClient(ILogger<HeliosServerClient> logger, ILuminManager manager, ConfigureService configureService)
+        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, ConfigureService configureService)
         {
             _logger = logger;
             _logger.LogInformation("Initializing LuminClient ...");
@@ -44,6 +44,11 @@ namespace HeliosClockCommon.Clients
         /// <summary>Initializes this instance.</summary>
         private async Task Initialize()
         {
+            manager.NotifyController += async (s, e) =>
+            {
+                await _connection.InvokeAsync(nameof(IHeliosHub.NotifyController), ColorHelpers.HexConverter(e.StartColor), ColorHelpers.HexConverter(e.EndColor)).ConfigureAwait(false);
+            };
+
             _connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
             _connection.On(nameof(IHeliosHub.SetRandomColor), SetRandomColor);
             _connection.On<string>(nameof(IHeliosHub.StartMode), OnStartMode);
@@ -57,7 +62,7 @@ namespace HeliosClockCommon.Clients
             await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
             ledController.LedCount = ConfigureService.Config.LedCount;
 
-            _logger.LogInformation("Local Helios Client Initialized ...");
+            _logger.LogInformation("Local Lumin Client Initialized ...");
 
         }
 

@@ -10,6 +10,8 @@ namespace HeliosClockCommon.Interfaces
 {
     public interface IHeliosHub
     {
+        Task NotifyController(string startColor, string endColor);
+
         Task SignalClient(string user, string message);
         Task SetAlarm(DateTime alarmTime);
         Task SetColor(Color startColor, Color endColor);

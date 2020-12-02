@@ -22,18 +22,20 @@ namespace HeliosService
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //First start the configuration service
+            ConfigureService configureService = new();
+            services.AddSingleton(configureService);
+
             ILedController controller = new LedAPA102Controller();
             ILuminManager heliosManager = new LuminManager(controller);
-            ConfigureService configureService = new();
 
             services.AddHostedService<DiscroveryServer>();
 
             services.AddSignalR(options => { options.EnableDetailedErrors = true; });
             services.AddSingleton(controller);
             services.AddSingleton(heliosManager);
-            services.AddSingleton(configureService);
             services.AddHostedService<GPIOService>();
-            services.AddHostedService<HeliosServerClient>();
+            services.AddHostedService<LuminClientService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

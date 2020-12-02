@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30615.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosService", "HeliosService\HeliosService.csproj", "{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminServer", "HeliosService\LuminServer.csproj", "{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockCommon", "HeliosClockCommon\HeliosClockCommon.csproj", "{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}"
 EndProject
@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockApp", "HeliosClo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockAPIStandard", "HeliosClockAPIStandard\HeliosClockAPIStandard.csproj", "{2D4B917A-E466-41AE-A600-D1E73AB8F810}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuminClient", "LuminClient\LuminClient.csproj", "{ABD4D102-D79F-4668-B4F1-BD4A1D1C7130}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminClient", "LuminClient\LuminClient.csproj", "{ABD4D102-D79F-4668-B4F1-BD4A1D1C7130}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,13 +1,19 @@
 ﻿using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.EventArgs;
 using HeliosClockCommon.LedCommon;
+using System;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Interfaces
 {
     public interface ILuminManager
     {
+        /// <summary>Occurs when [notify controller].</summary>
+        event EventHandler<NotifyControllerEventArgs> NotifyController;
+
+        /// <summary>Gets or sets the brightness.</summary>
+        /// <value>The brightness.</value>
         int Brightness { get; set; }
 
         /// <summary>Gets a value indicating whether this instance is running.</summary>
@@ -59,5 +65,8 @@ namespace HeliosClockCommon.Interfaces
 
         /// <summary>Refreshes the screen.</summary>
         Task RefreshScreen();
+
+        /// <summary>Notifies the controllers.</summary>
+        void NotifyControllers();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.EventArgs;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.Models;
@@ -24,6 +25,9 @@ namespace HeliosClockCommon.Clients
         public string ClientId => _connection.ConnectionId;
 
         public IPAddress IPAddress { get; set; }
+
+        /// <summary>Occurs when connection to hub established.</summary>
+        public event EventHandler<NotifyControllerEventArgs> OnControllerNotified;
 
         /// <summary>Occurs when connection to hub established.</summary>
         public event EventHandler<EventArgs<bool>> OnConnected;
@@ -84,6 +88,7 @@ namespace HeliosClockCommon.Clients
         public void Initialize()
         {
             _connection.On<string>(nameof(IHeliosHub.LedClientChanged), OnLedClientChanged);
+            _connection.On<string, string>(nameof(IHeliosHub.NotifyController), OnNotifyController);
             _connection.Reconnected += _connection_Reconnected;
         }
 
@@ -98,6 +103,15 @@ namespace HeliosClockCommon.Clients
         private Task OnLedClientChanged(string clients)
         {
             LedClientChanged.Invoke(this, new EventArgs<string>(clients));
+            return Task.CompletedTask;
+        }
+
+        /// <summary>Called when [notify controller].</summary>
+        /// <param name="startColor">The start color.</param>
+        /// <param name="endColor">The end color.</param>
+        private Task OnNotifyController(string startColor, string endColor)
+        {
+            OnControllerNotified?.Invoke(this, new NotifyControllerEventArgs { StartColor = ColorHelpers.FromHex(startColor), EndColor = ColorHelpers.FromHex(endColor) });
             return Task.CompletedTask;
         }
 

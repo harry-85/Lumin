@@ -1,5 +1,6 @@
 ﻿using HeliosClockCommon.Configurator;
 using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.EventArgs;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
@@ -16,13 +17,19 @@ namespace HeliosClockAPIStandard
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
 
+        public event EventHandler<NotifyControllerEventArgs> NotifyController;
+
         public ILedController LedController { get; set; }
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
-        public int Brightness { get { return LedController.Brightness; } set { LedController.Brightness = value; } }
+        public int Brightness
+        {
+            get { return LedController.Brightness; }
+            set { LedController.Brightness = value; }
+        }
 
-        public bool IsRunning { get => autoOffTmer.Enabled; }
+        public bool IsRunning => autoOffTmer.Enabled;
 
         public bool IsModeRunning { get; set; }
 
@@ -39,6 +46,12 @@ namespace HeliosClockAPIStandard
 
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
+        }
+
+        /// <summary>Notifies the controllers.</summary>
+        public void NotifyControllers()
+        {
+            NotifyController?.Invoke(this, new NotifyControllerEventArgs { StartColor = StartColor, EndColor = EndColor });
         }
 
         /// <summary>Refreshes the screen.</summary>
@@ -60,13 +73,11 @@ namespace HeliosClockAPIStandard
         /// <param name="cancellationToken">The cancellation token.</param>
         public async Task SetRandomColor()
         {
-            Random rnd = new Random();
+            Random rnd = new();
             Color startColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-            //Color startColor = Color.FromArgb(RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255));
 
             rnd = new Random();
             Color endColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-            //Color endColor = Color.FromArgb(RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255), RandomNumberGenerator.Between(0, 255));
 
             await SetColor(startColor, endColor, ColorInterpolationMode.HueMode).ConfigureAwait(false);
         }
@@ -154,6 +165,10 @@ namespace HeliosClockAPIStandard
             }
 
             await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
+
+            StartColor = LedController.ActualScreen[0].LedColor;
+            EndColor = LedController.ActualScreen[LedController.ActualScreen.Length - 1].LedColor;
+
         }
 
         /// <summary>Runs the led mode.</summary>

@@ -75,6 +75,12 @@ namespace HeliosClockApp.Services
                 LedClientManager.SetNewClients(e.Args);
             };
 
+            Client.OnControllerNotified += (s, e) =>
+            {
+                StartColor = e.StartColor;
+                EndColor = e.EndColor;
+            };
+
         }
 
         /// <summary>Sends the color to the server.</summary>
