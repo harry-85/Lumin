@@ -5,7 +5,10 @@ netCoreDownloadFileName="aspnetcore-runtime-5.0.0-linux-arm64.tar.gz"
 
 dotnetPath="/usr/share/dotnet"
 
+discoveryPort=8888
+signalPort=5000
 
+#install dotNet 5.0
 if [[ $hashOutput != "" ]]
 then
 	wget https://download.visualstudio.microsoft.com/download/pr/ac555882-afa3-4f5b-842b-c4cec2ae0e90/84cdd6d47a9f79b6722f0e0a9b258888/aspnetcore-runtime-5.0.0-linux-arm64.tar.gz
@@ -14,6 +17,24 @@ then
 	tar zxf $netCoreDownloadFileName -C $dotnetPath
 	rm $netCoreDownloadFileName
 else
-	$dotnetPath=$(whereis dotnet)
+	dotnetPath=$(whereis dotnet)
 fi
 
+echo dotNet path is at: $dotnetPath 
+
+#open ports in firewall
+ufw allow $discoveryPort
+ufw allow $signalPort
+
+#write config file to: ~/.luminConfig/lumin.config
+
+#write GPIO and SPI files, add users to enable SPI and GPIO
+
+#install "libgpiod" --> see here: https://ubuntu.pkgs.org/20.04/ubuntu-universe-amd64/libgpiod-dev_1.4.1-4_amd64.deb.html
+apt install libgpiod2 -y
+
+
+
+# possibility 1:
+echo "line 1" >> greetings.txt
+echo "line 2" >> greetings.txt

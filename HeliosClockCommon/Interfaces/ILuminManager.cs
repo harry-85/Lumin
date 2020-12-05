@@ -42,12 +42,10 @@ namespace HeliosClockCommon.Interfaces
 
         /// <summary>Sets the on off.</summary>
         /// <param name="onOff">The on off.</param>
-        /// <returns></returns>
         Task SetOnOff(PowerOnOff onOff, LedSide side, Color color);
 
         /// <summary>Runs the led mode.</summary>
         /// <param name="mode">The mode.</param>
-        /// <returns></returns>
         Task RunLedMode(LedMode mode);
 
         /// <summary>Stops the led mode.</summary>
