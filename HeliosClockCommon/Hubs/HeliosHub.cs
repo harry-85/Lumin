@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +18,7 @@ namespace HeliosClockCommon.Hubs
 
     public class HeliosHub : Hub<IHeliosHub>
     {
+        /// <summary>The logger.</summary>
         private readonly ILogger<IHeliosHub> _logger;
 
         /// <summary>Initializes a new instance of the <see cref="HeliosHub"/> class.</summary>
@@ -28,12 +28,17 @@ namespace HeliosClockCommon.Hubs
             this._logger = logger;
         }
 
+        /// <summary>Notifies the controller.</summary>
+        /// <param name="startColor">The start color.</param>
+        /// <param name="endColor">The end color.</param>
         public async Task NotifyController(string startColor, string endColor)
         {
             _logger.LogDebug("Notify all Controllers...");
             await Clients.Group(ClientTypes.Controller.ToString()).NotifyController(startColor, endColor).ConfigureAwait(false);
         }
 
+        /// <summary>Registers as controller.</summary>
+        /// <param name="clientId">The client identifier.</param>
         public async Task RegisterAsController(string clientId)
         {
             _logger.LogDebug("Register {0} as {1} ...", clientId, ClientTypes.Controller);
@@ -43,6 +48,9 @@ namespace HeliosClockCommon.Hubs
             await DistributeLedClients(Clients.Caller).ConfigureAwait(false);
         }
 
+        /// <summary>Registers as led client.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="name">The name.</param>
         public async Task RegisterAsLedClient(string clientId, string name)
         {
             _logger.LogDebug("Register {0} with ID {1} as {2} ...", name, clientId, ClientTypes.LedClient);
@@ -54,41 +62,66 @@ namespace HeliosClockCommon.Hubs
             await DistributeLedClients(Clients.Group(ClientTypes.Controller.ToString())).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the color string.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="startColor">The start color.</param>
+        /// <param name="endColor">The end color.</param>
+        /// <param name="interpolationMode">The interpolation mode.</param>
         public async Task SetColorString(string clientId, string startColor, string endColor, string interpolationMode)
         {
             await GetHubToForward(clientId).SetColorString(startColor, endColor, interpolationMode).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the onoff.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="onOff">The on off.</param>
+        /// <param name="side">The side.</param>
         public async Task SetOnoff(string clientId, string onOff, string side)
         {
             await GetHubToForward(clientId).SetOnOff(onOff, side).ConfigureAwait(false);
         }
 
+        /// <summary>Starts the mode.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="mode">The mode.</param>
         public async Task StartMode(string clientId, string mode)
         {
             await GetHubToForward(clientId).StartMode(mode).ConfigureAwait(false);
         }
 
+        /// <summary>Stops the specified client identifier.</summary>
+        /// <param name="clientId">The client identifier.</param>
         public async Task Stop(string clientId)
         {
             await GetHubToForward(clientId).Stop().ConfigureAwait(false);
         }
 
+        /// <summary>Sets the brightness.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="brightness">The brightness.</param>
         public async Task SetBrightness(string clientId, string brightness)
         {
             await GetHubToForward(clientId).SetBrightness(brightness).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the refresh speed.</summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="speed">The speed.</param>
         public async Task SetRefreshSpeed(string clientId, string speed)
         {
             await GetHubToForward(clientId).SetRefreshSpeed(speed).ConfigureAwait(false);
         }
 
+        /// <summary>Sets the random color.</summary>
+        /// <param name="clientId">The client identifier.</param>
         public async Task SetRandomColor(string clientId)
         {
             await GetHubToForward(clientId).SetRandomColor().ConfigureAwait(false);
         }
 
+        /// <summary>Called when a connection with the hub is terminated.</summary>
+        /// <param name="exception"></param>
+        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous disconnect.</returns>
         public override Task OnDisconnectedAsync(Exception exception)
         {
             UserHandler.ConnectedIds.Remove(Context.ConnectionId);
@@ -96,6 +129,7 @@ namespace HeliosClockCommon.Hubs
             return base.OnDisconnectedAsync(exception);
         }
 
+        /// <summary>Called when a new connection is established with the hub.</summary>
         public override async Task OnConnectedAsync()
         {
             UserHandler.ConnectedIds.Add(Context.ConnectionId, new ClientConfig { ClientType = Enumerations.ClientTypes.Unregistered });
@@ -104,6 +138,8 @@ namespace HeliosClockCommon.Hubs
             await base.OnConnectedAsync().ConfigureAwait(false);
         }
 
+        /// <summary>Distributes the led clients.</summary>
+        /// <param name="client">The client.</param>
         private async Task DistributeLedClients(IHeliosHub client)
         {
             //Distribute the LedClient list to the controllers
