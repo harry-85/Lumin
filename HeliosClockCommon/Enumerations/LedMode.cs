@@ -1,9 +1,16 @@
-﻿namespace HeliosClockCommon.Enumerations
+﻿using HeliosClockCommon.Attributes;
+
+namespace HeliosClockCommon.Enumerations
 {
     public enum LedMode
     {
+        [LedMode(false, false)]
         None = 0,
+        [LedMode(false, true)]
         Spin = 1,
+        [LedMode(false, true)]
         KnightRider = 2,
+        [LedMode(true, true)]
+        Disco = 3,
     }
 }

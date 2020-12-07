@@ -25,13 +25,13 @@ namespace HeliosClockCommon.Clients
         private readonly ILedController ledController;
         private bool isConnecting;
         private bool isRunning = false;
-        public ConfigureService ConfigureService { get; }
+        public IConfigureService ConfigureService { get; }
         public string ClientId => connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
-        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, ConfigureService configureService)
+        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, IConfigureService configureService)
         {
             _logger = logger;
             _logger.LogInformation("Initializing LuminClient ...");

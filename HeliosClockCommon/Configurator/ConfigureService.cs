@@ -1,4 +1,5 @@
 ﻿using HeliosClockCommon.Defaults;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,14 +7,19 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Configurator
 {
-    public class ConfigureService
+    public class ConfigureService : IConfigureService
     {
         public LuminConfigs Config { get; set; } = LuminConfigs.GetDefaultConfig();
         private readonly FileInfo configFile;
+        private readonly ILogger<ConfigureService> logger;
 
         /// <summary>Initializes a new instance of the <see cref="ConfigureService"/> class.</summary>
-        public ConfigureService()
+        public ConfigureService(ILogger<ConfigureService> logger)
         {
+            this.logger = logger;
+
+            logger.LogInformation("Loading Configuration File from: {0} ...", DefaultValues.UnixSavePath);
+
             configFile = new FileInfo(DefaultValues.UnixSavePath);
         }
 
@@ -55,6 +61,7 @@ namespace HeliosClockCommon.Configurator
                     if (null != prop && prop.CanWrite)
                     {
                         prop.SetValue(Config, Convert.ChangeType(configValue, prop.PropertyType), null);
+                        logger.LogDebug("Set Configuration Value: {0} = {1}", prop.Name, configValue);
                     }
                 }
             }

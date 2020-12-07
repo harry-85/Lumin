@@ -1,13 +1,16 @@
-﻿using HeliosClockCommon.Configurator;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using HeliosClockCommon.Attributes;
+using HeliosClockCommon.Configurator;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.EventArgs;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
-using System;
-using System.Drawing;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace HeliosClockAPIStandard
 {
@@ -16,6 +19,7 @@ namespace HeliosClockAPIStandard
         private readonly System.Timers.Timer autoOffTmer;
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
+        private readonly ILogger<LuminManager> logger;
 
         public event EventHandler<NotifyControllerEventArgs> NotifyController;
 
@@ -23,6 +27,9 @@ namespace HeliosClockAPIStandard
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
         public Color EndColor { get; set; }
+
+        /// <summary>Gets or sets the global brightness.</summary>
+        /// <value>The global brightness.</value>
         public int Brightness
         {
             get { return LedController.Brightness; }
@@ -30,22 +37,28 @@ namespace HeliosClockAPIStandard
         }
 
         public bool IsRunning => autoOffTmer.Enabled;
-
         public bool IsModeRunning { get; set; }
+        private LedMode runningLedMode = LedMode.None;
 
+        /// <summary>Gets or sets the automatic off time in [ms].</summary>
+        /// <value>The automatic off time.</value>
         public double AutoOffTime { get; set; }
 
         /// <summary>Initializes a new instance of the <see cref="HeliosManager"/> class.</summary>
         /// <param name="ledController">The led controller.</param>
-        public LuminManager(ILedController ledController)
+        public LuminManager(ILedController ledController, IConfigureService configureService, ILogger<LuminManager> logger)
         {
+            this.logger = logger;
             RefreshSpeed = 100;
-            this.LedController = ledController;
+            LedController = ledController;
 
-            AutoOffTime = 4 * 60 * 60 * 1000; // milliseconds
+            double timeInHours = configureService.Config.AutoOffTime;
+            AutoOffTime = timeInHours * 60 * 60 * 1000; // milliseconds
 
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
+
+            logger.LogInformation("Lumin Manager Initialized ...");
         }
 
         /// <summary>Notifies the controllers.</summary>
@@ -97,8 +110,21 @@ namespace HeliosClockAPIStandard
             StartColor = startColor;
             EndColor = endColor;
 
+            bool useSmoothing = true;
+
             //If mode is running, let only the color object change, but do not transfer colors to screen.
-            if (IsModeRunning) return;
+            if (IsModeRunning)
+            {
+                var enumType = typeof(LedMode);
+                var memberInfos = enumType.GetMember(runningLedMode.ToString());
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo.GetCustomAttributes(typeof(LedModeAttribute), false);
+
+                if (!((LedModeAttribute)valueAttributes[0]).CanSetColor)
+                    return;
+
+                useSmoothing = ((LedModeAttribute)valueAttributes[0]).UseSmoothing;
+            }
 
             var colors = await ColorHelpers.ColorGradient(StartColor, EndColor, LedController.LedCount, interpolationMode).ConfigureAwait(false);
 
@@ -107,11 +133,12 @@ namespace HeliosClockAPIStandard
                 leds.SetPixel(ref i, colors[i]);
             }
 
-            LedController.IsSmoothing = true;
+            LedController.IsSmoothing = useSmoothing;
             await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
             LedController.IsSmoothing = false;
         }
 
+        /// <summary>Stops the led mode.</summary>
         public async Task StopLedMode()
         {
             cancellationTokenSource?.Cancel();
@@ -168,7 +195,6 @@ namespace HeliosClockAPIStandard
 
             StartColor = LedController.ActualScreen[0].LedColor;
             EndColor = LedController.ActualScreen[LedController.ActualScreen.Length - 1].LedColor;
-
         }
 
         /// <summary>Runs the led mode.</summary>
@@ -185,6 +211,8 @@ namespace HeliosClockAPIStandard
             Task.Run(async () =>
             {
                 IsModeRunning = true;
+                runningLedMode = mode;
+                
                 try
                 {
                     switch (mode)
@@ -196,17 +224,22 @@ namespace HeliosClockAPIStandard
                         case LedMode.KnightRider:
                             await KnightRiderMode(cancellationToken).ConfigureAwait(false);
                             break;
+                        case LedMode.Disco:
+                            await DiscoMode(cancellationToken).ConfigureAwait(false);
+                            break;
                         default:
                             break;
                     }
                 }
                 catch
-                { }
+                {
+                }
                 finally
                 {
                     IsModeRunning = false;
+                    runningLedMode = LedMode.None;
                 }
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
@@ -242,6 +275,8 @@ namespace HeliosClockAPIStandard
             }
         }
 
+        /// <summary>Starts Knights Rider mode.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         private async Task KnightRiderMode(CancellationToken cancellationToken)
         {
             await Task.Run(async () =>
@@ -277,7 +312,7 @@ namespace HeliosClockAPIStandard
                         colorCount++;
 
                     await LedController.SendPixels(leds.pixels).ConfigureAwait(false);
-                    
+
                     startIndex++;
 
                     if (startIndex >= ledCount)
@@ -289,7 +324,22 @@ namespace HeliosClockAPIStandard
 
                     await Task.Delay(RefreshSpeed, cancellationToken).ConfigureAwait(false);
                 }
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>Starts the disco the mode.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task DiscoMode(CancellationToken cancellationToken)
+        {
+            await Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await SetRandomColor().ConfigureAwait(false);
+                    await Task.Delay(RefreshSpeed, cancellationToken).ConfigureAwait(false);
+                    NotifyControllers();
+                }
+            }, cancellationToken);
         }
     }
 }

@@ -41,6 +41,11 @@ namespace HeliosClockApp.ViewModels
                 await HeliosService.StartMode(LedMode.Spin).ConfigureAwait(false);
             });
 
+            StartDiscoModeCommand = new Command(async () =>
+            {
+                await HeliosService.StartMode(LedMode.Disco).ConfigureAwait(false);
+            });
+
             StartKnightRiderCommand = new Command(async () =>
             {
                 await HeliosService.StartMode(LedMode.KnightRider).ConfigureAwait(false);
@@ -108,6 +113,10 @@ namespace HeliosClockApp.ViewModels
         /// <summary>Gets the start spin command.</summary>
         /// <value>The start spin command.</value>
         public ICommand StartSpinCommand { get; }
+
+        /// <summary>Gets the start disco mode command.</summary>
+        /// <value>The start disco mode command.</value>
+        public ICommand StartDiscoModeCommand { get; }
 
         /// <summary>Gets the stop command.</summary>
         /// <value>The stop command.</value>

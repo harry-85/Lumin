@@ -23,17 +23,15 @@ namespace HeliosService
         public void ConfigureServices(IServiceCollection services)
         {
             //First start the configuration service
-            ConfigureService configureService = new();
-            services.AddSingleton(configureService);
-
-            ILedController controller = new LedAPA102Controller();
-            ILuminManager heliosManager = new LuminManager(controller);
+            services.AddSingleton<IConfigureService, ConfigureService>();
 
             services.AddHostedService<DiscroveryServer>();
 
+            services.AddSingleton<ILedController, LedAPA102Controller>();
+            services.AddSingleton<ILuminManager, LuminManager>();
+
             services.AddSignalR(options => { options.EnableDetailedErrors = true; });
-            services.AddSingleton(controller);
-            services.AddSingleton(heliosManager);
+            
             services.AddHostedService<GPIOService>();
             services.AddHostedService<LuminClientService>();
         }

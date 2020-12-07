@@ -17,5 +17,7 @@ namespace HeliosClockCommon.Defaults
         public const string DefaultClientName = "Led Client";
 
         public static int DefaultLedCount = 58;
+
+        public static int DefaultAutoOffTime = 1;
     }
 }

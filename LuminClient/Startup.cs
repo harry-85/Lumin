@@ -18,15 +18,12 @@ namespace LuminClient
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //First start the configuration service
-            ConfigureService configureService = new();
-            services.AddSingleton(configureService);
+            // First start the configuration service
+            services.AddSingleton<IConfigureService, ConfigureService>();
 
-            ILedController controller = new LedAPA102Controller();// { LedCount = 92 };
-            ILuminManager heliosManager = new LuminManager(controller);
+            services.AddSingleton<ILedController, LedAPA102Controller>();
+            services.AddSingleton<ILuminManager, LuminManager>();
 
-            services.AddSingleton(controller);
-            services.AddSingleton(heliosManager);
             services.AddHostedService<LuminClientService>();
         }
 
