@@ -46,17 +46,19 @@ namespace HeliosClockAPIStandard
 
         /// <summary>Initializes a new instance of the <see cref="HeliosManager"/> class.</summary>
         /// <param name="ledController">The led controller.</param>
-        public LuminManager(ILedController ledController, IConfigureService configureService, ILogger<LuminManager> logger)
+        public LuminManager(ILedController ledController, ILuminConfiguration luminConfiguration, ILogger<LuminManager> logger)
         {
             this.logger = logger;
             RefreshSpeed = 100;
             LedController = ledController;
 
-            double timeInHours = configureService.Config.AutoOffTime;
-            AutoOffTime = timeInHours * 60 * 60 * 1000; // milliseconds
+            double timeInHours = luminConfiguration.AutoOffTime;
+            AutoOffTime = timeInHours * 60.0 * 60.0 * 1000.0; // milliseconds
 
+            logger.LogDebug("Starting auto off timer with interval: {0} hour ...", timeInHours);
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
+            
 
             logger.LogInformation("Lumin Manager Initialized ...");
         }

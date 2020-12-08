@@ -1,38 +1,39 @@
 ﻿using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Properties;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Configurator
 {
-    public class ConfigureService : IConfigureService
+    public class ConfigureService : BackgroundService, IConfigureService
     {
-        public LuminConfigs Config { get; set; } = LuminConfigs.GetDefaultConfig();
         private readonly FileInfo configFile;
         private readonly ILogger<ConfigureService> logger;
 
-        /// <summary>Initializes a new instance of the <see cref="ConfigureService"/> class.</summary>
-        public ConfigureService(ILogger<ConfigureService> logger)
+        private readonly ILuminConfiguration config;
+
+        /// <summary>Initializes a new instance of the <see cref="ConfigureService" /> class.</summary>
+        /// <param name="logger">The logger.</param>
+        public ConfigureService(ILuminConfiguration luminConfig, ILogger<ConfigureService> logger)
         {
             this.logger = logger;
 
+            config = luminConfig;
             logger.LogInformation("Loading Configuration File from: {0} ...", DefaultValues.UnixSavePath);
-
             configFile = new FileInfo(DefaultValues.UnixSavePath);
         }
 
-        /// <summary>Reads the lumin configuration.</summary>
+        /// <summary>Reads and sets the lumin configuration.</summary>
         public async Task ReadLuminConfig()
         {
-            Config = new LuminConfigs();
-
             if (!configFile.Exists)
             {
-                Config = LuminConfigs.GetDefaultConfig();
                 logger.LogWarning(Resources.ConfigurationFileDoestNotExist, DefaultValues.UnixSavePath);
                 return;
             }
@@ -54,7 +55,7 @@ namespace HeliosClockCommon.Configurator
                     //Check Syntax contains an =
                     if (!line.Contains("="))
                     {
-                        logger.LogWarning("Cannot read configuration line: \"{0}\" ...", line);
+                        logger.LogWarning(Resources.CannotReadConfigurationLine, line);
                         continue;
                     }
 
@@ -63,7 +64,7 @@ namespace HeliosClockCommon.Configurator
                     //Check value ob both sides of = is provided
                     if (input.Length != 2 || input.Where(s => s == null || s.Trim() == string.Empty).ToList().Count > 0)
                     {
-                        logger.LogWarning("Cannot read configuration line: \"{0}\" ...", line);
+                        logger.LogWarning(Resources.CannotReadConfigurationLine, line);
                         continue;
                     }
 
@@ -78,11 +79,33 @@ namespace HeliosClockCommon.Configurator
                     var configValue = configs[prop.Name];
                     if (prop != null && prop.CanWrite)
                     {
-                        prop.SetValue(Config, Convert.ChangeType(configValue, prop.PropertyType), null);
-                        logger.LogDebug("Set Configuration Value: {0} = {1}", prop.Name, configValue);
+                        try
+                        {
+                            prop.SetValue(config, Convert.ChangeType(configValue, prop.PropertyType), null);
+                            logger.LogDebug("Set Configuration Value: {0} = {1} ...", prop.Name, configValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogWarning("Cannot set Configuration Value: {0} to {1}. Using Default Value: {2}. Error Message: {3} ...",
+                                prop.Name,
+                                configValue,
+                                prop.GetValue(config),
+                                ex.Message);
+                        }
+
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// This method is called when the <see cref="T:Microsoft.Extensions.Hosting.IHostedService" /> starts. The implementation should return a task that represents
+        /// the lifetime of the long running operation(s) being performed.
+        /// </summary>
+        /// <param name="stoppingToken">Triggered when <see cref="M:Microsoft.Extensions.Hosting.IHostedService.StopAsync(System.Threading.CancellationToken)" /> is called.</param>
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            await ReadLuminConfig().ConfigureAwait(false);      
         }
     }
 }

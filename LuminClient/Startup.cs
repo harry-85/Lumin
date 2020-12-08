@@ -18,12 +18,17 @@ namespace LuminClient
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // First start the configuration service
-            services.AddSingleton<IConfigureService, ConfigureService>();
+            //First create the configuration file and start the configuration service to read the configuration
+            services.AddSingleton<ILuminConfiguration, LuminConfigs>();
+            services.AddHostedService<ConfigureService>();
 
+            //Create an LED Controller
             services.AddSingleton<ILedController, LedAPA102Controller>();
+
+            //Create the Lumin Manager, manages the LED Connection
             services.AddSingleton<ILuminManager, LuminManager>();
 
+            //Start the lumin client, which is the local LED Client, listening to SignarR commands
             services.AddHostedService<LuminClientService>();
         }
 

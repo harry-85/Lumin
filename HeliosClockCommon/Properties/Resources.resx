@@ -100,4 +100,7 @@
   <data name="ConfigurationFileDoestNotExist" xml:space="preserve">
     <value>Configuration File at \"{0}\" doest not exist.\nUsing default Configuration ...</value>
   </data>
+  <data name="CannotReadConfigurationLine" xml:space="preserve">
+    <value>Cannot read configuration line: \"{0}\ ...</value>
+  </data>
 </root>

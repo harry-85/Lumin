@@ -28,18 +28,18 @@ namespace HeliosClockCommon.Clients
         private readonly ILedController ledController;
         private bool isConnecting;
         private bool isRunning = false;
-        public IConfigureService ConfigureService { get; }
+        private ILuminConfiguration luminConfiguration;
         public string ClientId => connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
-        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, IConfigureService configureService)
+        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, ILuminConfiguration luminConfiguration)
         {
             _logger = logger;
             _logger.LogInformation("Initializing LuminClient ...");
 
-            ConfigureService = configureService;
+            this.luminConfiguration = luminConfiguration;
 
             this.manager = manager;
             ledController = manager.LedController;
@@ -47,7 +47,7 @@ namespace HeliosClockCommon.Clients
         }
 
         /// <summary>Initializes the lumin clients, sets all SignalR listeners and other events.</summary>
-        private async Task Initialize()
+        private void Initialize()
         {
             localCancellationTokenSource = new CancellationTokenSource();
             localCancellationToken = localCancellationTokenSource.Token;
@@ -65,10 +65,8 @@ namespace HeliosClockCommon.Clients
             connection.Reconnected += Connection_Reconnected;
             connection.Closed += Connection_Closed;
 
-            await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
-
             //Set led color count of LedController
-            ledController.LedCount = ConfigureService.Config.LedCount;
+            ledController.LedCount = luminConfiguration.LedCount;
 
             _logger.LogInformation("Local Lumin Client Initialized ...");
         }
@@ -170,7 +168,7 @@ namespace HeliosClockCommon.Clients
         {
             try
             {
-                await connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId, ConfigureService.Config.Name).ConfigureAwait(false);
+                await connection.InvokeAsync<string>(nameof(IHeliosHub.RegisterAsLedClient), ClientId, luminConfiguration.Name).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -227,7 +225,7 @@ namespace HeliosClockCommon.Clients
 
             await Task.Run(async () =>
             {
-                await Initialize().ConfigureAwait(false);
+                Initialize();
 
                 _logger.LogInformation("Local Client: Connecting ...");
 

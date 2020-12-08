@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
 namespace HeliosClockCommon.Configurator
 {
-    public interface IConfigureService
+    public interface IConfigureService : IHostedService
     {
-        LuminConfigs Config { get; set; }
         /// <summary>Reads the lumin configuration.</summary>
         Task ReadLuminConfig();
     }

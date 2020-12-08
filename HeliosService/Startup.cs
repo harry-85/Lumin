@@ -1,3 +1,4 @@
+using System.Linq;
 using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
 using HeliosClockAPIStandard.GPIOListeners;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace HeliosService
 {
@@ -22,17 +24,26 @@ namespace HeliosService
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //First start the configuration service
-            services.AddSingleton<IConfigureService, ConfigureService>();
+            //First create the configuration file and start the configuration service to read the configuration
+            services.AddSingleton<ILuminConfiguration, LuminConfigs>();
+            services.AddHostedService<ConfigureService>();
 
+            //Start the discovery service to find server IP
             services.AddHostedService<DiscroveryServer>();
 
+            //Create an LED Controller
             services.AddSingleton<ILedController, LedAPA102Controller>();
+
+            //Create the Lumin Manager, manages the LED Connection
             services.AddSingleton<ILuminManager, LuminManager>();
 
+            //Initialize the SignarR Server
             services.AddSignalR(options => { options.EnableDetailedErrors = true; });
             
+            //Start the GPIO watch server, to listen on physical button touch
             services.AddHostedService<GPIOService>();
+
+            //Start the lumin client, which is the local LED Client, listening to SignarR commands
             services.AddHostedService<LuminClientService>();
         }
 

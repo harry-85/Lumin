@@ -1,9 +1,33 @@
-﻿using HeliosClockCommon.Defaults;
+﻿using System.Text;
+using HeliosClockCommon.Defaults;
 
 namespace HeliosClockCommon.Configurator
 {
-    public class LuminConfigs
+    public class LuminConfigs :ILuminConfiguration
     {
+        /// <summary>Initializes a new instance of the <see cref="LuminConfigs"/> class.</summary>
+        /// <param name="createDefault">if set to <c>true</c> [create default].</param>
+        public LuminConfigs(bool createDefault)
+        {
+            if (createDefault)
+            {
+                Name = DefaultValues.DefaultClientName;
+                LedCount = DefaultValues.DefaultLedCount;
+                AutoOffTime = DefaultValues.DefaultAutoOffTime;
+            }
+            else
+            {
+                CreateDefaultLuminConfigs();
+            }
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="LuminConfigs"/> class.</summary>
+        /// <remarks>Creates a new default configuration.</summary>
+        public LuminConfigs()
+        {
+            CreateDefaultLuminConfigs();
+        }
+
         /// <summary>Gets or sets the name of the LED Client.</summary>
         /// <value>The name.</value>
         public string Name { get; set; }
@@ -16,13 +40,17 @@ namespace HeliosClockCommon.Configurator
         /// <value>The automatic off time.</value>
         public double AutoOffTime { get; set; }
 
-        /// <summary>Gets the default configuration.</summary>
-        /// <returns>A default configuration object.</returns>
-        public static LuminConfigs GetDefaultConfig() => new LuminConfigs
+        /// <summary>Creates the default lumin configurations.</summary>
+        private void CreateDefaultLuminConfigs()
         {
-            Name = DefaultValues.DefaultClientName,
-            LedCount = DefaultValues.DefaultLedCount,
-            AutoOffTime = DefaultValues.DefaultAutoOffTime
-        };
+            var defaultConfig = new LuminConfigs(true);
+            foreach (var prop in typeof(LuminConfigs).GetProperties())
+            {
+                if (prop.CanWrite && prop.CanRead)
+                {
+                    prop.SetValue(this, prop.GetValue(defaultConfig));
+                }
+            }
+        }
     }
 }

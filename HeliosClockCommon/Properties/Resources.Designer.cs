@@ -61,6 +61,15 @@ namespace HeliosClockCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot read configuration line: \&quot;{0}\ ....
+        /// </summary>
+        internal static string CannotReadConfigurationLine {
+            get {
+                return ResourceManager.GetString("CannotReadConfigurationLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration File at \&quot;{0}\&quot; doest not exist.\nUsing default Configuration ....
         /// </summary>
         internal static string ConfigurationFileDoestNotExist {
