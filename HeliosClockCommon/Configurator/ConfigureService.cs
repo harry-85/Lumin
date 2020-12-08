@@ -1,8 +1,10 @@
 ﻿using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Properties;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Configurator
@@ -31,7 +33,7 @@ namespace HeliosClockCommon.Configurator
             if (!configFile.Exists)
             {
                 Config = LuminConfigs.GetDefaultConfig();
-                logger.LogWarning("Configuration File at \"{0}\" doest not exist.\nUsing default Configuration ...", DefaultValues.UnixSavePath);
+                logger.LogWarning(Resources.ConfigurationFileDoestNotExist, DefaultValues.UnixSavePath);
                 return;
             }
 
@@ -49,7 +51,22 @@ namespace HeliosClockCommon.Configurator
                     if (line.StartsWith("#"))
                         continue;
 
+                    //Check Syntax contains an =
+                    if (!line.Contains("="))
+                    {
+                        logger.LogWarning("Cannot read configuration line: \"{0}\" ...", line);
+                        continue;
+                    }
+
                     var input = line.Split("=");
+
+                    //Check value ob both sides of = is provided
+                    if (input.Length != 2 || input.Where(s => s == null || s.Trim() == string.Empty).ToList().Count > 0)
+                    {
+                        logger.LogWarning("Cannot read configuration line: \"{0}\" ...", line);
+                        continue;
+                    }
+
                     configs.Add(input[0].Trim(), input[1].Trim());
                 }
             }
@@ -59,7 +76,7 @@ namespace HeliosClockCommon.Configurator
                 if (configs.ContainsKey(prop.Name))
                 {
                     var configValue = configs[prop.Name];
-                    if (null != prop && prop.CanWrite)
+                    if (prop != null && prop.CanWrite)
                     {
                         prop.SetValue(Config, Convert.ChangeType(configValue, prop.PropertyType), null);
                         logger.LogDebug("Set Configuration Value: {0} = {1}", prop.Name, configValue);
