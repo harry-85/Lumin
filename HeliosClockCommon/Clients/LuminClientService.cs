@@ -19,6 +19,9 @@ namespace HeliosClockCommon.Clients
 {
     public partial class LuminClientService : IHostedService
     {
+        private CancellationTokenSource localCancellationTokenSource;
+        private CancellationToken localCancellationToken;
+
         private readonly ILogger<LuminClientService> _logger;
         private HubConnection connection;
         private readonly ILuminManager manager;
@@ -46,6 +49,9 @@ namespace HeliosClockCommon.Clients
         /// <summary>Initializes the lumin clients, sets all SignalR listeners and other events.</summary>
         private async Task Initialize()
         {
+            localCancellationTokenSource = new CancellationTokenSource();
+            localCancellationToken = localCancellationTokenSource.Token;
+
             manager.NotifyController += async (s, e) => await NotifyController(e).ConfigureAwait(false);
 
             connection.On<string, string, string>(nameof(IHeliosHub.SetColorString), SetColor);
@@ -56,7 +62,8 @@ namespace HeliosClockCommon.Clients
             connection.On<string, string>(nameof(IHeliosHub.SetOnOff), SetOnOff);
             connection.On<string>(nameof(IHeliosHub.SetBrightness), SetBrightness);
 
-            connection.Reconnected += _connection_Reconnected;
+            connection.Reconnected += Connection_Reconnected;
+            connection.Closed += Connection_Closed;
 
             await ConfigureService.ReadLuminConfig().ConfigureAwait(false);
 
@@ -66,9 +73,18 @@ namespace HeliosClockCommon.Clients
             _logger.LogInformation("Local Lumin Client Initialized ...");
         }
 
+        /// <summary>Triggered when the SignalR connection is closed.</summary>
+        /// <param name="arg">The argument.</param>
+        /// <returns></returns>
+        private Task Connection_Closed(Exception arg)
+        {
+            _logger.LogDebug("Local Lumin Client Closed ...");
+            return Task.CompletedTask;
+        }
+
         /// <summary>On reconnected.</summary>
         /// <param name="arg">The argument.</param>
-        private async Task _connection_Reconnected(string arg)
+        private async Task Connection_Reconnected(string arg)
         {
             await RegisterAsLedClient().ConfigureAwait(false);
         }
@@ -216,13 +232,13 @@ namespace HeliosClockCommon.Clients
                 _logger.LogInformation("Local Client: Connecting ...");
 
                 // Loop is here to wait until the server is running
-                while (connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested)
+                while (connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
                 {
                     try
                     {
                         await connection.StartAsync(cancellationToken).ConfigureAwait(false); ;
 
-                        while (connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested)
+                        while (connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
                         {
                             await Task.Delay(1000).ConfigureAwait(false);
                         }
@@ -235,7 +251,7 @@ namespace HeliosClockCommon.Clients
                 }
 
                 _logger.LogInformation("Local Client: Connection Successfully. Status: {0} ...", connection.State.ToString());
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
             if (!cancellationToken.IsCancellationRequested)
                 await RegisterAsLedClient().ConfigureAwait(false);
@@ -247,6 +263,9 @@ namespace HeliosClockCommon.Clients
         /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
         public async Task StopAsync(CancellationToken cancellationToken)
         {
+            isConnecting = false;
+            localCancellationTokenSource?.Cancel();
+
             await connection.DisposeAsync().ConfigureAwait(false);
         }
     }

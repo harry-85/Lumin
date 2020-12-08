@@ -238,6 +238,7 @@ namespace HeliosClockAPIStandard
                 {
                     IsModeRunning = false;
                     runningLedMode = LedMode.None;
+                    NotifyControllers();
                 }
             }, cancellationToken).ConfigureAwait(false);
 
@@ -337,7 +338,6 @@ namespace HeliosClockAPIStandard
                 {
                     await SetRandomColor().ConfigureAwait(false);
                     await Task.Delay(RefreshSpeed, cancellationToken).ConfigureAwait(false);
-                    NotifyControllers();
                 }
             }, cancellationToken);
         }

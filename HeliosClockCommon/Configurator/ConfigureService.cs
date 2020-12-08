@@ -31,6 +31,7 @@ namespace HeliosClockCommon.Configurator
             if (!configFile.Exists)
             {
                 Config = LuminConfigs.GetDefaultConfig();
+                logger.LogWarning("Configuration File at \"{0}\" doest not exist.\nUsing default Configuration ...", DefaultValues.UnixSavePath);
                 return;
             }
 
