@@ -1,4 +1,3 @@
-using System.Linq;
 using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
 using HeliosClockAPIStandard.GPIOListeners;
@@ -14,7 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace HeliosService
 {
@@ -43,7 +41,7 @@ namespace HeliosService
             //Start the GPIO watch server, to listen on physical button touch
             services.AddHostedService<GPIOService>();
 
-            //Start the lumin client, which is the local LED Client, listening to SignarR commands
+            //Start the lumin client, which is the local LED Client, listening to SignaR commands
             services.AddHostedService<LuminClientService>();
         }
 

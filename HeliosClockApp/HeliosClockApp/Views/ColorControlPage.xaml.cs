@@ -17,17 +17,6 @@ namespace HeliosClockApp.Views
             ((ColorControlModel)BindingContext).HeliosService.OnStartColorChanged += HeliosService_OnStartColorChanged;
             ((ColorControlModel)BindingContext).HeliosService.OnConnected += HeliosService_OnConnected;
             ((ColorControlModel)BindingContext).HeliosService.OnModeChange += HeliosService_OnModeChange;
-
-            ////MessagingCenter.Subscribe<ConnectedMessage>(new ConnectedMessage(), "ConnectedToServer", (s) =>
-            ////{
-            ////    connectingIndicator.IsVisible = false;
-            ////    connectingOverlay.IsVisible = false;
-            ////});
-            ////MessagingCenter.Subscribe<ConnectedMessage>(new ConnectedMessage(), "DicsonnectedFromServer", (s) =>
-            ////{
-            ////    connectingIndicator.IsVisible = true;
-            ////    connectingOverlay.IsVisible = true;
-            ////});
         }
 
         /// <summary>Handles the OnModeChange event of the HeliosService control.</summary>
@@ -39,15 +28,23 @@ namespace HeliosClockApp.Views
             {
                 case HeliosClockCommon.Enumerations.LedMode.None:
                     ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+                    ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     break;
                 case HeliosClockCommon.Enumerations.LedMode.Spin:
                     ButtonSpin.BackgroundColor = Color.ForestGreen;
+                    ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     break;
                 case HeliosClockCommon.Enumerations.LedMode.KnightRider:
                     ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+                    ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = Color.ForestGreen;
+                    break;
+                case HeliosClockCommon.Enumerations.LedMode.Disco:
+                    ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+                    ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+                    ButtonDiscoMode.BackgroundColor = Color.ForestGreen;
                     break;
             }
         }

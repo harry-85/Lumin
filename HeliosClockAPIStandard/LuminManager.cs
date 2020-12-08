@@ -19,7 +19,6 @@ namespace HeliosClockAPIStandard
         private readonly System.Timers.Timer autoOffTmer;
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
-        private readonly ILogger<LuminManager> logger;
 
         public event EventHandler<NotifyControllerEventArgs> NotifyController;
 
@@ -48,7 +47,6 @@ namespace HeliosClockAPIStandard
         /// <param name="ledController">The led controller.</param>
         public LuminManager(ILedController ledController, ILuminConfiguration luminConfiguration, ILogger<LuminManager> logger)
         {
-            this.logger = logger;
             RefreshSpeed = 100;
             LedController = ledController;
 
@@ -59,7 +57,6 @@ namespace HeliosClockAPIStandard
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
             
-
             logger.LogInformation("Lumin Manager Initialized ...");
         }
 

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>c9f6a9ca-8747-4458-9565-6f215d586ceb</UserSecretsId>
+    <PackageIcon>lumin_icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HeliosClockAPIStandard\LuminClientControlAPI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Icon\lumin_icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
