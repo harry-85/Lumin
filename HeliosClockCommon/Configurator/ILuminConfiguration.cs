@@ -6,6 +6,9 @@ namespace HeliosClockCommon.Configurator
 {
     public interface ILuminConfiguration
     {
+        /// <summary>Occurs when [on configuration changed].</summary>
+        event EventHandler<EventArgs<string>> OnConfigurationChanged;
+
         /// <summary>Gets or sets the name of the LED Client.</summary>
         /// <value>The name.</value>
         string Name { get; set; }

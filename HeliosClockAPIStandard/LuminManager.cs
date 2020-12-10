@@ -16,12 +16,12 @@ namespace HeliosClockAPIStandard
 {
     public class LuminManager : ILuminManager
     {
-        private readonly System.Timers.Timer autoOffTmer;
+        private System.Timers.Timer autoOffTmer;
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
-
+        private ILuminConfiguration luminConfiguration;
         public event EventHandler<NotifyControllerEventArgs> NotifyController;
-
+        private ILogger<LuminManager> logger;
         public ILedController LedController { get; set; }
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
@@ -49,15 +49,36 @@ namespace HeliosClockAPIStandard
         {
             RefreshSpeed = 100;
             LedController = ledController;
+            this.luminConfiguration = luminConfiguration;
+            this.logger = logger;
 
+            CreateAutoOffTimer();
+
+            //When Configuration Changes, reload AutoOffTimer
+            luminConfiguration.OnConfigurationChanged += (s, e) =>
+            {
+                if (e.Args == nameof(luminConfiguration.AutoOffTime))
+                    CreateAutoOffTimer();
+            };
+
+            logger.LogInformation("Lumin Manager Initialized ...");
+        }
+
+        private void CreateAutoOffTimer()
+        {
             double timeInHours = luminConfiguration.AutoOffTime;
             AutoOffTime = timeInHours * 60.0 * 60.0 * 1000.0; // milliseconds
+
+            if (autoOffTmer != null)
+            {
+                autoOffTmer.Elapsed -= AutoOffTmer_Elapsed;
+                autoOffTmer.Stop();
+                autoOffTmer.Dispose();
+            }
 
             logger.LogDebug("Starting auto off timer with interval: {0} hour ...", timeInHours);
             autoOffTmer = new System.Timers.Timer(AutoOffTime);
             autoOffTmer.Elapsed += AutoOffTmer_Elapsed;
-            
-            logger.LogInformation("Lumin Manager Initialized ...");
         }
 
         /// <summary>Notifies the controllers.</summary>

@@ -1,22 +1,23 @@
-﻿using HeliosClockCommon.Defaults;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HeliosClockCommon.Defaults;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace HeliosClockCommon.Discorvery
 {
     public class DiscroveryServer : BackgroundService
     {
-        private readonly ILogger<DiscroveryServer> _logger;
+        private readonly ILogger<DiscroveryServer> logger;
 
         /// <summary>Initializes a new instance of the <see cref="DiscroveryServer"/> class.</summary>
         /// <param name="logger">The logger.</param>
         public DiscroveryServer(ILogger<DiscroveryServer> logger)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -26,26 +27,39 @@ namespace HeliosClockCommon.Discorvery
         /// <param name="stoppingToken">Triggered when <see cref="M:Microsoft.Extensions.Hosting.IHostedService.StopAsync(System.Threading.CancellationToken)" /> is called.</param>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Started Discovery Server ...");
-            var server = new UdpClient(DefaultDiscoveryValues.DiscoveryPort);
+            logger.LogInformation("Started Discovery Server ...");
             var responseData = Encoding.ASCII.GetBytes(DefaultDiscoveryValues.DefaultDiscoveryResponse);
 
             await Task.Run(async () =>
             {
-                while (!stoppingToken.IsCancellationRequested)
+                UdpClient server = null;
+                try
                 {
-                    var clientRequestData = await server.ReceiveAsync().ConfigureAwait(false);
-                    var clientRequest = Encoding.ASCII.GetString(clientRequestData.Buffer);
+                    server = new UdpClient(DefaultDiscoveryValues.DiscoveryPort);
+                    while (!stoppingToken.IsCancellationRequested)
+                    {
+                        var clientRequestData = await server.ReceiveAsync().ConfigureAwait(false);
+                        var clientRequest = Encoding.ASCII.GetString(clientRequestData.Buffer);
 
-                    if (clientRequest != DefaultDiscoveryValues.DefaultDiscoveryRequest)
-                        continue;
+                        if (clientRequest != DefaultDiscoveryValues.DefaultDiscoveryRequest)
+                            continue;
 
-                    var clientEp = clientRequestData.RemoteEndPoint;
+                        var clientEp = clientRequestData.RemoteEndPoint;
 
-                    _logger.LogTrace("Received {0} from {1}, sending response ...", clientRequest, clientEp.Address.ToString());
-                    server.Send(responseData, responseData.Length, clientEp);
+                        logger.LogTrace("Received {0} from {1}, sending response ...", clientRequest, clientEp.Address.ToString());
+                        server.Send(responseData, responseData.Length, clientEp);
+                    }
                 }
-            }).ConfigureAwait(false);
+                catch (Exception ex)
+                {
+                    server?.Close();
+
+                    logger.LogWarning("Cannot wait for to discovery request. Message: {0} ...", ex.Message);
+                    await Task.Delay(1000).ConfigureAwait(false);
+                }
+            }, stoppingToken).ConfigureAwait(false);
+
+            logger.LogInformation("Discovery Server Ended ...");
         }
     }
 }

@@ -46,7 +46,7 @@ namespace HeliosClockCommon.Discorvery
 					await client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, DefaultDiscoveryValues.DiscoveryPort)).ConfigureAwait(false);
 					await Task.Delay(500).ConfigureAwait(false);
 				}
-			});
+			}, cancellationToken);
 
 			var receiveTask = Task.Run(async () =>
 			{
@@ -67,7 +67,7 @@ namespace HeliosClockCommon.Discorvery
 					{
 					}
 				}
-			});
+			}, cancellationToken);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 			try
@@ -77,6 +77,7 @@ namespace HeliosClockCommon.Discorvery
 			catch
 			{ }
 
+			localCancellationTokenSource.Cancel();
 			client.Close();
 		}
 

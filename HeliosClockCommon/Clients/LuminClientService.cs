@@ -23,13 +23,16 @@ namespace HeliosClockCommon.Clients
         private CancellationToken localCancellationToken;
         private CancellationToken parentCancellationToken;
 
-        private readonly ILogger<LuminClientService> logger;
+        private bool isConnecting;
+        private bool isRunning = false;
         private HubConnection connection;
         private readonly ILuminManager manager;
         private readonly ILedController ledController;
-        private bool isConnecting;
-        private bool isRunning = false;
+        private readonly ILogger<LuminClientService> logger;
         private readonly ILuminConfiguration luminConfiguration;
+
+        /// <summary>Gets the client SignalR identifier.</summary>
+        /// <value>The client SignalR identifier.</value>
         public string ClientId => connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
@@ -203,7 +206,7 @@ namespace HeliosClockCommon.Clients
 
         /// <summary>Triggered when the application host is ready to start the service.</summary>
         /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-        private async Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             logger.LogInformation("Starting Lumin Client ...");
             DiscoveryClient discoveryClient = new DiscoveryClient();

@@ -1,18 +1,19 @@
-﻿using HeliosClockCommon.Defaults;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Interfaces;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HeliosClockCommon.Defaults;
+using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Interfaces;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace HeliosClockCommon.Hubs
 {
     public static class UserHandler
     {
+        /// <summary>The connected clients.</summary>
         public static Dictionary<string, ClientConfig> ConnectedIds = new Dictionary<string, ClientConfig>();
     }
 
