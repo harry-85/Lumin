@@ -72,7 +72,7 @@ namespace HeliosClockCommon.Hubs
             await GetHubToForward(clientId).SetColorString(startColor, endColor, interpolationMode).ConfigureAwait(false);
         }
 
-        /// <summary>Sets the onoff.</summary>
+        /// <summary>Sets the ON/OFF.</summary>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="onOff">The on off.</param>
         /// <param name="side">The side.</param>

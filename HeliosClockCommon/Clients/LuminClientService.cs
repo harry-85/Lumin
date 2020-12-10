@@ -21,14 +21,15 @@ namespace HeliosClockCommon.Clients
     {
         private CancellationTokenSource localCancellationTokenSource;
         private CancellationToken localCancellationToken;
+        private CancellationToken parentCancellationToken;
 
-        private readonly ILogger<LuminClientService> _logger;
+        private readonly ILogger<LuminClientService> logger;
         private HubConnection connection;
         private readonly ILuminManager manager;
         private readonly ILedController ledController;
         private bool isConnecting;
         private bool isRunning = false;
-        private ILuminConfiguration luminConfiguration;
+        private readonly ILuminConfiguration luminConfiguration;
         public string ClientId => connection.ConnectionId;
 
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
@@ -36,14 +37,14 @@ namespace HeliosClockCommon.Clients
         /// <param name="manager">The manager.</param>
         public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, ILuminConfiguration luminConfiguration)
         {
-            _logger = logger;
-            _logger.LogInformation("Initializing LuminClient ...");
+            this.logger = logger;
+            this.logger.LogInformation("Initializing LuminClient ...");
 
             this.luminConfiguration = luminConfiguration;
 
             this.manager = manager;
             ledController = manager.LedController;
-            _logger.LogInformation("LuminClient Initialized...");
+            this.logger.LogInformation("LuminClient Initialized...");
         }
 
         /// <summary>Initializes the lumin clients, sets all SignalR listeners and other events.</summary>
@@ -68,16 +69,24 @@ namespace HeliosClockCommon.Clients
             //Set led color count of LedController
             ledController.LedCount = luminConfiguration.LedCount;
 
-            _logger.LogInformation("Local Lumin Client Initialized ...");
+            logger.LogInformation("Local Lumin Client Initialized ...");
         }
 
         /// <summary>Triggered when the SignalR connection is closed.</summary>
+        /// <remarks>Tries to create a new connection and restart it.</remarks>
         /// <param name="arg">The argument.</param>
-        /// <returns></returns>
-        private Task Connection_Closed(Exception arg)
+        private async Task Connection_Closed(Exception arg)
         {
-            _logger.LogDebug("Local Lumin Client Closed ...");
-            return Task.CompletedTask;
+            if (localCancellationToken.IsCancellationRequested)
+                return;
+
+            logger.LogDebug("Local Lumin Client Closed. Waiting 1000ms ...");
+
+            isConnecting = false;
+            await Task.Delay(1000).ConfigureAwait(false);
+
+            logger.LogDebug("Restarting Closed Lumin Client ...");
+            await StartAsync(parentCancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>On reconnected.</summary>
@@ -91,7 +100,7 @@ namespace HeliosClockCommon.Clients
         /// <param name="onOff">The on off.</param>
         private async Task SetOnOff(string onOff, string side)
         {
-            _logger.LogDebug("Local On / Off Command : {0} ...", onOff);
+            logger.LogDebug("Local On / Off Command : {0} ...", onOff);
             await manager.SetOnOff((PowerOnOff)Enum.Parse(typeof(PowerOnOff), onOff), (LedSide)Enum.Parse(typeof(LedSide), side), Color.White).ConfigureAwait(false);
         }
 
@@ -108,7 +117,7 @@ namespace HeliosClockCommon.Clients
             Task.Run(async () =>
             {
                 isRunning = true;
-                _logger.LogDebug("Local Color Change: Start: {0} - End: {1} ...", startColor, endColor);
+                logger.LogDebug("Local Color Change: Start: {0} - End: {1} ...", startColor, endColor);
                 await manager.SetColor(
                     ColorHelpers.FromHex(startColor),
                     ColorHelpers.FromHex(endColor),
@@ -126,7 +135,7 @@ namespace HeliosClockCommon.Clients
         {
             await OnStop().ConfigureAwait(false);
 
-            _logger.LogDebug("Local Client: Mode change to: {0} ...", mode);
+            logger.LogDebug("Local Client: Mode change to: {0} ...", mode);
 
             Enum.TryParse(mode, out LedMode ledMode);
             await manager.RunLedMode(ledMode).ConfigureAwait(false);
@@ -136,7 +145,7 @@ namespace HeliosClockCommon.Clients
         /// <param name="speed">The speed.</param>
         private Task OnSetRefreshSpeed(string speed)
         {
-            _logger.LogDebug("Set refresh speed: {0} ...", speed);
+            logger.LogDebug("Set refresh speed: {0} ...", speed);
             manager.RefreshSpeed = int.Parse(speed);
             return Task.CompletedTask;
         }
@@ -151,7 +160,7 @@ namespace HeliosClockCommon.Clients
         /// <param name="brightness">The brightness.</param>
         private async Task SetBrightness(string brightness)
         {
-            _logger.LogDebug("Set Brightness level to: {0} ...", brightness);
+            logger.LogDebug("Set Brightness level to: {0} ...", brightness);
             manager.Brightness = int.Parse(brightness);
             await manager.RefreshScreen().ConfigureAwait(false);
         }
@@ -159,7 +168,7 @@ namespace HeliosClockCommon.Clients
         /// <summary>Called when stop command send.</summary>
         private async Task OnStop()
         {
-            _logger.LogDebug("Local Client: Mode stop command ...");
+            logger.LogDebug("Local Client: Mode stop command ...");
             await manager.StopLedMode().ConfigureAwait(false);
         }
 
@@ -172,7 +181,7 @@ namespace HeliosClockCommon.Clients
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Error in registering as LED Client. Message: {0} ...", ex.Message);
+                logger.LogWarning("Error in registering as LED Client. Message: {0} ...", ex.Message);
             }
         }
 
@@ -188,19 +197,19 @@ namespace HeliosClockCommon.Clients
             }
             catch(Exception ex)
             {
-                _logger.LogWarning("Error notifying controller. Message: {0} ...", ex.Message);
+                logger.LogWarning("Error notifying controller. Message: {0} ...", ex.Message);
             }
         }
 
         /// <summary>Triggered when the application host is ready to start the service.</summary>
         /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-        public async Task StartAsync(CancellationToken cancellationToken)
+        private async Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Starting Lumin Client ...");
+            logger.LogInformation("Starting Lumin Client ...");
             DiscoveryClient discoveryClient = new DiscoveryClient();
             discoveryClient.OnIpDiscovered += async (s, e) =>
             {
-                _logger.LogInformation("Server IP Discovered: {0} ...", e.Args);
+                logger.LogInformation("Server IP Discovered: {0} ...", e.Args);
                 discoveryClient.StopDiscoveryClient();
                 await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
             };
@@ -216,10 +225,21 @@ namespace HeliosClockCommon.Clients
             if (isConnecting)
                 return;
 
+            parentCancellationToken = cancellationToken;
             isConnecting = true;
 
             string URL = string.Format(DefaultValues.HubUrl, serverIpAddress.ToString(), DefaultValues.SignalPortOne);
-            _logger.LogInformation("Connecting to Server with address: {0} ...", URL);
+            logger.LogInformation("Connecting to Server with address: {0} ...", URL);
+
+            try
+            {
+                if(connection != null)
+                    await connection.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogDebug("Error closing old connection. Message: {0} ...", ex.Message);
+            }
 
             connection = new HubConnectionBuilder().WithUrl(URL).WithAutomaticReconnect().Build();
 
@@ -227,7 +247,7 @@ namespace HeliosClockCommon.Clients
             {
                 Initialize();
 
-                _logger.LogInformation("Local Client: Connecting ...");
+                logger.LogInformation("Local Client: Connecting ...");
 
                 // Loop is here to wait until the server is running
                 while (connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
@@ -243,12 +263,12 @@ namespace HeliosClockCommon.Clients
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning("Local Client: Error Connecting: {0} ...", ex.Message);
+                        logger.LogWarning("Local Client: Error Connecting: {0} ...", ex.Message);
                         await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                     }
                 }
 
-                _logger.LogInformation("Local Client: Connection Successfully. Status: {0} ...", connection.State.ToString());
+                logger.LogInformation("Local Client: Connection Successfully. Status: {0} ...", connection.State.ToString());
             }, cancellationToken).ConfigureAwait(false);
 
             if (!cancellationToken.IsCancellationRequested)
@@ -263,7 +283,7 @@ namespace HeliosClockCommon.Clients
         {
             isConnecting = false;
             localCancellationTokenSource?.Cancel();
-
+            logger.LogInformation("Stopping Lumin Client ...");
             await connection.DisposeAsync().ConfigureAwait(false);
         }
     }
