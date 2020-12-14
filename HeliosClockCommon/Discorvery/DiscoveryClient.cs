@@ -15,6 +15,7 @@ namespace HeliosClockCommon.Discorvery
 		public event EventHandler<EventArgs<IPAddress>> OnIpDiscovered;
 		private CancellationTokenSource localCancellationTokenSource;
 		private CancellationToken localCancellationToken;
+		private UdpClient client;
 
 		/// <summary>Starts the discovery client.</summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -24,13 +25,11 @@ namespace HeliosClockCommon.Discorvery
 			localCancellationTokenSource = new CancellationTokenSource();
 			localCancellationToken = localCancellationTokenSource.Token;
 
-			UdpClient client = null;
-
 			try
 			{
 				client = new UdpClient(DefaultDiscoveryValues.DiscoveryPort, AddressFamily.InterNetwork);
 			}
-			catch (Exception ex) when (ex is AddressInUseException || ex is SocketException)
+			catch (Exception ex) //when (ex is AddressInUseException || ex is SocketException)
 			{
 				//If address is in use, Discovery Server may be running in this machine. Try to listen anyway
 				client = new UdpClient();
@@ -72,10 +71,10 @@ namespace HeliosClockCommon.Discorvery
 
 			try
 			{
-				await Task.Run(() => Task.WaitAll(new Task[] { receiveTask }, cancellationToken)).ConfigureAwait(false);
+				await Task.Run(() => Task.WaitAll(new Task[] { receiveTask }, localCancellationToken)).ConfigureAwait(false);
 			}
 			catch
-			{ }
+			{}
 
 			localCancellationTokenSource.Cancel();
 			client.Close();
@@ -85,6 +84,7 @@ namespace HeliosClockCommon.Discorvery
 		public void StopDiscoveryClient()
 		{
 			localCancellationTokenSource?.Cancel();
+			client?.Dispose();
 		}
 	}
 }

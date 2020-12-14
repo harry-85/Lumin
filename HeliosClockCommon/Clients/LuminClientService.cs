@@ -83,13 +83,20 @@ namespace HeliosClockCommon.Clients
             if (localCancellationToken.IsCancellationRequested)
                 return;
 
+            localCancellationTokenSource.Cancel();
+
             logger.LogDebug("Local Lumin Client Closed. Waiting 1000ms ...");
 
             isConnecting = false;
             await Task.Delay(1000).ConfigureAwait(false);
 
-            logger.LogDebug("Restarting Closed Lumin Client ...");
-            await StartAsync(parentCancellationToken).ConfigureAwait(false);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Run(async () =>
+            {
+                logger.LogDebug("Restarting Closed Lumin Client ...");
+                await StartAsync(parentCancellationToken).ConfigureAwait(false);
+            });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         /// <summary>On reconnected.</summary>
@@ -217,6 +224,7 @@ namespace HeliosClockCommon.Clients
                 await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
             };
 
+            logger.LogDebug("Starting Discovery Client ...");
             await discoveryClient.StartDiscoveryClient(cancellationToken).ConfigureAwait(false);
         }
 

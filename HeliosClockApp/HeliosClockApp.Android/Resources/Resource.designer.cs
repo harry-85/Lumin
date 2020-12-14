@@ -13319,7 +13319,6 @@ namespace HeliosClockApp.Droid
 			global::Vapolia.WheelPickerForms.Resource.Styleable.WheelPicker_visibleItemCount = global::HeliosClockApp.Droid.Resource.Styleable.WheelPicker_visibleItemCount;
 			global::Vapolia.WheelPickerForms.Resource.Styleable.WheelPicker_wp_itemTextColor = global::HeliosClockApp.Droid.Resource.Styleable.WheelPicker_wp_itemTextColor;
 			global::Xamarin.Essentials.Resource.Attribute.alpha = global::HeliosClockApp.Droid.Resource.Attribute.alpha;
-			global::Xamarin.Essentials.Resource.Attribute.coordinatorLayoutStyle = global::HeliosClockApp.Droid.Resource.Attribute.coordinatorLayoutStyle;
 			global::Xamarin.Essentials.Resource.Attribute.font = global::HeliosClockApp.Droid.Resource.Attribute.font;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderAuthority = global::HeliosClockApp.Droid.Resource.Attribute.fontProviderAuthority;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderCerts = global::HeliosClockApp.Droid.Resource.Attribute.fontProviderCerts;
@@ -13330,23 +13329,15 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Attribute.fontStyle = global::HeliosClockApp.Droid.Resource.Attribute.fontStyle;
 			global::Xamarin.Essentials.Resource.Attribute.fontVariationSettings = global::HeliosClockApp.Droid.Resource.Attribute.fontVariationSettings;
 			global::Xamarin.Essentials.Resource.Attribute.fontWeight = global::HeliosClockApp.Droid.Resource.Attribute.fontWeight;
-			global::Xamarin.Essentials.Resource.Attribute.keylines = global::HeliosClockApp.Droid.Resource.Attribute.keylines;
-			global::Xamarin.Essentials.Resource.Attribute.layout_anchor = global::HeliosClockApp.Droid.Resource.Attribute.layout_anchor;
-			global::Xamarin.Essentials.Resource.Attribute.layout_anchorGravity = global::HeliosClockApp.Droid.Resource.Attribute.layout_anchorGravity;
-			global::Xamarin.Essentials.Resource.Attribute.layout_behavior = global::HeliosClockApp.Droid.Resource.Attribute.layout_behavior;
-			global::Xamarin.Essentials.Resource.Attribute.layout_dodgeInsetEdges = global::HeliosClockApp.Droid.Resource.Attribute.layout_dodgeInsetEdges;
-			global::Xamarin.Essentials.Resource.Attribute.layout_insetEdge = global::HeliosClockApp.Droid.Resource.Attribute.layout_insetEdge;
-			global::Xamarin.Essentials.Resource.Attribute.layout_keyline = global::HeliosClockApp.Droid.Resource.Attribute.layout_keyline;
-			global::Xamarin.Essentials.Resource.Attribute.statusBarBackground = global::HeliosClockApp.Droid.Resource.Attribute.statusBarBackground;
 			global::Xamarin.Essentials.Resource.Attribute.ttcIndex = global::HeliosClockApp.Droid.Resource.Attribute.ttcIndex;
+			global::Xamarin.Essentials.Resource.Color.androidx_core_ripple_material_light = global::HeliosClockApp.Droid.Resource.Color.androidx_core_ripple_material_light;
+			global::Xamarin.Essentials.Resource.Color.androidx_core_secondary_text_default_material_light = global::HeliosClockApp.Droid.Resource.Color.androidx_core_secondary_text_default_material_light;
 			global::Xamarin.Essentials.Resource.Color.browser_actions_bg_grey = global::HeliosClockApp.Droid.Resource.Color.browser_actions_bg_grey;
 			global::Xamarin.Essentials.Resource.Color.browser_actions_divider_color = global::HeliosClockApp.Droid.Resource.Color.browser_actions_divider_color;
 			global::Xamarin.Essentials.Resource.Color.browser_actions_text_color = global::HeliosClockApp.Droid.Resource.Color.browser_actions_text_color;
 			global::Xamarin.Essentials.Resource.Color.browser_actions_title_color = global::HeliosClockApp.Droid.Resource.Color.browser_actions_title_color;
 			global::Xamarin.Essentials.Resource.Color.notification_action_color_filter = global::HeliosClockApp.Droid.Resource.Color.notification_action_color_filter;
 			global::Xamarin.Essentials.Resource.Color.notification_icon_bg_color = global::HeliosClockApp.Droid.Resource.Color.notification_icon_bg_color;
-			global::Xamarin.Essentials.Resource.Color.ripple_material_light = global::HeliosClockApp.Droid.Resource.Color.ripple_material_light;
-			global::Xamarin.Essentials.Resource.Color.secondary_text_default_material_light = global::HeliosClockApp.Droid.Resource.Color.secondary_text_default_material_light;
 			global::Xamarin.Essentials.Resource.Dimension.browser_actions_context_menu_max_width = global::HeliosClockApp.Droid.Resource.Dimension.browser_actions_context_menu_max_width;
 			global::Xamarin.Essentials.Resource.Dimension.browser_actions_context_menu_min_padding = global::HeliosClockApp.Droid.Resource.Dimension.browser_actions_context_menu_min_padding;
 			global::Xamarin.Essentials.Resource.Dimension.compat_button_inset_horizontal_material = global::HeliosClockApp.Droid.Resource.Dimension.compat_button_inset_horizontal_material;
@@ -13421,43 +13412,28 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Id.action_divider = global::HeliosClockApp.Droid.Resource.Id.action_divider;
 			global::Xamarin.Essentials.Resource.Id.action_image = global::HeliosClockApp.Droid.Resource.Id.action_image;
 			global::Xamarin.Essentials.Resource.Id.action_text = global::HeliosClockApp.Droid.Resource.Id.action_text;
-			global::Xamarin.Essentials.Resource.Id.all = global::HeliosClockApp.Droid.Resource.Id.all;
 			global::Xamarin.Essentials.Resource.Id.async = global::HeliosClockApp.Droid.Resource.Id.async;
 			global::Xamarin.Essentials.Resource.Id.blocking = global::HeliosClockApp.Droid.Resource.Id.blocking;
-			global::Xamarin.Essentials.Resource.Id.bottom = global::HeliosClockApp.Droid.Resource.Id.bottom;
 			global::Xamarin.Essentials.Resource.Id.browser_actions_header_text = global::HeliosClockApp.Droid.Resource.Id.browser_actions_header_text;
 			global::Xamarin.Essentials.Resource.Id.browser_actions_menu_items = global::HeliosClockApp.Droid.Resource.Id.browser_actions_menu_items;
 			global::Xamarin.Essentials.Resource.Id.browser_actions_menu_item_icon = global::HeliosClockApp.Droid.Resource.Id.browser_actions_menu_item_icon;
 			global::Xamarin.Essentials.Resource.Id.browser_actions_menu_item_text = global::HeliosClockApp.Droid.Resource.Id.browser_actions_menu_item_text;
 			global::Xamarin.Essentials.Resource.Id.browser_actions_menu_view = global::HeliosClockApp.Droid.Resource.Id.browser_actions_menu_view;
-			global::Xamarin.Essentials.Resource.Id.center = global::HeliosClockApp.Droid.Resource.Id.center;
-			global::Xamarin.Essentials.Resource.Id.center_horizontal = global::HeliosClockApp.Droid.Resource.Id.center_horizontal;
-			global::Xamarin.Essentials.Resource.Id.center_vertical = global::HeliosClockApp.Droid.Resource.Id.center_vertical;
 			global::Xamarin.Essentials.Resource.Id.chronometer = global::HeliosClockApp.Droid.Resource.Id.chronometer;
-			global::Xamarin.Essentials.Resource.Id.clip_horizontal = global::HeliosClockApp.Droid.Resource.Id.clip_horizontal;
-			global::Xamarin.Essentials.Resource.Id.clip_vertical = global::HeliosClockApp.Droid.Resource.Id.clip_vertical;
 			global::Xamarin.Essentials.Resource.Id.dialog_button = global::HeliosClockApp.Droid.Resource.Id.dialog_button;
-			global::Xamarin.Essentials.Resource.Id.end = global::HeliosClockApp.Droid.Resource.Id.end;
-			global::Xamarin.Essentials.Resource.Id.fill = global::HeliosClockApp.Droid.Resource.Id.fill;
-			global::Xamarin.Essentials.Resource.Id.fill_horizontal = global::HeliosClockApp.Droid.Resource.Id.fill_horizontal;
-			global::Xamarin.Essentials.Resource.Id.fill_vertical = global::HeliosClockApp.Droid.Resource.Id.fill_vertical;
 			global::Xamarin.Essentials.Resource.Id.forever = global::HeliosClockApp.Droid.Resource.Id.forever;
 			global::Xamarin.Essentials.Resource.Id.icon = global::HeliosClockApp.Droid.Resource.Id.icon;
 			global::Xamarin.Essentials.Resource.Id.icon_group = global::HeliosClockApp.Droid.Resource.Id.icon_group;
 			global::Xamarin.Essentials.Resource.Id.info = global::HeliosClockApp.Droid.Resource.Id.info;
 			global::Xamarin.Essentials.Resource.Id.italic = global::HeliosClockApp.Droid.Resource.Id.italic;
-			global::Xamarin.Essentials.Resource.Id.left = global::HeliosClockApp.Droid.Resource.Id.left;
 			global::Xamarin.Essentials.Resource.Id.line1 = global::HeliosClockApp.Droid.Resource.Id.line1;
 			global::Xamarin.Essentials.Resource.Id.line3 = global::HeliosClockApp.Droid.Resource.Id.line3;
-			global::Xamarin.Essentials.Resource.Id.none = global::HeliosClockApp.Droid.Resource.Id.none;
 			global::Xamarin.Essentials.Resource.Id.normal = global::HeliosClockApp.Droid.Resource.Id.normal;
 			global::Xamarin.Essentials.Resource.Id.notification_background = global::HeliosClockApp.Droid.Resource.Id.notification_background;
 			global::Xamarin.Essentials.Resource.Id.notification_main_column = global::HeliosClockApp.Droid.Resource.Id.notification_main_column;
 			global::Xamarin.Essentials.Resource.Id.notification_main_column_container = global::HeliosClockApp.Droid.Resource.Id.notification_main_column_container;
-			global::Xamarin.Essentials.Resource.Id.right = global::HeliosClockApp.Droid.Resource.Id.right;
 			global::Xamarin.Essentials.Resource.Id.right_icon = global::HeliosClockApp.Droid.Resource.Id.right_icon;
 			global::Xamarin.Essentials.Resource.Id.right_side = global::HeliosClockApp.Droid.Resource.Id.right_side;
-			global::Xamarin.Essentials.Resource.Id.start = global::HeliosClockApp.Droid.Resource.Id.start;
 			global::Xamarin.Essentials.Resource.Id.tag_accessibility_actions = global::HeliosClockApp.Droid.Resource.Id.tag_accessibility_actions;
 			global::Xamarin.Essentials.Resource.Id.tag_accessibility_clickable_spans = global::HeliosClockApp.Droid.Resource.Id.tag_accessibility_clickable_spans;
 			global::Xamarin.Essentials.Resource.Id.tag_accessibility_heading = global::HeliosClockApp.Droid.Resource.Id.tag_accessibility_heading;
@@ -13470,7 +13446,6 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Id.text2 = global::HeliosClockApp.Droid.Resource.Id.text2;
 			global::Xamarin.Essentials.Resource.Id.time = global::HeliosClockApp.Droid.Resource.Id.time;
 			global::Xamarin.Essentials.Resource.Id.title = global::HeliosClockApp.Droid.Resource.Id.title;
-			global::Xamarin.Essentials.Resource.Id.top = global::HeliosClockApp.Droid.Resource.Id.top;
 			global::Xamarin.Essentials.Resource.Integer.status_bar_notification_info_maxnum = global::HeliosClockApp.Droid.Resource.Integer.status_bar_notification_info_maxnum;
 			global::Xamarin.Essentials.Resource.Layout.browser_actions_context_menu_page = global::HeliosClockApp.Droid.Resource.Layout.browser_actions_context_menu_page;
 			global::Xamarin.Essentials.Resource.Layout.browser_actions_context_menu_row = global::HeliosClockApp.Droid.Resource.Layout.browser_actions_context_menu_row;
@@ -13481,6 +13456,10 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Layout.notification_template_icon_group = global::HeliosClockApp.Droid.Resource.Layout.notification_template_icon_group;
 			global::Xamarin.Essentials.Resource.Layout.notification_template_part_chronometer = global::HeliosClockApp.Droid.Resource.Layout.notification_template_part_chronometer;
 			global::Xamarin.Essentials.Resource.Layout.notification_template_part_time = global::HeliosClockApp.Droid.Resource.Layout.notification_template_part_time;
+			global::Xamarin.Essentials.Resource.String.copy_toast_msg = global::HeliosClockApp.Droid.Resource.String.copy_toast_msg;
+			global::Xamarin.Essentials.Resource.String.fallback_menu_item_copy_link = global::HeliosClockApp.Droid.Resource.String.fallback_menu_item_copy_link;
+			global::Xamarin.Essentials.Resource.String.fallback_menu_item_open_in_browser = global::HeliosClockApp.Droid.Resource.String.fallback_menu_item_open_in_browser;
+			global::Xamarin.Essentials.Resource.String.fallback_menu_item_share_link = global::HeliosClockApp.Droid.Resource.String.fallback_menu_item_share_link;
 			global::Xamarin.Essentials.Resource.String.status_bar_notification_info_overflow = global::HeliosClockApp.Droid.Resource.String.status_bar_notification_info_overflow;
 			global::Xamarin.Essentials.Resource.Style.TextAppearance_Compat_Notification = global::HeliosClockApp.Droid.Resource.Style.TextAppearance_Compat_Notification;
 			global::Xamarin.Essentials.Resource.Style.TextAppearance_Compat_Notification_Info = global::HeliosClockApp.Droid.Resource.Style.TextAppearance_Compat_Notification_Info;
@@ -13489,22 +13468,10 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Style.TextAppearance_Compat_Notification_Title = global::HeliosClockApp.Droid.Resource.Style.TextAppearance_Compat_Notification_Title;
 			global::Xamarin.Essentials.Resource.Style.Widget_Compat_NotificationActionContainer = global::HeliosClockApp.Droid.Resource.Style.Widget_Compat_NotificationActionContainer;
 			global::Xamarin.Essentials.Resource.Style.Widget_Compat_NotificationActionText = global::HeliosClockApp.Droid.Resource.Style.Widget_Compat_NotificationActionText;
-			global::Xamarin.Essentials.Resource.Style.Widget_Support_CoordinatorLayout = global::HeliosClockApp.Droid.Resource.Style.Widget_Support_CoordinatorLayout;
 			global::Xamarin.Essentials.Resource.Styleable.ColorStateListItem = global::HeliosClockApp.Droid.Resource.Styleable.ColorStateListItem;
 			global::Xamarin.Essentials.Resource.Styleable.ColorStateListItem_alpha = global::HeliosClockApp.Droid.Resource.Styleable.ColorStateListItem_alpha;
 			global::Xamarin.Essentials.Resource.Styleable.ColorStateListItem_android_alpha = global::HeliosClockApp.Droid.Resource.Styleable.ColorStateListItem_android_alpha;
 			global::Xamarin.Essentials.Resource.Styleable.ColorStateListItem_android_color = global::HeliosClockApp.Droid.Resource.Styleable.ColorStateListItem_android_color;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_keylines = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_keylines;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_android_layout_gravity = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_android_layout_gravity;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_anchor = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_anchor;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_anchorGravity = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_anchorGravity;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_behavior = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_behavior;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_dodgeInsetEdges = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_dodgeInsetEdges;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_insetEdge = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_insetEdge;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_Layout_layout_keyline = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_Layout_layout_keyline;
-			global::Xamarin.Essentials.Resource.Styleable.CoordinatorLayout_statusBarBackground = global::HeliosClockApp.Droid.Resource.Styleable.CoordinatorLayout_statusBarBackground;
 			global::Xamarin.Essentials.Resource.Styleable.FontFamily = global::HeliosClockApp.Droid.Resource.Styleable.FontFamily;
 			global::Xamarin.Essentials.Resource.Styleable.FontFamilyFont = global::HeliosClockApp.Droid.Resource.Styleable.FontFamilyFont;
 			global::Xamarin.Essentials.Resource.Styleable.FontFamilyFont_android_font = global::HeliosClockApp.Droid.Resource.Styleable.FontFamilyFont_android_font;
@@ -13539,6 +13506,7 @@ namespace HeliosClockApp.Droid
 			global::Xamarin.Essentials.Resource.Styleable.GradientColor_android_startY = global::HeliosClockApp.Droid.Resource.Styleable.GradientColor_android_startY;
 			global::Xamarin.Essentials.Resource.Styleable.GradientColor_android_tileMode = global::HeliosClockApp.Droid.Resource.Styleable.GradientColor_android_tileMode;
 			global::Xamarin.Essentials.Resource.Styleable.GradientColor_android_type = global::HeliosClockApp.Droid.Resource.Styleable.GradientColor_android_type;
+			global::Xamarin.Essentials.Resource.Xml.image_share_filepaths = global::HeliosClockApp.Droid.Resource.Xml.image_share_filepaths;
 			global::Xamarin.Essentials.Resource.Xml.xamarin_essentials_fileprovider_file_paths = global::HeliosClockApp.Droid.Resource.Xml.xamarin_essentials_fileprovider_file_paths;
 			global::Xamarin.Forms.Material.Android.Resource.Animation.abc_fade_in = global::HeliosClockApp.Droid.Resource.Animation.abc_fade_in;
 			global::Xamarin.Forms.Material.Android.Resource.Animation.abc_fade_out = global::HeliosClockApp.Droid.Resource.Animation.abc_fade_out;
@@ -26227,43 +26195,55 @@ namespace HeliosClockApp.Droid
 			public const int character_counter_pattern = 2131623966;
 			
 			// aapt resource value: 0x7F0E001F
-			public const int fab_transformation_scrim_behavior = 2131623967;
+			public const int copy_toast_msg = 2131623967;
 			
 			// aapt resource value: 0x7F0E0020
-			public const int fab_transformation_sheet_behavior = 2131623968;
+			public const int fab_transformation_scrim_behavior = 2131623968;
 			
 			// aapt resource value: 0x7F0E0021
-			public const int hide_bottom_view_on_scroll_behavior = 2131623969;
+			public const int fab_transformation_sheet_behavior = 2131623969;
 			
 			// aapt resource value: 0x7F0E0022
-			public const int library_name = 2131623970;
+			public const int fallback_menu_item_copy_link = 2131623970;
 			
 			// aapt resource value: 0x7F0E0023
-			public const int mtrl_chip_close_icon_content_description = 2131623971;
+			public const int fallback_menu_item_open_in_browser = 2131623971;
 			
 			// aapt resource value: 0x7F0E0024
-			public const int overflow_tab_title = 2131623972;
+			public const int fallback_menu_item_share_link = 2131623972;
 			
 			// aapt resource value: 0x7F0E0025
-			public const int password_toggle_content_description = 2131623973;
+			public const int hide_bottom_view_on_scroll_behavior = 2131623973;
 			
 			// aapt resource value: 0x7F0E0026
-			public const int path_password_eye = 2131623974;
+			public const int library_name = 2131623974;
 			
 			// aapt resource value: 0x7F0E0027
-			public const int path_password_eye_mask_strike_through = 2131623975;
+			public const int mtrl_chip_close_icon_content_description = 2131623975;
 			
 			// aapt resource value: 0x7F0E0028
-			public const int path_password_eye_mask_visible = 2131623976;
+			public const int overflow_tab_title = 2131623976;
 			
 			// aapt resource value: 0x7F0E0029
-			public const int path_password_strike_through = 2131623977;
+			public const int password_toggle_content_description = 2131623977;
 			
 			// aapt resource value: 0x7F0E002A
-			public const int search_menu_title = 2131623978;
+			public const int path_password_eye = 2131623978;
 			
 			// aapt resource value: 0x7F0E002B
-			public const int status_bar_notification_info_overflow = 2131623979;
+			public const int path_password_eye_mask_strike_through = 2131623979;
+			
+			// aapt resource value: 0x7F0E002C
+			public const int path_password_eye_mask_visible = 2131623980;
+			
+			// aapt resource value: 0x7F0E002D
+			public const int path_password_strike_through = 2131623981;
+			
+			// aapt resource value: 0x7F0E002E
+			public const int search_menu_title = 2131623982;
+			
+			// aapt resource value: 0x7F0E002F
+			public const int status_bar_notification_info_overflow = 2131623983;
 			
 			static String()
 			{
@@ -30999,7 +30979,10 @@ namespace HeliosClockApp.Droid
 		{
 			
 			// aapt resource value: 0x7F110000
-			public const int xamarin_essentials_fileprovider_file_paths = 2131820544;
+			public const int image_share_filepaths = 2131820544;
+			
+			// aapt resource value: 0x7F110001
+			public const int xamarin_essentials_fileprovider_file_paths = 2131820545;
 			
 			static Xml()
 			{
