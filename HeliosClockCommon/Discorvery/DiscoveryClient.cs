@@ -29,7 +29,7 @@ namespace HeliosClockCommon.Discorvery
 			{
 				client = new UdpClient(DefaultDiscoveryValues.DiscoveryPort, AddressFamily.InterNetwork);
 			}
-			catch (Exception ex) //when (ex is AddressInUseException || ex is SocketException)
+			catch //// (Exception ex) //when (ex is AddressInUseException || ex is SocketException)
 			{
 				//If address is in use, Discovery Server may be running in this machine. Try to listen anyway
 				client = new UdpClient();
