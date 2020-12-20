@@ -1,5 +1,6 @@
 ﻿using HeliosClockCommon.Defaults;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -10,12 +11,18 @@ using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Discorvery
 {
-	public class DiscoveryClient
+	public class DiscoveryClient : IDisposable
 	{
 		public event EventHandler<EventArgs<IPAddress>> OnIpDiscovered;
 		private CancellationTokenSource localCancellationTokenSource;
 		private CancellationToken localCancellationToken;
-		private UdpClient client;
+		private readonly UdpClient client;
+
+        /// <summary>Initializes a new instance of the <see cref="DiscoveryClient"/> class.</summary>
+        public DiscoveryClient(DiscoverFactory factory)
+		{
+			client = factory.UdpClient;
+		}
 
 		/// <summary>Starts the discovery client.</summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -24,16 +31,6 @@ namespace HeliosClockCommon.Discorvery
 			localCancellationTokenSource?.Cancel();
 			localCancellationTokenSource = new CancellationTokenSource();
 			localCancellationToken = localCancellationTokenSource.Token;
-
-			try
-			{
-				client = new UdpClient(DefaultDiscoveryValues.DiscoveryPort, AddressFamily.InterNetwork);
-			}
-			catch //// (Exception ex) //when (ex is AddressInUseException || ex is SocketException)
-			{
-				//If address is in use, Discovery Server may be running in this machine. Try to listen anyway
-				client = new UdpClient();
-			}
 
 			var RequestData = Encoding.ASCII.GetBytes(DefaultDiscoveryValues.DefaultDiscoveryRequest);
 
@@ -51,7 +48,6 @@ namespace HeliosClockCommon.Discorvery
 			{
 				while (!cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
 				{
-					client.EnableBroadcast = true;
 					try
 					{
 						var serverResponseData = await client.ReceiveAsync().ConfigureAwait(false);
@@ -77,13 +73,17 @@ namespace HeliosClockCommon.Discorvery
 			{}
 
 			localCancellationTokenSource.Cancel();
-			client.Close();
 		}
 
 		/// <summary>Stops the discovery client.</summary>
 		public void StopDiscoveryClient()
 		{
 			localCancellationTokenSource?.Cancel();
+		}
+
+		public void Dispose()
+		{
+			client?.Close();
 			client?.Dispose();
 		}
 	}

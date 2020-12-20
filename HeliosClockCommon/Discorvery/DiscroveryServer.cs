@@ -12,11 +12,12 @@ namespace HeliosClockCommon.Discorvery
     public class DiscroveryServer : BackgroundService
     {
         private readonly ILogger<DiscroveryServer> logger;
-
+        private DiscoverFactory discoverFactory;
         /// <summary>Initializes a new instance of the <see cref="DiscroveryServer"/> class.</summary>
         /// <param name="logger">The logger.</param>
-        public DiscroveryServer(ILogger<DiscroveryServer> logger)
+        public DiscroveryServer(DiscoverFactory factory, ILogger<DiscroveryServer> logger)
         {
+            this.discoverFactory = factory;
             this.logger = logger;
         }
 
@@ -32,10 +33,9 @@ namespace HeliosClockCommon.Discorvery
 
             await Task.Run(async () =>
             {
-                UdpClient server = null;
+                UdpClient server = discoverFactory.UdpClient;
                 try
                 {
-                    server = new UdpClient(DefaultDiscoveryValues.DiscoveryPort);
                     while (!stoppingToken.IsCancellationRequested)
                     {
                         var clientRequestData = await server.ReceiveAsync().ConfigureAwait(false);

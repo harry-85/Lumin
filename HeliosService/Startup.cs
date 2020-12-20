@@ -24,7 +24,12 @@ namespace HeliosService
         {
             //First create the configuration file and start the configuration service to read the configuration
             services.AddSingleton<ILuminConfiguration, LuminConfigs>();
+
+            //Starting the configuration service
             services.AddHostedService<ConfigureService>();
+
+            //Starting discover factory, creates the unique UDP Client
+            services.AddSingleton<DiscoverFactory>();
 
             //Start the discovery service to find server IP
             services.AddHostedService<DiscroveryServer>();

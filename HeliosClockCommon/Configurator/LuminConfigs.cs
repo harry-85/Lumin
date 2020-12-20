@@ -11,6 +11,7 @@ namespace HeliosClockCommon.Configurator
         private string name;
         private int ledCount;
         private double autoOffTime;
+        private int discoveryPort;
 
         /// <summary>Occurs when [on configuration changed].</summary>
         public event EventHandler<EventArgs<string>> OnConfigurationChanged;
@@ -25,6 +26,7 @@ namespace HeliosClockCommon.Configurator
                 Name = DefaultValues.DefaultClientName;
                 LedCount = DefaultValues.DefaultLedCount;
                 AutoOffTime = DefaultValues.DefaultAutoOffTime;
+                DiscoveryPort = DefaultDiscoveryValues.DiscoveryPort;
             }
             else
             {
@@ -58,6 +60,16 @@ namespace HeliosClockCommon.Configurator
             set
             {
                 name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int DiscoveryPort
+        {
+            get => discoveryPort;
+            set
+            {
+                discoveryPort = value;
                 OnPropertyChanged();
             }
         }

@@ -31,6 +31,8 @@ namespace HeliosClockCommon.Clients
         private readonly ILogger<LuminClientService> logger;
         private readonly ILuminConfiguration luminConfiguration;
 
+        private readonly DiscoveryClient discoveryClient;
+
         /// <summary>Gets the client SignalR identifier.</summary>
         /// <value>The client SignalR identifier.</value>
         public string ClientId => connection.ConnectionId;
@@ -38,12 +40,14 @@ namespace HeliosClockCommon.Clients
         /// <summary>Initializes a new instance of the <see cref="LuminClientService"/> class.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="manager">The manager.</param>
-        public LuminClientService(ILogger<LuminClientService> logger, ILuminManager manager, ILuminConfiguration luminConfiguration)
+        public LuminClientService(ILogger<LuminClientService> logger, DiscoverFactory discoverFactory, ILuminManager manager, ILuminConfiguration luminConfiguration)
         {
             this.logger = logger;
             this.logger.LogInformation("Initializing LuminClient ...");
 
             this.luminConfiguration = luminConfiguration;
+            discoveryClient = new DiscoveryClient(discoverFactory);
+            discoveryClient.OnIpDiscovered += DiscoveryClient_OnIpDiscovered; 
 
             this.manager = manager;
             ledController = manager.LedController;
@@ -211,19 +215,22 @@ namespace HeliosClockCommon.Clients
             }
         }
 
+        /// <summary>Handles the OnIpDiscovered event of the DiscoveryClient control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs{IPAddress}"/> instance containing the event data.</param>
+        private async void DiscoveryClient_OnIpDiscovered(object sender, EventArgs<IPAddress> e)
+        {
+            logger.LogInformation("Server IP Discovered: {0} ...", e.Args);
+            discoveryClient.StopDiscoveryClient();
+            await ConnectToServer(e.Args).ConfigureAwait(false);
+        }
+
         /// <summary>Triggered when the application host is ready to start the service.</summary>
         /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             logger.LogInformation("Starting Lumin Client ...");
-            DiscoveryClient discoveryClient = new DiscoveryClient();
-            discoveryClient.OnIpDiscovered += async (s, e) =>
-            {
-                logger.LogInformation("Server IP Discovered: {0} ...", e.Args);
-                discoveryClient.StopDiscoveryClient();
-                await ConnectToServer(cancellationToken, e.Args).ConfigureAwait(false);
-            };
-
+            parentCancellationToken = cancellationToken;
             logger.LogDebug("Starting Discovery Client ...");
             await discoveryClient.StartDiscoveryClient(cancellationToken).ConfigureAwait(false);
         }
@@ -231,12 +238,11 @@ namespace HeliosClockCommon.Clients
         /// <summary>Connects to server.</summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="serverIpAddress">The server IP address.</param>
-        private async Task ConnectToServer(CancellationToken cancellationToken, IPAddress serverIpAddress)
+        private async Task ConnectToServer(IPAddress serverIpAddress)
         {
             if (isConnecting)
                 return;
 
-            parentCancellationToken = cancellationToken;
             isConnecting = true;
 
             string URL = string.Format(DefaultValues.HubUrl, serverIpAddress.ToString(), DefaultValues.SignalPortOne);
@@ -261,13 +267,13 @@ namespace HeliosClockCommon.Clients
                 logger.LogInformation("Local Client: Connecting ...");
 
                 // Loop is here to wait until the server is running
-                while (connection.State != HubConnectionState.Connected && !cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
+                while (connection.State != HubConnectionState.Connected && !parentCancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
                 {
                     try
                     {
-                        await connection.StartAsync(cancellationToken).ConfigureAwait(false); ;
+                        await connection.StartAsync(parentCancellationToken).ConfigureAwait(false); ;
 
-                        while (connection.State == HubConnectionState.Connecting && !cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
+                        while (connection.State == HubConnectionState.Connecting && !parentCancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
                         {
                             await Task.Delay(1000).ConfigureAwait(false);
                         }
@@ -275,14 +281,14 @@ namespace HeliosClockCommon.Clients
                     catch (Exception ex)
                     {
                         logger.LogWarning("Local Client: Error Connecting: {0} ...", ex.Message);
-                        await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                        await Task.Delay(1000, parentCancellationToken).ConfigureAwait(false);
                     }
                 }
 
                 logger.LogInformation("Local Client: Connection Successfully. Status: {0} ...", connection.State.ToString());
-            }, cancellationToken).ConfigureAwait(false);
+            }, parentCancellationToken).ConfigureAwait(false);
 
-            if (!cancellationToken.IsCancellationRequested)
+            if (!parentCancellationToken.IsCancellationRequested)
                 await RegisterAsLedClient().ConfigureAwait(false);
 
             isConnecting = false;

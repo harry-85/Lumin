@@ -20,5 +20,9 @@ namespace HeliosClockCommon.Configurator
         /// <summary>Gets or sets the automatic off time of the LED controller.</summary>
         /// <value>The automatic off time.</value>
         double AutoOffTime { get; set; }
+
+        /// <summary>Gets or sets the discovery port.</summary>
+        /// <value>The discovery port.</value>
+        int DiscoveryPort { get; set; }
     }
 }

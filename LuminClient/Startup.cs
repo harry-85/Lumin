@@ -2,6 +2,7 @@ using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
 using HeliosClockCommon.Clients;
 using HeliosClockCommon.Configurator;
+using HeliosClockCommon.Discorvery;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.LedCommon;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +21,12 @@ namespace LuminClient
         {
             //First create the configuration file and start the configuration service to read the configuration
             services.AddSingleton<ILuminConfiguration, LuminConfigs>();
+
+            //Starting the configuration service
             services.AddHostedService<ConfigureService>();
+
+            //Starting discover factory, creates the unique UDP Client
+            services.AddSingleton<DiscoverFactory>();
 
             //Create an LED Controller
             services.AddSingleton<ILedController, LedAPA102Controller>();

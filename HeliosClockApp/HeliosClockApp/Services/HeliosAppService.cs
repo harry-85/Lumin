@@ -1,13 +1,12 @@
-﻿using HeliosClockApp.Models;
-using HeliosClockCommon.Clients;
-using HeliosClockCommon.Discorvery;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Models;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using HeliosClockCommon.Clients;
+using HeliosClockCommon.Discorvery;
+using HeliosClockCommon.Enumerations;
+using HeliosClockCommon.Models;
 
 namespace HeliosClockApp.Services
 {
@@ -22,6 +21,7 @@ namespace HeliosClockApp.Services
         public event EventHandler<EventArgs<bool>> OnConnected;
         public event EventHandler<EventArgs> OnDisconnected;
         public event EventHandler<EventArgs<LedMode>> OnModeChange;
+        private readonly DiscoveryClient discoveryClient;
 
         public LedClientManager LedClientManager;
 
@@ -55,6 +55,7 @@ namespace HeliosClockApp.Services
         public HeliosAppService()
         {
             LedClientManager = new LedClientManager();
+            discoveryClient = new DiscoveryClient(new DiscoverFactory());
 
             Client = new HeliosAppClient();
             Client.OnConnected += async (s, e) =>
@@ -80,6 +81,8 @@ namespace HeliosClockApp.Services
                 StartColor = e.StartColor;
                 EndColor = e.EndColor;
             };
+
+            discoveryClient.OnIpDiscovered += DiscoveryClient_OnIpDiscovered;
 
         }
 
@@ -164,7 +167,7 @@ namespace HeliosClockApp.Services
         }
 
         /// <summary>Connects to server.</summary>
-        public async Task StartAsync(CancellationToken cancellationToken, IPAddress serverAddress)
+        public async Task StartAsync(IPAddress serverAddress)
         {
             cancellationTokenSource?.Cancel();
             cancellationTokenSource = new CancellationTokenSource();
@@ -174,17 +177,21 @@ namespace HeliosClockApp.Services
             await Client.StartAsync(token).ConfigureAwait(false);
         }
 
+
+        /// <summary>Handles the OnIpDiscovered event of the DiscoveryClient control.</summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs{IPAddress}"/> instance containing the event data.</param>
+        private async void DiscoveryClient_OnIpDiscovered(object sender, EventArgs<IPAddress> e)
+        {
+            discoveryClient.StopDiscoveryClient();
+            await StartAsync(e.Args).ConfigureAwait(false);
+        }
+
         /// <summary>Connects to server.</summary>
         /// <param name="cancellationToken"></param>
         public async Task ConnectToServer(CancellationToken cancellationToken)
         {
-            DiscoveryClient discoveryClient = new DiscoveryClient();
-            discoveryClient.OnIpDiscovered += async (s, e) =>
-            {
-                discoveryClient.StopDiscoveryClient();
-                await StartAsync(cancellationToken, e.Args).ConfigureAwait(false);
-            };
-
+            //Throws event: DiscoveryClient_OnIpDiscovered, where program will continue
             await discoveryClient.StartDiscoveryClient(cancellationToken).ConfigureAwait(false);
         }
 

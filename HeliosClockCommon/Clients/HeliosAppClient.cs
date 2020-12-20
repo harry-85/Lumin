@@ -1,16 +1,15 @@
-﻿using HeliosClockCommon.Defaults;
+﻿using System;
+using System.Drawing;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using HeliosClockCommon.Defaults;
 using HeliosClockCommon.Enumerations;
 using HeliosClockCommon.EventArgs;
 using HeliosClockCommon.Helper;
 using HeliosClockCommon.Interfaces;
 using HeliosClockCommon.Models;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Drawing;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HeliosClockCommon.Clients
 {
