@@ -39,7 +39,13 @@ namespace HeliosClockCommon.Discorvery
 			{
 				while (!cancellationToken.IsCancellationRequested && !localCancellationToken.IsCancellationRequested)
 				{
-					await client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, DefaultDiscoveryValues.DiscoveryPort)).ConfigureAwait(false);
+					try
+					{
+						await client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, DefaultDiscoveryValues.DiscoveryPort)).ConfigureAwait(false);
+					}
+					catch
+					{
+					}
 					await Task.Delay(500).ConfigureAwait(false);
 				}
 			}, cancellationToken);

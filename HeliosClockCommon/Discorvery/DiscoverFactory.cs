@@ -1,6 +1,5 @@
 ﻿using System.Net.Sockets;
 using HeliosClockCommon.Configurator;
-using HeliosClockCommon.Defaults;
 using Microsoft.Extensions.Logging;
 
 namespace HeliosClockCommon.Discorvery
@@ -19,7 +18,7 @@ namespace HeliosClockCommon.Discorvery
             Intitialize(luminConfiguration, logger);
         }
 
-        /// <summary>Initializes a new instance of the <see cref="DiscoverFactory"/> class.</summary>
+        /// <summary>Initializes a new default instance of the <see cref="DiscoverFactory"/> class.</summary>
         public DiscoverFactory()
         {
             Intitialize(new LuminConfigs(), null);
