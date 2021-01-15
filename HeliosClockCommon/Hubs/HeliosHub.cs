@@ -42,6 +42,12 @@ namespace HeliosClockCommon.Hubs
         /// <param name="clientId">The client identifier.</param>
         public async Task RegisterAsController(string clientId)
         {
+            if (clientId == null)
+            {
+                _logger.LogError("ClientId is null! Unknown registering device! ... ");
+                return;
+            }
+
             _logger.LogDebug("Register {0} as {1} ...", clientId, ClientTypes.Controller);
             UserHandler.ConnectedIds[clientId].ClientType = ClientTypes.Controller;
 

@@ -1,25 +1,22 @@
-﻿using HeliosClockCommon.Defaults;
-using Microsoft.AspNetCore.Connections;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HeliosClockCommon.Defaults;
 
 namespace HeliosClockCommon.Discorvery
 {
-	public class DiscoveryClient : IDisposable
+	public class DiscoveryClient
 	{
 		public event EventHandler<EventArgs<IPAddress>> OnIpDiscovered;
 		private CancellationTokenSource localCancellationTokenSource;
 		private CancellationToken localCancellationToken;
 		private readonly UdpClient client;
 
-        /// <summary>Initializes a new instance of the <see cref="DiscoveryClient"/> class.</summary>
-        public DiscoveryClient(DiscoverFactory factory)
+		/// <summary>Initializes a new instance of the <see cref="DiscoveryClient"/> class.</summary>
+		public DiscoveryClient(DiscoverFactory factory)
 		{
 			client = factory.UdpClient;
 		}
@@ -44,8 +41,7 @@ namespace HeliosClockCommon.Discorvery
 						await client.SendAsync(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, DefaultDiscoveryValues.DiscoveryPort)).ConfigureAwait(false);
 					}
 					catch
-					{
-					}
+					{}
 					await Task.Delay(500).ConfigureAwait(false);
 				}
 			}, cancellationToken);
@@ -85,12 +81,6 @@ namespace HeliosClockCommon.Discorvery
 		public void StopDiscoveryClient()
 		{
 			localCancellationTokenSource?.Cancel();
-		}
-
-		public void Dispose()
-		{
-			client?.Close();
-			client?.Dispose();
 		}
 	}
 }

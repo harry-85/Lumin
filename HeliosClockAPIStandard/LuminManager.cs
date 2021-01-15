@@ -21,7 +21,7 @@ namespace HeliosClockAPIStandard
         private CancellationToken cancellationToken;
         private ILuminConfiguration luminConfiguration;
         public event EventHandler<NotifyControllerEventArgs> NotifyController;
-        private ILogger<LuminManager> logger;
+        private readonly ILogger<LuminManager> logger;
         public ILedController LedController { get; set; }
         public int RefreshSpeed { get; set; }
         public Color StartColor { get; set; }
@@ -98,6 +98,7 @@ namespace HeliosClockAPIStandard
         /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
         private async void AutoOffTmer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            logger.LogDebug("AutoOff Timer Invoked ...");
             await SetOnOff(PowerOnOff.Off, LedSide.Full, Color.Black).ConfigureAwait(false);
             Brightness = 255;
         }

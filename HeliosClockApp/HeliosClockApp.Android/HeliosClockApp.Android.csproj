@@ -60,15 +60,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
-      <Version>5.0.1</Version>
+      <Version>5.0.2</Version>
     </PackageReference>
     <PackageReference Include="TouchView">
       <Version>4.1.99</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1791-pre5" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0-rc1" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1874" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1-preview1" />
     <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>5.0.0.1791-pre5</Version>
+      <Version>5.0.0.1874</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
