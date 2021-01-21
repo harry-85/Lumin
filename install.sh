@@ -28,12 +28,25 @@ ufw allow $signalPort
 
 #write config file to: ~/.luminConfig/lumin.config
 
-#write GPIO and SPI files, add users to enable SPI and GPIO
+#CONFIG FILE Start
+#-------------------------------------------
+	#Name of the Led Client
+	Name=Bed Room
+	#Number of LEDs at the LedClient side
+	LedCount=58
+	#Time in hours for auto off timer
+	AutoOffTime=2
+	#Discovery Port 
+	DiscoveryPort=8080
+#-------------------------------------------
+#CONFIG FILE End
+
+#write GPIO and SPI files, add users to enable SPI and GPIO | Path: /etc/udev/rules.d/
 
 #install "libgpiod" --> see here: https://ubuntu.pkgs.org/20.04/ubuntu-universe-amd64/libgpiod-dev_1.4.1-4_amd64.deb.html
 apt install libgpiod2 -y
 
-
+# Create Service File / Enable and Start Service (systemctl)
 
 # possibility 1:
 echo "line 1" >> greetings.txt

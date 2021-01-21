@@ -6,8 +6,6 @@ Description=Lumin Service in .NET
 # Location: 
 # /etc/systemd/system/LuminServerService.service
 
-#some more help: 
-#https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/SystemWide/
 
 [Service]
 Type=simple
