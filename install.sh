@@ -1,7 +1,34 @@
 #!/bin/sh
 
+#Write Service File Function
+#Parameters: 1. serverServicePath 2. installPath 3. dotnetPath 4. luminServerDllName 5. userName
+WriteServiceFile () {
+	serverServicePath=$1
+	installPath=$2
+	dotnetPath=$3
+	luminServerDllName=$4
+	userName=$5
+
+	# Create Server Service File / Enable and Start Service (systemctl)
+	echo '[Unit]' > $serverServicePath
+	echo 'Description=Lumin Service in .NET' >> $serverServicePath
+	echo ''
+	echo '# Location:'$serverServicePath >> $serverServicePath
+	echo ''
+	echo '[Service]' >> $serverServicePath
+	echo 'Type=simple' >> $serverServicePath
+	echo 'WorkingDirectory='$installPath >> $serverServicePath
+	echo 'ExecStart='$dotnetPath'/dotnet '$installPath$luminServerDllName >> $serverServicePath
+	echo 'User='$userName >> $serverServicePath
+	echo ''
+	echo '[Install]' >> $serverServicePath
+	echo 'WantedBy=multi-user.target' >> $serverServicePath
+}
+
 clientName="Bed Room"
 ledCount=58
+
+luminServerDllName="LuminServer.dll"
 
 userName=$USER
 homeFolder="/home/"$userName"/"
@@ -65,20 +92,7 @@ echo 'SUBSYSTEM=="spidev", GROUP="spiuser", MODE="0660"' > $spiDeviceRule
 apt install libgpiod2 -y
 
 # Create Server Service File / Enable and Start Service (systemctl)
-echo '[Unit]' > $serverServicePath
-echo 'Description=Lumin Service in .NET' >> $serverServicePath
-echo ''
-echo '# Location:' >> $serverServicePath
-echo '# /etc/systemd/system/LuminServerService.service' >> $serverServicePath
-echo ''
-echo '[Service]' >> $serverServicePath
-echo 'Type=simple' >> $serverServicePath
-echo 'WorkingDirectory='$installPath >> $serverServicePath
-echo 'ExecStart='$dotnetPath'/dotnet '$installPath'LuminServer.dll' >> $serverServicePath
-echo 'User=ubuntu' >> $serverServicePath
-echo ''
-echo '[Install]' >> $serverServicePath
-echo 'WantedBy=multi-user.target' >> $serverServicePath
+WriteServiceFile $serverServicePath $installPath $dotnetPath $luminServerDllName $userName
 
 #Enable the Server Service
 systemctl enable $serverServiceName
