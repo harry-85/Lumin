@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # README #
 
 This README would normally document whatever steps are necessary to get your application up and running.
@@ -31,4 +30,3 @@ This README would normally document whatever steps are necessary to get your app
 =======
 # Lumin
 Lumin Light Service - A Client Server Based LED Light System
->>>>>>> main
