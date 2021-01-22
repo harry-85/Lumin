@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HeliosClockAPIStandard\LuminClientControlAPI.csproj" />
-    <ProjectReference Include="..\HeliosClockCommon\HeliosClockCommon.csproj" />
+    <ProjectReference Include="..\LuminCommon\LuminCommon.csproj" />
   </ItemGroup>
 
 </Project>

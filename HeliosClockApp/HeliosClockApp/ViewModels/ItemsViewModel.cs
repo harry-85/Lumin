@@ -1,7 +1,7 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Views;
-using HeliosClockCommon.Messages;
-using HeliosClockCommon.Models;
+using LuminCommon.Messages;
+using LuminCommon.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

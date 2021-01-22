@@ -1,8 +1,8 @@
 ﻿using HeliosClockApp.Models;
-using HeliosClockCommon.Helper;
-using HeliosClockCommon.Models;
-using HeliosClockCommon.Serializer;
-using HeliosClockCommon.Settings;
+using LuminCommon.Helper;
+using LuminCommon.Models;
+using LuminCommon.Serializer;
+using LuminCommon.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

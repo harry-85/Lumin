@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30615.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminServer", "HeliosService\LuminServer.csproj", "{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminServer", "LuminServer\LuminServer.csproj", "{5E1B6536-7649-41B5-8FF3-9C5FDAB30E19}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeliosClockCommon", "HeliosClockCommon\HeliosClockCommon.csproj", "{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuminCommon", "LuminCommon\LuminCommon.csproj", "{8FE3DF72-3107-4D75-B86C-E44EDBA9E4A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeliosClockApp.Android", "HeliosClockApp\HeliosClockApp.Android\HeliosClockApp.Android.csproj", "{4C797898-9FDD-42E5-8FCB-270DA9E25569}"
 EndProject

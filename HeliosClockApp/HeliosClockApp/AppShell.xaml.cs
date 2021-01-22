@@ -1,5 +1,5 @@
 ﻿using HeliosClockApp.Views;
-using HeliosClockCommon.Messages;
+using LuminCommon.Messages;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 

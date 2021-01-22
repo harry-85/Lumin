@@ -1,6 +1,6 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Services;
-using HeliosClockCommon.Models;
+using LuminCommon.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

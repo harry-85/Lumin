@@ -1,7 +1,7 @@
 ﻿using HeliosClockApp.Models;
 using HeliosClockApp.Views;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Models;
+using LuminCommon.Enumerations;
+using LuminCommon.Models;
 using System;
 using System.Net;
 using System.Windows.Input;

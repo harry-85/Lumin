@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\HeliosClockCommon\HeliosClockCommon.csproj" />
+    <ProjectReference Include="..\..\LuminCommon\LuminCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

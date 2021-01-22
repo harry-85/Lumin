@@ -1,7 +1,7 @@
 ﻿using HeliosClockAPIStandard.Enumeration;
-using HeliosClockCommon.Defaults;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Interfaces;
+using LuminCommon.Defaults;
+using LuminCommon.Enumerations;
+using LuminCommon.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;

@@ -24,24 +24,24 @@ namespace HeliosClockApp.Controls
 				typeof(System.Drawing.Color),
 				typeof(ColorPickerControl));
 
-        /// <summary>Gets or sets the color of the picked.</summary>
-        /// <value>The color of the picked.</value>
-        public System.Drawing.Color PickedColor
+		/// <summary>Gets or sets the color of the picked.</summary>
+		/// <value>The color of the picked.</value>
+		public System.Drawing.Color PickedColor
 		{
 			get { return (System.Drawing.Color)GetValue(PickedColorProperty); }
 			set { SetValue(PickedColorProperty, value); }
 		}
 
-        /// <summary>Initializes a new instance of the <see cref="ColorPickerControl"/> class.</summary>
-        public ColorPickerControl()
+		/// <summary>Initializes a new instance of the <see cref="ColorPickerControl"/> class.</summary>
+		public ColorPickerControl()
 		{
 			InitializeComponent();
 		}
 
-        /// <summary>Handles the OnPaintSurface event of the SkCanvasView control.</summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="SKPaintSurfaceEventArgs"/> instance containing the event data.</param>
-        private void SkCanvasView_OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+		/// <summary>Handles the OnPaintSurface event of the SkCanvasView control.</summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="SKPaintSurfaceEventArgs"/> instance containing the event data.</param>
+		private void SkCanvasView_OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
 		{
 			var skImageInfo = e.Info;
 			var skSurface = e.Surface;

@@ -4,7 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
-using HeliosClockCommon.Messages;
+using LuminCommon.Messages;
 using TouchEffect.Android;
 
 namespace HeliosClockApp.Droid

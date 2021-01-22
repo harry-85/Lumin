@@ -1,4 +1,4 @@
-﻿using HeliosClockCommon.Helper;
+﻿using LuminCommon.Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

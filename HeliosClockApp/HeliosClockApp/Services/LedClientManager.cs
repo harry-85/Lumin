@@ -1,4 +1,4 @@
-﻿using HeliosClockCommon.Models;
+﻿using LuminCommon.Models;
 using System.Collections.Generic;
 
 namespace HeliosClockApp.Services

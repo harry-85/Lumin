@@ -1,4 +1,4 @@
-using HeliosClockCommon.Defaults;
+using LuminCommon.Defaults;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Net;

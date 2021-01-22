@@ -1,7 +1,7 @@
 ﻿using HeliosClockApp.Services;
 using HeliosClockApp.Views;
-using HeliosClockCommon.Messages;
-using HeliosClockCommon.Models;
+using LuminCommon.Messages;
+using LuminCommon.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

@@ -1,5 +1,5 @@
 ﻿using HeliosClockApp.Models;
-using HeliosClockCommon.Messages;
+using LuminCommon.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;

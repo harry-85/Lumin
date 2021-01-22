@@ -108,9 +108,9 @@
     <AndroidResource Include="Resources\drawable\icon_feed.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HeliosClockCommon\HeliosClockCommon.csproj">
+    <ProjectReference Include="..\..\LuminCommon\LuminCommon.csproj">
       <Project>{8fe3df72-3107-4d75-b86c-e44edba9e4a8}</Project>
-      <Name>HeliosClockCommon</Name>
+      <Name>LuminCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\HeliosClockApp\HeliosClockApp.csproj">
       <Project>{0472271A-C1E5-4396-9CD1-339B047BF7E2}</Project>

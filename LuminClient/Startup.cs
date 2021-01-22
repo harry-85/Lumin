@@ -1,10 +1,10 @@
 using HeliosClockAPIStandard;
 using HeliosClockAPIStandard.Controller;
-using HeliosClockCommon.Clients;
-using HeliosClockCommon.Configurator;
-using HeliosClockCommon.Discorvery;
-using HeliosClockCommon.Interfaces;
-using HeliosClockCommon.LedCommon;
+using LuminCommon.Clients;
+using LuminCommon.Configurator;
+using LuminCommon.Discorvery;
+using LuminCommon.Interfaces;
+using LuminCommon.LedCommon;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

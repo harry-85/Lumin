@@ -21,27 +21,27 @@ namespace HeliosClockApp.Views
 
         /// <summary>Handles the OnModeChange event of the HeliosService control.</summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs{HeliosClockCommon.Enumerations.LedMode}"/> instance containing the event data.</param>
-        private void HeliosService_OnModeChange(object sender, EventArgs<HeliosClockCommon.Enumerations.LedMode> e)
+        /// <param name="e">The <see cref="EventArgs{LuminCommon.Enumerations.LedMode}"/> instance containing the event data.</param>
+        private void HeliosService_OnModeChange(object sender, EventArgs<LuminCommon.Enumerations.LedMode> e)
         {
             switch (e.Args)
             {
-                case HeliosClockCommon.Enumerations.LedMode.None:
+                case LuminCommon.Enumerations.LedMode.None:
                     ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     break;
-                case HeliosClockCommon.Enumerations.LedMode.Spin:
+                case LuminCommon.Enumerations.LedMode.Spin:
                     ButtonSpin.BackgroundColor = Color.ForestGreen;
                     ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     break;
-                case HeliosClockCommon.Enumerations.LedMode.KnightRider:
+                case LuminCommon.Enumerations.LedMode.KnightRider:
                     ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonDiscoMode.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = Color.ForestGreen;
                     break;
-                case HeliosClockCommon.Enumerations.LedMode.Disco:
+                case LuminCommon.Enumerations.LedMode.Disco:
                     ButtonSpin.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonKnightRider.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                     ButtonDiscoMode.BackgroundColor = Color.ForestGreen;

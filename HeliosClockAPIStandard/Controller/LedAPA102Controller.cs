@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Device.Spi;
 using System.Drawing;
 using System.Threading.Tasks;
-using HeliosClockCommon.Helper;
-using HeliosClockCommon.LedCommon;
+using LuminCommon.Helper;
+using LuminCommon.LedCommon;
 
 namespace HeliosClockAPIStandard.Controller
 {

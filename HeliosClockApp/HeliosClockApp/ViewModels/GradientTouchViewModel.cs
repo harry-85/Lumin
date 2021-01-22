@@ -1,6 +1,6 @@
 ﻿using HeliosClockApp.Views;
-using HeliosClockCommon.Helper;
-using HeliosClockCommon.Messages;
+using LuminCommon.Helper;
+using LuminCommon.Messages;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

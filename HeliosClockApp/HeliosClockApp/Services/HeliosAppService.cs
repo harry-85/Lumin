@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using HeliosClockCommon.Clients;
-using HeliosClockCommon.Discorvery;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.Models;
+using LuminCommon.Clients;
+using LuminCommon.Discorvery;
+using LuminCommon.Enumerations;
+using LuminCommon.Models;
 
 namespace HeliosClockApp.Services
 {

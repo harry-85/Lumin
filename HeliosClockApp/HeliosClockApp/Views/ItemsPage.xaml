@@ -4,7 +4,7 @@
              x:Class="HeliosClockApp.Views.ItemsPage"
              Title="{Binding Title}"
              xmlns:local="clr-namespace:HeliosClockApp.ViewModels"  
-             xmlns:model="clr-namespace:HeliosClockCommon.Models;assembly=HeliosClockCommon"  
+             xmlns:model="clr-namespace:LuminCommon.Models;assembly=LuminCommon"  
              xmlns:forms9patch="clr-namespace:Forms9Patch;assembly=Forms9Patch"
              xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
              x:Name="BrowseItemsPage">

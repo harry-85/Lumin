@@ -3,13 +3,13 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HeliosClockCommon.Attributes;
-using HeliosClockCommon.Configurator;
-using HeliosClockCommon.Enumerations;
-using HeliosClockCommon.EventArgs;
-using HeliosClockCommon.Helper;
-using HeliosClockCommon.Interfaces;
-using HeliosClockCommon.LedCommon;
+using LuminCommon.Attributes;
+using LuminCommon.Configurator;
+using LuminCommon.Enumerations;
+using LuminCommon.EventArgs;
+using LuminCommon.Helper;
+using LuminCommon.Interfaces;
+using LuminCommon.LedCommon;
 using Microsoft.Extensions.Logging;
 
 namespace HeliosClockAPIStandard
