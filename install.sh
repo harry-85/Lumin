@@ -1,33 +1,37 @@
 #!/bin/sh
 
 #Write Service File Function
-#Parameters: 1. serverServicePath 2. installPath 3. dotnetPath 4. luminServerDllName 5. userName
+#Parameters: 1. servicePath 2. installPath 3. dotnetPath 4. DllName 5. userName
 WriteServiceFile () {
-	serverServicePath=$1
+	servicePath=$1
 	installPath=$2
 	dotnetPath=$3
-	luminServerDllName=$4
+	DllName=$4
 	userName=$5
 
-	# Create Server Service File / Enable and Start Service (systemctl)
-	echo '[Unit]' > $serverServicePath
-	echo 'Description=Lumin Service in .NET' >> $serverServicePath
+	# Create Service File / Enable and Start Service (systemctl)
+	echo '[Unit]' > $servicePath
+	echo 'Description=Lumin Service in .NET' >> $servicePath
 	echo ''
-	echo '# Location:'$serverServicePath >> $serverServicePath
+	echo '# Location:'$servicePath >> $servicePath
 	echo ''
-	echo '[Service]' >> $serverServicePath
-	echo 'Type=simple' >> $serverServicePath
-	echo 'WorkingDirectory='$installPath >> $serverServicePath
-	echo 'ExecStart='$dotnetPath'/dotnet '$installPath$luminServerDllName >> $serverServicePath
-	echo 'User='$userName >> $serverServicePath
+	echo '[Service]' >> $servicePath
+	echo 'Type=simple' >> $servicePath
+	echo 'WorkingDirectory='$installPath >> $servicePath
+	echo 'ExecStart='$dotnetPath'/dotnet '$installPath$DllName >> $servicePath
+	echo 'User='$userName >> $servicePath
 	echo ''
-	echo '[Install]' >> $serverServicePath
-	echo 'WantedBy=multi-user.target' >> $serverServicePath
+	echo '[Install]' >> $servicePath
+	echo 'WantedBy=multi-user.target' >> $servicePath
 }
 
+##Main Program###
+
+#Default Values
 clientName="Bed Room"
 ledCount=58
 
+releaseRepository="https://github.com/Richy1989/Lumin"
 luminServerDllName="LuminServer.dll"
 
 userName=$USER
@@ -47,6 +51,7 @@ serverServicePath="/etc/systemd/system/"$serverServiceName
 
 discoveryPort=8080
 signalPort=5000
+
 
 hashOutput=$(hash dotnet)
 netCoreDownloadFileName="aspnetcore-runtime-5.0.0-linux-arm64.tar.gz"
@@ -94,8 +99,21 @@ apt install libgpiod2 -y
 # Create Server Service File / Enable and Start Service (systemctl)
 WriteServiceFile $serverServicePath $installPath $dotnetPath $luminServerDllName $userName
 
+#Clone, publish and install binaries
+#installPath="/home/ubuntu/tempInstall"
+mkdir $installPath
+mkdir ".lumin_temp"
+cd ".lumin_temp"
+git clone $releaseRepository
+dotnet publish "Lumin/LuminServer/LuminServer.csproj"
+actualFolder=pwd #$(pwd)
+cd "Lumin/LuminServer/bin/Debug/net5.0/publish/"
+cp -R * $installPath
+cd $actualFolder
+cd ".."
+rm -r -f ".lumin_temp"
+
 #Enable the Server Service
 systemctl enable $serverServiceName
 echo $serverServiceName' is enabled' 
-echo '1. Copy Files to: '$installPath 
-echo '2. Execute: systemctl start '$serverServiceName
+echo 'Next Step: Execute: systemctl start '$serverServiceName
